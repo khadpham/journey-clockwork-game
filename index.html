@@ -1,0 +1,1089 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Hành Trình Của An - v40.0 Precision Touch</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&family=Merriweather:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <style>
+        /* --- CORE --- */
+        body { font-family: 'Inter', sans-serif; background-color: #020617; color: #e2e8f0; overflow: hidden; touch-action: manipulation; }
+        .font-serif { font-family: 'Merriweather', serif; }
+        ::-webkit-scrollbar { width: 4px; height: 4px; }
+        ::-webkit-scrollbar-track { background: #0f172a; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 2px; }
+
+        /* --- TOAST --- */
+        #toast-container { position: fixed; top: 20px; right: 20px; z-index: 200; display: flex; flex-direction: column; gap: 10px; pointer-events: none; }
+        .toast { 
+            background: rgba(30, 41, 59, 0.95); border-left: 4px solid #6366f1; color: white; 
+            padding: 12px 24px; border-radius: 8px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.5);
+            animation: slideIn 0.3s ease-out, fadeOut 0.3s ease-in 2.7s forwards; 
+            pointer-events: auto; font-size: 0.9rem; font-weight: 600; display: flex; align-items: center; gap: 8px;
+        }
+        .toast.error { border-left-color: #f43f5e; }
+        .toast.success { border-left-color: #10b981; }
+        .toast.warning { border-left-color: #f59e0b; }
+        @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        @keyframes fadeOut { from { opacity: 1; } to { opacity: 0; } }
+
+        /* --- MODAL --- */
+        .modal { display: none; position: fixed; z-index: 100; inset: 0; background-color: rgba(0,0,0,0.9); backdrop-filter: blur(5px); align-items: center; justify-content: center; padding: 16px; }
+        .modal-content { background-color: #1e293b; border: 1px solid #334155; border-radius: 1rem; max-width: 600px; width: 100%; max-height: 80vh; overflow-y: auto; animation: zoomIn 0.2s ease-out; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); }
+        @keyframes zoomIn { from { transform: scale(0.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+        /* GAME 1 */
+        .bulb-btn { transition: all 0.1s; }
+        .bulb-btn:active { transform: scale(0.98); }
+        .bulb-on { background-color: #fcd34d !important; color: #713f12 !important; box-shadow: 0 0 40px #fcd34d; border-color: #fbbf24 !important; }
+        .bulb-off { background-color: #1e293b; color: #64748b; border-color: #475569; }
+
+        /* GAME 2: JUGS */
+        .jug-container { position: relative; background: #334155; border-radius: 0 0 12px 12px; border: 4px solid #64748b; border-top: none; overflow: hidden; transition: all 0.2s; cursor: pointer; width: 90px; margin: 0 8px; }
+        .jug-container:hover { border-color: #94a3b8; }
+        .jug-water { position: absolute; bottom: 0; left: 0; width: 100%; background-color: #fbbf24; transition: height 0.5s ease; opacity: 0.9; box-shadow: inset 0 -5px 10px rgba(0,0,0,0.1); }
+        .jug-selected { border-color: #d946ef !important; box-shadow: 0 0 0 4px rgba(217, 70, 239, 0.5) !important; transform: translateY(-4px); }
+
+        /* GAME 4: BRIDGE */
+        .char-card { 
+            transition: all 0.2s; cursor: pointer; user-select: none; position: relative; z-index: 20; 
+            box-shadow: 0 4px 6px rgba(0,0,0,0.4); background: #1e293b; border: 2px solid #475569; 
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            border-radius: 8px; width: 100%; aspect-ratio: 1/1;
+        }
+        .char-card:hover { transform: translateY(-3px); border-color: #fbbf24; background: #334155; }
+        
+        /* Desktop Layout */
+        .bridge-layout { display: flex; width: 100%; height: 600px; border: 2px solid #334155; border-radius: 16px; overflow: hidden; background: #0f172a; position: relative; }
+        
+        .cliff-side { 
+            width: 250px; 
+            height: 100%; background: #1e293b; border-right: 2px solid #334155; padding: 16px; overflow-y: auto; flex-shrink: 0;
+            display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; 
+            align-content: start; justify-items: center; z-index: 5;
+        }
+        .cliff-side.right { border-left: 2px solid #334155; border-right: none; }
+        
+        .bridge-zone { 
+            flex: 1; height: 100%; position: relative; 
+            background: linear-gradient(180deg, #020617 0%, #0f172a 100%); 
+            overflow: hidden; 
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+        }
+        
+        /* Desktop: Button inside Bridge Zone, below cable */
+        .bridge-zone .btn-go-round { margin-top: 60px; }
+
+        .bridge-cable { position: absolute; width: 100%; height: 8px; background: #64748b; top: 40%; transform: translateY(-50%); border-radius: 4px; box-shadow: 0 10px 20px rgba(0,0,0,0.5); }
+        
+        .lamp-carrier { 
+            width: 180px; height: 180px;
+            border-radius: 50%; border: 4px dashed rgba(251, 191, 36, 0.6); 
+            display: flex; justify-content: center; align-items: center; flex-wrap: wrap; gap: 8px; padding: 20px;
+            background: radial-gradient(circle, rgba(251,191,36,0.15) 0%, transparent 70%); 
+            transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1); 
+            z-index: 10; position: absolute; box-shadow: 0 0 30px rgba(251, 191, 36, 0.1); 
+            top: 40%; margin-top: -90px;
+        }
+        
+        .pos-left { transform: translateX(0); left: 10px; }
+        .pos-right { transform: translateX(0); left: calc(100% - 190px); }
+
+        /* GO BUTTON ROUND */
+        .btn-go-round {
+            width: 90px; height: 90px; border-radius: 50%;
+            background: linear-gradient(135deg, #d97706, #b45309); color: white; font-weight: 900;
+            box-shadow: 0 4px 15px rgba(217, 119, 6, 0.5); border: 4px solid rgba(251, 191, 36, 0.3);
+            letter-spacing: 0.05em; font-size: 1.3rem; 
+            display: flex; align-items: center; justify-content: center;
+            transition: all 0.2s; z-index: 40; cursor: pointer;
+        }
+        .btn-go-round:active { transform: scale(0.9); box-shadow: 0 2px 5px rgba(217, 119, 6, 0.5); }
+
+        /* BUTTON STYLES MOBILE */
+        .btn-go-mobile {
+            width: 80%;
+            padding: 14px; border-radius: 12px;
+            background: linear-gradient(to right, #d97706, #b45309); color: white; font-weight: 900;
+            box-shadow: 0 4px 15px rgba(217, 119, 6, 0.4); border: 2px solid rgba(251, 191, 36, 0.5);
+            letter-spacing: 0.1em; font-size: 1.1rem; text-transform: uppercase;
+            transition: all 0.2s; 
+            margin-bottom: 40px; /* INCREASED BOTTOM SPACING for balance */
+        }
+        .btn-go-mobile:active { transform: scale(0.98); }
+
+        /* Mobile Adjustments */
+        @media (max-width: 767px) {
+            .bridge-layout { flex-direction: column; height: auto; min-height: auto; border: none; background: transparent; overflow: visible; }
+            .cliff-side { 
+                width: 100%; height: auto; min-height: 80px; 
+                border: 2px solid #334155; border-radius: 12px; background: #1e293b;
+                padding: 8px; margin-bottom: 0;
+                display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px;
+            }
+            .cliff-side.right { margin-top: 0; border-top: none; border-radius: 0 0 12px 12px; }
+            .cliff-side:first-child { border-bottom: none; border-radius: 12px 12px 0 0; }
+            
+            /* SPLIT BRIDGE ZONE */
+            .bridge-zone { 
+                min-height: 280px; border: 2px solid #334155; 
+                border-top: none; border-bottom: none;
+                background: linear-gradient(180deg, #0f172a 0%, #1e293b 100%);
+                margin: 0; 
+                display: flex; flex-direction: row; 
+                align-items: stretch; justify-content: flex-start;
+            }
+            .bridge-zone .btn-go-round { margin-top: 0; } 
+            
+            .bridge-track-area { width: 100%; position: relative; height: 100%; }
+
+            /* Cable in track area */
+            .bridge-cable { width: 6px; height: 100%; top: 0; left: 50%; transform: translateX(-50%); }
+            
+            .lamp-carrier { 
+                left: 50%; width: 120px; height: 120px; margin-left: -60px;
+                top: 10px; margin-top: 0;
+                transition: top 0.8s cubic-bezier(0.4, 0, 0.2, 1); 
+            }
+            .pos-left { top: 10px; transform: none; left: 50%; }
+            .pos-right { top: calc(100% - 130px); transform: none; left: 50%; }
+            
+            .char-card { height: 45px; width: 100%; padding: 1px; border-radius: 4px; } 
+            .char-emoji { font-size: 1.1rem; line-height: 1; }
+            .char-text { font-size: 0.55rem; display: none; } 
+        }
+
+        /* GAME 5 */
+        .box-btn { transition: all 0.2s; cursor: pointer; touch-action: manipulation; }
+        .box-btn:active { transform: scale(0.95); }
+        .quantum-active { animation: pulse-glow 2s infinite; border-color: #818cf8; }
+        @keyframes pulse-glow { 0%, 100% { box-shadow: 0 0 5px rgba(99, 102, 241, 0.2); } 50% { box-shadow: 0 0 20px rgba(99, 102, 241, 0.5); } }
+
+        /* GAME 6: SPIDER FRAME */
+        .spider-frame {
+            border: 2px solid #475569; border-radius: 24px;
+            background: #0f172a; box-shadow: inset 0 0 40px rgba(0,0,0,0.6);
+            overflow: hidden; width: 100%; height: 100%;
+            display: flex; align-items: center; justify-content: center;
+            max-width: 600px; margin: 0 auto; aspect-ratio: 1/1;
+        }
+
+        /* GAME 7 */
+        .horse { width: 40px; height: 40px; border-radius: 8px; background-color: #be185d; color: white; display: flex; align-items: center; justify-content: center; font-weight: 800; cursor: pointer; transition: all 0.2s; user-select: none; border: 2px solid #fbcfe8; font-size: 0.9rem; box-shadow: 0 2px 4px rgba(0,0,0,0.3); }
+        .horse:active { transform: scale(1.1); }
+        #horse-pool-container { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; width: 100%; max-width: 350px; margin: 0 auto; }
+
+        /* GAME 8 */
+        .ball { width: 38px; height: 38px; border-radius: 50%; background-color: #4f46e5; color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; cursor: pointer; transition: transform 0.1s; font-size: 0.8rem; margin: 2px; box-shadow: inset -5px -5px 10px rgba(0,0,0,0.4); border: 2px solid #818cf8; }
+        
+        .pan { 
+            min-height: 120px; border: 3px solid #64748b; border-top: none; border-radius: 0 0 20px 20px; background-color: #1e293b; 
+            display: grid; grid-template-columns: repeat(2, 1fr); 
+            align-content: start; justify-items: center; gap: 5px; padding: 10px; 
+            transition: border-color 0.3s; cursor: pointer; width: 100%; position: relative;
+        }
+        .pan::before { content:''; position: absolute; top: -40px; left: 50%; width: 4px; height: 40px; background: #64748b; transform: translateX(-50%); }
+        @media (min-width: 768px) { .pan { grid-template-columns: repeat(4, 1fr); } }
+        
+        .pan:hover { border-color: #94a3b8; }
+        .pan.selected-pan { border-color: #fbbf24; background-color: rgba(251, 191, 36, 0.08); box-shadow: 0 0 20px rgba(251, 191, 36, 0.15); }
+        .pan.selected-pan::before { background: #fbbf24; }
+
+        .scale-arm { width: 100%; height: 8px; background: #64748b; border-radius: 4px; transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1); transform-origin: center; position: relative; }
+        .scale-pivot { width: 0; height: 0; border-left: 20px solid transparent; border-right: 20px solid transparent; border-bottom: 40px solid #475569; position: absolute; bottom: -48px; left: 50%; transform: translateX(-50%); }
+        
+        .balanced-anim { animation: balancePulse 0.5s ease-in-out; }
+        @keyframes balancePulse { 0% { transform: scaleX(1); } 50% { transform: scaleX(1.1); background-color: #10b981; } 100% { transform: scaleX(1); } }
+
+        .tilt-left { transform: rotate(-10deg); } .tilt-right { transform: rotate(10deg); }
+        .pan-container { transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1); width: 40%; display: flex; flex-direction: column; items-center; }
+        .pan-tilt-up { transform: translateY(-30px); } .pan-tilt-down { transform: translateY(30px); }
+
+        /* UTILS */
+        .game-canvas { display: block; width: 100%; height: 100%; object-fit: contain; }
+        .story-gradient { background: linear-gradient(180deg, #1e293b 0%, #020617 100%); }
+        .log-box { font-family: monospace; font-size: 0.9rem; background: #0f172a; padding: 12px; border-radius: 8px; overflow-y: auto; border: 1px solid #334155; color: #94a3b8; line-height: 1.6; }
+        
+        /* VICTORY OVERLAY */
+        .victory-overlay { position: absolute; inset: 0; background: rgba(2, 6, 23, 0.98); backdrop-filter: blur(12px); z-index: 100; display: flex; flex-direction: column; align-items: center; justify-content: center; opacity: 0; pointer-events: auto; transition: opacity 0.3s ease-out; padding: 20px; text-align: center; pointer-events: none; }
+        .victory-visible { opacity: 1; pointer-events: auto; }
+
+        /* ACCORDION */
+        .accordion-content { overflow: hidden; transition: max-height 0.4s ease-in-out; }
+        .accordion-collapsed { max-height: 0 !important; padding-top: 0 !important; padding-bottom: 0 !important; }
+        .accordion-expanded { max-height: 800px; }
+        /* Desktop: Always expanded by default, can be toggled */
+        @media (min-width: 768px) { 
+            #story-content-wrapper.accordion-collapsed { max-height: 0 !important; }
+            #story-content-wrapper:not(.accordion-collapsed) { max-height: 800px !important; }
+        }
+        
+        /* INTRO PAGE OVERRIDE: Hide accordion toggle, force expand */
+        .intro-active #accordion-icon-mobile { display: none; }
+        .intro-active #accordion-icon-desktop { display: none; }
+        .intro-active .accordion-content { max-height: none !important; }
+    </style>
+</head>
+<body class="flex h-screen bg-slate-950 text-slate-200">
+
+    <div id="toast-container"></div>
+
+    <!-- SIDEBAR -->
+    <aside class="hidden md:flex flex-col w-72 bg-slate-900 border-r border-slate-800 h-full shrink-0 z-30">
+        <div class="p-6 border-b border-slate-800">
+            <h1 class="text-lg font-black text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-cyan-400">HÀNH TRÌNH CỦA AN</h1>
+            <div class="text-[10px] text-slate-500 font-bold mt-1 tracking-widest">v40.0 PRECISION TOUCH</div>
+        </div>
+        <nav id="sidebar-nav" class="flex-1 overflow-y-auto pb-4 space-y-1 p-2"></nav>
+        <div class="p-4 border-t border-slate-800 bg-slate-900/50">
+            <div class="flex justify-between items-center bg-slate-800 p-3 rounded-lg border border-slate-700 shadow-inner">
+                <div class="flex items-center space-x-2"><span class="text-xl">⚙️</span><span class="text-xs font-bold text-amber-400 uppercase">Bánh Răng</span></div>
+                <span id="gear-count" class="text-xl font-black text-white">0/8</span>
+            </div>
+        </div>
+    </aside>
+
+    <!-- MOBILE HEADER -->
+    <div class="md:hidden fixed top-0 w-full h-14 bg-slate-900/95 backdrop-blur border-b border-slate-800 z-50 flex items-center justify-between px-4 shadow-lg">
+        <span class="font-bold text-indigo-400 text-sm truncate">HÀNH TRÌNH CỦA AN</span>
+        <div class="flex items-center gap-3">
+            <span class="text-amber-400 text-xs font-bold" id="mobile-gear">0 ⚙️</span>
+            <button onclick="document.getElementById('mobile-menu').classList.toggle('hidden')" class="text-2xl p-2">☰</button>
+        </div>
+    </div>
+    <div id="mobile-menu" class="hidden fixed top-14 left-0 w-full bg-slate-950/95 backdrop-blur z-40 border-b border-slate-800 p-4 md:hidden max-h-[80vh] overflow-y-auto shadow-2xl">
+        <nav id="mobile-nav-list" class="space-y-1 pb-4"></nav>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <main class="flex-1 flex flex-col relative pt-14 md:pt-0 overflow-hidden h-full">
+        
+        <!-- STORY ACCORDION -->
+        <div id="story-section" class="bg-slate-900 border-b border-slate-800 shrink-0 z-20 shadow-md relative transition-all duration-300">
+            <!-- Mobile Toggle -->
+            <div class="md:hidden flex justify-between items-center p-3 bg-slate-800 cursor-pointer active:bg-slate-700 transition border-b border-slate-800" onclick="toggleStory()">
+                <div class="flex items-center gap-2 overflow-hidden">
+                    <span id="chapter-tag-mobile" class="text-[9px] font-bold text-slate-400 bg-slate-950 px-2 py-1 rounded border border-slate-700 shrink-0">CHƯƠNG 1</span>
+                    <span id="story-title-mobile" class="text-sm font-bold text-white truncate">...</span>
+                </div>
+                <span id="accordion-icon-mobile" class="text-xs text-slate-500">▼</span>
+            </div>
+
+            <!-- Desktop Toggle & Title -->
+            <div class="hidden md:flex justify-between items-center p-4 bg-slate-800 border-b border-slate-700 cursor-pointer hover:bg-slate-750 transition" onclick="toggleStory()">
+                 <div class="flex items-center gap-3">
+                    <span id="part-tag" class="text-[10px] font-black text-indigo-400 uppercase tracking-widest border border-indigo-500/30 px-2 py-0.5 rounded bg-indigo-500/10">PHẦN 1</span>
+                    <h3 id="story-title" class="text-xl font-serif font-bold text-white truncate">...</h3>
+                 </div>
+                 <div class="flex items-center gap-4">
+                    <span id="chapter-tag" class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">CHƯƠNG 1</span>
+                    <span id="accordion-icon-desktop" class="text-slate-400 hover:text-white transition text-sm">▲ Thu gọn</span>
+                 </div>
+            </div>
+            
+            <div id="story-content-wrapper" class="accordion-content accordion-expanded p-4 md:p-6 overflow-y-auto max-h-[40vh] bg-slate-900">
+                <div class="max-w-4xl mx-auto">
+                    <div id="story-text" class="text-slate-300 text-sm leading-relaxed mb-4 font-light">...</div>
+                    <!-- New Rules Section -->
+                    <div id="game-rules-section" class="mb-6 p-4 bg-slate-950/50 rounded-xl border border-slate-800 hidden">
+                        <h4 class="text-xs font-black text-amber-500 uppercase tracking-widest mb-2">HƯỚNG DẪN NHIỆM VỤ</h4>
+                        <div id="game-rules-text" class="text-sm text-slate-400 leading-relaxed space-y-2"></div>
+                    </div>
+                    <div class="flex gap-3 flex-wrap">
+                        <button id="btn-play" onclick="GameManager.playLevel()" class="px-6 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-bold rounded-lg shadow-lg transition-transform active:scale-95">BẮT ĐẦU (Enter)</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- GAME STAGE -->
+        <div class="flex-1 bg-[#020617] relative overflow-hidden flex flex-col w-full">
+            <div id="game-container" class="flex flex-col h-full w-full hidden">
+                <!-- Sticky Toolbar -->
+                <div class="flex justify-between items-center p-2 px-4 border-b border-slate-800 bg-slate-900 z-30 shrink-0 h-14">
+                    <div class="flex items-center gap-3">
+                        <div class="flex flex-col"><span class="text-[9px] text-slate-500 font-bold uppercase">Trạng thái</span><span id="game-metric" class="font-mono text-sm text-emerald-400 font-bold">...</span></div>
+                        <div id="game-msg" class="hidden"></div>
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="ActiveGame.reset()" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-600 rounded text-xs font-bold transition">↺ Reset</button>
+                        <button onclick="openModal('hint-modal')" class="px-3 py-1.5 bg-amber-900/30 hover:bg-amber-800 text-amber-200 border border-amber-700/50 rounded text-xs font-bold transition">💡 Gợi ý</button>
+                        <button onclick="GameManager.skip()" class="px-3 py-1.5 bg-rose-900/20 hover:bg-rose-900 text-rose-300 border border-rose-800 rounded text-xs font-bold transition">⏩ SKIP</button>
+                    </div>
+                </div>
+
+                <!-- Game Content (Scrollable) -->
+                <div id="game-stage" class="flex-1 overflow-y-auto w-full p-4 relative flex flex-col items-center"></div>
+            </div>
+            
+            <div id="placeholder" class="absolute inset-0 flex flex-col items-center justify-center opacity-20 select-none pointer-events-none">
+                <div class="text-6xl md:text-8xl mb-4 grayscale">🏰</div>
+                <div class="text-xl md:text-2xl font-serif font-bold tracking-[0.2em] text-white">VƯƠNG QUỐC LOGIC</div>
+            </div>
+
+            <!-- VICTORY / STORY OVERLAY -->
+            <div id="victory-overlay" class="victory-overlay"></div>
+        </div>
+    </main>
+
+    <!-- MODALS -->
+    <div id="hint-modal" class="modal" style="display:none;" onclick="closeModal('hint-modal')">
+        <div class="modal-content p-8" onclick="event.stopPropagation()">
+            <div class="flex justify-between items-center mb-4 border-b border-slate-700 pb-2">
+                <h3 class="text-xl font-bold text-amber-500">Lời Khuyên</h3>
+                <button onclick="closeModal('hint-modal')" class="text-slate-400 hover:text-white text-2xl">&times;</button>
+            </div>
+            <p id="hint-text" class="text-slate-300 text-base mb-6 leading-relaxed border-l-4 border-amber-500/30 pl-4">...</p>
+            <div class="bg-slate-950 p-4 rounded-lg border border-slate-800"><div class="text-xs font-black text-indigo-500 mb-2 uppercase">Nguyên Lý Logic</div><p id="math-text" class="text-sm text-slate-400 italic font-serif">...</p></div>
+            <button onclick="closeModal('hint-modal')" class="mt-6 w-full py-3 bg-slate-800 hover:bg-slate-700 text-white font-bold rounded-lg border border-slate-600 transition">Đã Hiểu</button>
+        </div>
+    </div>
+
+    <div id="ending-screen" class="hidden fixed inset-0 z-[200] bg-black flex flex-col items-center justify-center p-6 text-center">
+        <h1 id="end-title" class="text-4xl md:text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-yellow-200 to-amber-600 mb-4">THE END</h1>
+        <p id="end-desc" class="text-base md:text-xl text-slate-300 max-w-xl mb-8 font-serif leading-relaxed">...</p>
+        <div class="text-2xl font-bold text-white mb-8">Thành tích: <span id="end-score" class="text-amber-400">0/8 ⚙️</span></div>
+        <button onclick="localStorage.removeItem('an_v240_save'); location.reload();" class="px-8 py-3 bg-white text-black font-bold text-lg rounded-full hover:scale-105 transition-transform">CHƠI LẠI TỪ ĐẦU</button>
+    </div>
+
+    <script>
+        // --- TOAST SYSTEM ---
+        function showToast(msg, type='info') {
+            const c = document.getElementById('toast-container');
+            const t = document.createElement('div');
+            t.className = `toast ${type}`; t.innerHTML = msg;
+            c.appendChild(t); setTimeout(() => t.remove(), 3000);
+        }
+
+        /* UTILS */
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        function playSound(t) { 
+            if(audioCtx.state==='suspended')audioCtx.resume();
+            if(t==='silent')return; 
+            const osc=audioCtx.createOscillator(),g=audioCtx.createGain();
+            osc.connect(g);g.connect(audioCtx.destination);
+            const n=audioCtx.currentTime;
+            if(t==='click'){osc.type='sine';osc.frequency.setValueAtTime(600,n);g.gain.setValueAtTime(0.05,n);g.gain.exponentialRampToValueAtTime(0.001,n+0.1);osc.start(n);osc.stop(n+0.1)}
+            else if(t==='win'){osc.type='triangle';osc.frequency.setValueAtTime(523,n);osc.frequency.linearRampToValueAtTime(1046,n+0.3);g.gain.setValueAtTime(0.1,n);g.gain.linearRampToValueAtTime(0.001,n+1);osc.start(n);osc.stop(n+1)}
+            else if(t==='fail'){osc.type='sawtooth';osc.frequency.setValueAtTime(150,n);osc.frequency.linearRampToValueAtTime(100,n+0.3);g.gain.setValueAtTime(0.1,n);g.gain.linearRampToValueAtTime(0.001,n+0.5);osc.start(n);osc.stop(n+0.5)} 
+        }
+        
+        function toggleStory() { 
+            const w=document.getElementById('story-content-wrapper');
+            const im=document.getElementById('accordion-icon-mobile');
+            const id=document.getElementById('accordion-icon-desktop');
+            
+            // Disable toggle on Intro page
+            if(document.body.classList.contains('intro-active')) return;
+
+            if(w.classList.contains('accordion-collapsed')){
+                w.classList.remove('accordion-collapsed');
+                w.classList.add('accordion-expanded');
+                if(im) im.innerText='▲';
+                if(id) id.innerText='▲ Thu gọn';
+            } else {
+                w.classList.remove('accordion-expanded');
+                w.classList.add('accordion-collapsed');
+                if(im) im.innerText='▼';
+                if(id) id.innerText='▼ Mở rộng';
+            } 
+        }
+        
+        // Helper function to explicitly collapse the story accordion
+        function forceCollapseStory() {
+            const w=document.getElementById('story-content-wrapper');
+            const im=document.getElementById('accordion-icon-mobile');
+            const id=document.getElementById('accordion-icon-desktop');
+            
+            if(w) {
+                w.classList.remove('accordion-expanded');
+                w.classList.add('accordion-collapsed');
+                if(im) im.innerText='▼';
+                if(id) id.innerText='▼ Mở rộng';
+            }
+        }
+
+        /* DATA - ENRICHED STORY & RULES */
+        const STORY = [
+            { 
+                id: 'intro', type: 'text', part: 'MỞ ĐẦU', title: 'Lời Nhắn Từ Quá Khứ', 
+                text: 'An, con trai yêu quý của ta. Nếu con đọc được những dòng này, có lẽ ta đã không còn ở bên con. Hắc Pháp Sư Muội Than - kẻ thù truyền kiếp của Hoàng Gia - đã trỗi dậy và bắt cóc ta để chiếm đoạt bí mật về Thời Gian. Ta đã kịp giấu Cây Đèn Chân Lý vào gói bưu phẩm này. Nó không chỉ là một công cụ, mà là người dẫn đường. Hãy lắng nghe tiếng nói của ánh sáng, nó sẽ chỉ cho con con đường cứu ta và cả Vương Quốc Logic. Hãy dũng cảm lên, con trai!',
+                rules: null 
+            },
+            { 
+                id: 'c1', type: 'game', game: 'switches', part: 'PHẦN 1: KHỞI ĐẦU', title: 'Chương 1: Căn Nhà Gỗ', 
+                text: 'Theo chỉ dẫn của ngọn đèn, An tìm đến căn nhà gỗ bìa rừng nơi người bạn trung thành của cha - Chú Chó Vàng - đang bị giam giữ. Căn phòng tối om, chỉ có một lồng năng lượng nhiệt đang nhốt Chú Chó. Để phá lồng, An cần tìm đúng công tắc kích hoạt trong 4 công tắc trên tường. Ngọn đèn thì thầm: "Ánh sáng không phải là tất cả, hãy cảm nhận hơi ấm còn vương lại..."', 
+                hint: 'Bật công tắc, đợi nóng, rồi tắt đi. Bóng đèn tắt nhưng còn NÓNG chính là chìa khóa.', math: 'Logic Nhị phân mở rộng (Trạng thái thứ 3).',
+                rules: '<p>1. Có 4 công tắc (A, B, C, D) và 4 bóng đèn (1, 2, 3, 4) trong phòng kín. Bạn không biết công tắc nào nối với đèn nào.</p><p>2. Bạn có thể BẬT/TẮT công tắc tùy ý.</p><p>3. Nhấn "⏱️ Chờ 10\'" để các đèn đang BẬT nóng lên.</p><p>4. Sau khi thao tác xong, nhấn "🚪 Vào Phòng" để kiểm tra trạng thái (Sáng/Tối, Nóng/Ấm/Lạnh) của các bóng đèn.</p><p>5. <strong>Nhiệm vụ:</strong> Xác định chính xác công tắc nào điều khiển bóng đèn nào.</p>'
+            },
+            { 
+                id: 'c2', type: 'game', game: 'jugs', part: 'PHẦN 1: KHỞI ĐẦU', title: 'Chương 2: Suối Dầu Cạn', 
+                text: 'Giải cứu thành công, Chú Chó Vàng dẫn An đến một suối dầu cạn. Tại đó, Robo Tin-Tin - hộ vệ khổng lồ của cha - đang nằm bất động vì cạn kiệt năng lượng. Lõi năng lượng của Tin-Tin yêu cầu nạp chính xác 4 Lít dầu để tái khởi động. An chỉ tìm thấy 3 chiếc bình rỗng với dung tích 8L, 5L và 3L. Một giọt cũng không được sai!', 
+                hint: 'Tập trung vào sự chênh lệch. 5 - 3 = 2. Làm sao từ 2 ra 4?', math: 'Phương trình Diophantine: 5x + 3y = 4.',
+                rules: '<p>1. Bạn có 3 bình chứa với dung tích tối đa là 8L, 5L và 3L. Ban đầu bình 8L đầy, 2 bình kia rỗng.</p><p>2. <strong>Cách chơi:</strong> Nhấn vào một bình để chọn làm nguồn, sau đó nhấn vào bình khác để đổ dầu sang.</p><p>3. Dầu sẽ được đổ cho đến khi bình nguồn cạn HOẶC bình đích đầy.</p><p>4. <strong>Nhiệm vụ:</strong> Tạo ra chính xác 4 Lít dầu trong bất kỳ bình nào.</p>'
+            },
+            { 
+                id: 'c3', type: 'game', game: 'graph', part: 'PHẦN 1: KHỞI ĐẦU', title: 'Chương 3: Cổng Đá Cổ Đại', 
+                text: 'Với sự gia nhập của Tin-Tin, cả nhóm tiến sâu vào rừng và bị chặn lại bởi một Cổng Đá Cổ Đại khổng lồ. Giáo Sư Gấu - nhà nghiên cứu cổ ngữ - đang loay hoay trước cổng. "Cổng này phong ấn bằng một hình vẽ sao," Giáo Sư nói, "Để mở nó, ta phải dùng năng lượng của đèn vẽ lại toàn bộ hình ngôi sao này bằng một nét bút liền mạch, không được nhấc tay và không được vẽ lại đường đã đi."', 
+                hint: 'Đếm số đường nối tại mỗi điểm. Bắt đầu từ điểm có số đường nối LẺ.', math: 'Đường đi Euler: Đồ thị có 0 hoặc 2 đỉnh bậc lẻ.',
+                rules: '<p>1. Bạn cần vẽ lại hình ngôi sao trên cổng đá.</p><p>2. <strong>Cách chơi:</strong> Nhấn vào một điểm (node) để bắt đầu. Sau đó nhấn vào các điểm kề nhau để di chuyển.</p><p>3. <strong>Luật:</strong> Bạn phải đi qua TẤT CẢ các đường nối (cạnh) màu xám đúng 1 lần duy nhất.</p><p>4. Nếu đi sai hoặc hết đường, nhấn nút "↺ Reset" để làm lại.</p>'
+            },
+            { 
+                id: 'c4', type: 'game', game: 'river', part: 'PHẦN 2: HÀNH TRÌNH', title: 'Chương 4: Cây Cầu Đứt Gãy', 
+                text: 'Cổng đá mở ra một vực thẳm. Cây cầu treo duy nhất đã bị đứt gãy, chỉ hiện ra lờ mờ dưới ánh sáng của Cây Đèn Chân Lý. Một Lữ Khách Bí Ẩn xuất hiện và xin đi nhờ. Ngọn đèn cảnh báo năng lượng chỉ còn đủ chiếu sáng trong 29 giây. Cả nhóm phải qua cầu trước khi bóng tối nuốt chửng tất cả. Nhưng cây cầu chỉ chịu được tối đa 2 người một lúc, và bắt buộc phải có người cầm đèn để soi đường.', 
+                hint: 'Đừng để người nhanh nhất làm mọi việc. Hãy để hai người chậm nhất (Gấu & Robo) đi cùng nhau một lượt.', math: 'Bài toán lập lịch tối ưu (Critical Path).',
+                rules: '<p>1. <strong>Mục tiêu:</strong> Đưa tất cả 5 thành viên (Chó, An, Khách, Gấu, Robo) qua bờ phải trong vòng 29 giây.</p><p>2. <strong>Tốc độ:</strong> Chó(1s), An(3s), Khách(6s), Gấu(8s), Robo(12s).</p><p>3. <strong>Luật đi:</strong><br>- Tối đa 2 người lên cầu một lượt.<br>- Phải có người cầm đèn (🏮) mới được đi.<br>- Thời gian đi tính theo người chậm nhất trong lượt đó.</p><p>4. <strong>Cách chơi:</strong> Nhấn vào nhân vật để đưa lên/xuống đèn. Nhấn nút "BĂNG QUA" (hoặc nút tròn "ĐI") để di chuyển.</p>'
+            },
+            { 
+                id: 'c5', type: 'game', game: 'cat', part: 'PHẦN 2: HÀNH TRÌNH', title: 'Chương 5: Sự Phản Bội', 
+                text: 'Ngay khi qua cầu an toàn, Lữ Khách Bí Ẩn cười nham hiểm và hiện nguyên hình là Hắc Pháp Sư Muội Than! Hắn giật lấy mảnh bản đồ từ tay An rồi biến mất vào khu rừng ma thuật. Khu rừng này có 5 bụi cây lượng tử, và hắn chỉ có thể lẩn trốn trong đó. Hắn có thói quen kỳ lạ: mỗi khi bạn kiểm tra một hộp, hắn bắt buộc phải nhảy sang một hộp ngay bên cạnh.', 
+                hint: 'Nếu hắn ở ô Chẵn, lần sau hắn phải sang Lẻ. Hãy kiểm tra theo trình tự.', math: 'Đồ thị lưỡng phân (Tính chẵn lẻ/Parity).',
+                rules: '<p>1. Hắc Pháp Sư trốn trong 1 trong 5 hộp (đánh số 1-5).</p><p>2. <strong>Mỗi lượt</strong>, bạn được phép chọn mở 1 hộp để kiểm tra.</p><p>3. <strong>Sau mỗi lần kiểm tra</strong>, hắn SẼ di chuyển sang hộp liền kề (VD: từ 2 sang 1 hoặc 3).</p><p>4. <strong>Nhiệm vụ:</strong> Tìm ra vị trí chính xác của hắn trong tối đa 6 lần thử.</p>'
+            },
+            { 
+                id: 'c6', type: 'game', game: 'spider', part: 'PHẦN 2: HÀNH TRÌNH', title: 'Chương 6: Vây Bắt Nhện Máy', 
+                text: 'Bị dồn vào đường cùng, Hắc Pháp Sư triệu hồi một con Nhện Máy Khổng Lồ để chặn đường rồi tiếp tục bỏ chạy. Con nhện di chuyển cực nhanh trên mạng lưới của nó. An phải sử dụng khả năng của Cây Đèn để xâm nhập vào hệ thống radar, điều khiển các điểm nút trên mạng nhện để vây bắt và vô hiệu hóa con quái vật này trước khi nó trốn thoát.', 
+                hint: 'Đừng chạy theo đuôi. Hãy chiếm các giao lộ quan trọng để cắt đường rút lui.', math: 'Lý thuyết trò chơi đuổi bắt trên đồ thị.',
+                rules: '<p>1. Bạn điều khiển điểm màu Xanh (🔵), Nhện là điểm màu Hồng (🔴).</p><p>2. <strong>Cách chơi:</strong> Nhấn vào các điểm nút lân cận (có đường nối màu trắng) để di chuyển.</p><p>3. <strong>Luật:</strong><br>- Bạn đi trước 1 bước, Nhện đi sau 1 bước.<br>- Nhện sẽ luôn cố gắng di chuyển ra xa bạn nhất có thể.</p><p>4. <strong>Nhiệm vụ:</strong> Bắt được Nhện (di chuyển vào cùng vị trí) trong tối đa 15 bước đi của bạn.</p>'
+            },
+            { 
+                id: 'c7', type: 'game', game: 'horses', part: 'PHẦN 3: ĐỈNH CAO', title: 'Chương 7: Triệu Hồi Rồng', 
+                text: 'Vượt qua Nhện Máy, cả nhóm đến được chân Tòa Tháp Thời Gian. Cầu thang đã bị phá hủy. Cách duy nhất để lên đỉnh là nhờ sự trợ giúp của loài Rồng. Tại Trại Rồng gần đó, có 25 con rồng đang ngủ say. An cần đánh thức 3 con rồng nhanh nhất để đưa mọi người lên đỉnh tháp. Không có thiết bị đo thời gian, An chỉ có thể tổ chức các cuộc đua giữa chúng để xác định thứ hạng.', 
+                hint: 'Chia 25 con thành 5 nhóm đua. Loại bỏ những con không thể nằm trong Top 3 dựa trên tính chất bắc cầu.', math: 'Thuật toán sắp xếp và lựa chọn tối ưu.',
+                rules: '<p>1. Có 25 con rồng với tốc độ khác nhau (bạn không biết tốc độ cụ thể).</p><p>2. Đường đua chỉ cho phép tối đa 5 con rồng chạy cùng lúc.</p><p>3. Sau mỗi cuộc đua, bạn chỉ biết thứ tự về đích (nhất, nhì, ba...), không biết thời gian.</p><p>4. <strong>Cách chơi:</strong> Chọn 2-5 con rồng từ "Trại Rồng" đưa vào "Đường Đua", rồi nhấn "ĐUA".</p><p>5. <strong>Nhiệm vụ:</strong> Xác định chính xác 3 con rồng nhanh nhất (theo thứ tự #1, #2, #3) với số lần đua ít nhất (Tối ưu: 7 lần).</p>'
+            },
+            { 
+                id: 'c8', type: 'game', game: 'balls', part: 'PHẦN 3: ĐỈNH CAO', title: 'Chương 8: Trái Tim Thời Gian', 
+                text: 'Đỉnh tháp! Cha của An đang bị giam giữ trong một khối pha lê thời gian. Hắc Pháp Sư đã trộn Lõi Thời Gian thật vào 12 quả cầu năng lượng giống hệt nhau. Hắn cười nhạo: "Chỉ có Lõi thật mới phá được pha lê. Nếu chọn sai, cha ngươi sẽ bị kẹt trong dòng thời gian mãi mãi!". Chiếc cân thăng bằng cổ xưa ở giữa phòng là hy vọng duy nhất. An chỉ có 3 lần cân để tìm ra quả cầu chứa Lõi thật và biết nó Nặng hay Nhẹ hơn các quả khác.', 
+                hint: 'Chia 12 quả thành 3 nhóm (4-4-4). Cân nhóm 1 và 2 sẽ loại trừ được nhiều nhất.', math: 'Cây quyết định tam phân (Ternary Search Tree).',
+                rules: '<p>1. Có 12 quả cầu (đánh số 1-12). Một quả là giả (khác khối lượng), 11 quả còn lại là thật (cùng khối lượng).</p><p>2. Bạn có một chiếc cân thăng bằng và được phép cân tối đa 3 lần.</p><p>3. <strong>Cách chơi:</strong><br>- Nhấn chọn "Đĩa Trái" hoặc "Đĩa Phải".<br>- Nhấn vào các quả bóng để đặt lên đĩa cân đã chọn.<br>- Nhấn "⚖️ CÂN NGAY" để xem kết quả (Trái nặng, Phải nặng, hoặc Cân bằng).</p><p>4. <strong>Nhiệm vụ:</strong> Sau 3 lần cân, xác định chính xác quả bóng nào là giả và nó Nặng hay Nhẹ hơn bóng thật.</p>'
+            }
+        ];
+
+        /* --- GAMES --- */
+        class GameSwitches {
+            constructor(){this.reset()}
+            reset(){this.map={};let s=['A','B','C','D'].sort(()=>Math.random()-0.5);[1,2,3,4].forEach((n,i)=>this.map[n]=s[i]);this.sw={A:{on:false,heat:0},B:{on:false,heat:0},C:{on:false,heat:0},D:{on:false,heat:0}};this.time=0;this.entered=false;this.render()}
+            toggle(k){if(!this.entered){this.sw[k].on=!this.sw[k].on;playSound('click');this.render()}}
+            wait(){if(!this.entered){this.time+=10;Object.keys(this.sw).forEach(k=>{if(this.sw[k].on)this.sw[k].heat+=10});playSound('click');this.render()}}
+            enter(){this.entered=true;this.render()}
+            check(){let c=0;[1,2,3,4].forEach(n=>{if(document.getElementById(`sel-${n}`).value===this.map[n])c++});if(c===4)GameManager.win(this.time<=20);else{playSound('fail');showToast('Sai rồi! Hãy thử lại.', 'error')}}
+            render(){
+                const m = document.getElementById('game-metric'); if(m) m.innerText=`${this.time} phút`;
+                const s = document.getElementById('game-stage'); if(!s) return;
+                
+                if(!this.entered){
+                    s.innerHTML=`
+                    <div class="flex flex-col items-center w-full h-full justify-start pt-4 overflow-y-auto pb-20">
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 w-full max-w-5xl mb-8">
+                            ${['A','B','C','D'].map(k=>`
+                                <button onclick="window.ActiveGame.toggle('${k}')" class="bulb-btn h-32 md:h-40 rounded-2xl border-2 border-slate-600 text-3xl font-bold flex flex-col items-center justify-center transition-all ${this.sw[k].on?'bulb-on':'bulb-off'} shadow-lg w-full hover:scale-105">
+                                    <span class="text-5xl mb-2">💡</span>
+                                    <span>${k}</span>
+                                    <span class="text-xs opacity-70 font-normal mt-2 bg-black/30 px-3 py-1 rounded-full border border-white/20">${this.sw[k].on?'ON':'OFF'}</span>
+                                </button>
+                            `).join('')}
+                        </div>
+                        <div class="md:hidden fixed bottom-0 left-0 w-full flex z-50">
+                             <button onclick="window.ActiveGame.wait()" class="flex-1 py-5 bg-slate-800 hover:bg-slate-700 text-white font-bold text-lg border-r border-slate-700 rounded-none">⏱️ Chờ 10'</button>
+                             <button onclick="window.ActiveGame.enter()" class="flex-1 py-5 bg-rose-700 hover:bg-rose-600 text-white font-bold text-lg rounded-none">🚪 Vào Phòng</button>
+                        </div>
+                        <div class="hidden md:flex gap-4 w-full max-w-lg mt-auto">
+                             <button onclick="window.ActiveGame.wait()" class="flex-1 py-4 bg-slate-700 hover:bg-slate-600 rounded-xl font-bold text-white text-lg shadow-xl border border-slate-500 active:scale-95 transition-transform">⏱️ Chờ 10'</button>
+                             <button onclick="window.ActiveGame.enter()" class="flex-1 py-4 bg-rose-600 hover:bg-rose-500 rounded-xl font-bold text-white text-lg uppercase shadow-xl border border-rose-400 active:scale-95 transition-transform">🚪 Vào Phòng</button>
+                        </div>
+                    </div>`;
+                }else{
+                    s.innerHTML=`<div class="flex flex-col items-center w-full h-full justify-start pt-4 overflow-y-auto pb-24"><div class="grid grid-cols-1 md:grid-cols-4 gap-6 w-full max-w-6xl mb-8 px-4">${[1,2,3,4].map(n=>{const st=this.sw[this.map[n]];let txt='TẮT',sub='LẠNH',cls='bulb-off';if(st.on){txt='BẬT';sub='NÓNG';cls='bulb-on'}else if(st.heat>=15){sub='NÓNG';cls='heat-high text-white'}else if(st.heat>0){sub='ẤM';cls='heat-med text-slate-300'}return `<div class="flex flex-row md:flex-col gap-4 w-full bg-slate-800/50 p-4 rounded-2xl border border-slate-700 items-center shadow-md"><div class="${cls} h-24 w-24 md:w-full md:h-32 rounded-xl border-2 flex flex-col items-center justify-center shadow-lg transition-all shrink-0"><span class="text-xs font-bold opacity-50 mb-1">Đèn ${n}</span><span class="text-xl font-black mb-1">${txt}</span><span class="text-[10px] font-bold uppercase tracking-widest bg-black/20 px-2 py-0.5 rounded-full">${sub}</span></div><select id="sel-${n}" class="flex-1 md:w-full p-4 bg-slate-900 border-2 border-slate-600 rounded-xl text-white font-bold cursor-pointer hover:border-indigo-500 outline-none text-center appearance-none text-base shadow-md"><option value="">Chọn công tắc...</option><option value="A">Công tắc A</option><option value="B">Công tắc B</option><option value="C">Công tắc C</option><option value="D">Công tắc D</option></select></div>`}).join('')}</div><div class="fixed bottom-0 left-0 w-full p-4 bg-slate-900/90 border-t border-slate-700 z-50 flex justify-center"><button onclick="window.ActiveGame.check()" class="w-full max-w-md py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl text-xl shadow-xl hover:scale-105 transition-transform">KIỂM TRA ĐÁP ÁN</button></div></div>`;
+                }
+            }
+        }
+
+        class GameJugs {
+            constructor(){this.reset()}
+            reset(){this.jugs=[8,0,0];this.caps=[8,5,3];this.moves=0;this.sel=null;this.render()}
+            click(i){if(this.sel===null){if(this.jugs[i]>0){this.sel=i;playSound('click')}}else{if(this.sel!==i)this.pour(this.sel,i);this.sel=null}this.render()}
+            pour(f,t){const a=Math.min(this.jugs[f],this.caps[t]-this.jugs[t]);if(a>0){this.jugs[f]-=a;this.jugs[t]+=a;this.moves++;playSound('click')}if(this.jugs.includes(4))GameManager.win(this.moves===6)}
+            render(){
+                document.getElementById('game-metric').innerText=`${this.moves} bước`;
+                const hArr = [320, 200, 120];
+                const h=this.jugs.map((v,i)=>{
+                    const cls=this.sel===i?'jug-selected':'border-slate-500';
+                    const pct = (v/this.caps[i])*100;
+                    return `<div onclick="window.ActiveGame.click(${i})" style="height:${hArr[i]}px" class="jug-container ${cls} flex-shrink-0"><div class="jug-water" style="height:${pct}%"></div><div class="absolute inset-0 flex items-center justify-center font-bold text-white drop-shadow-md z-10 text-3xl">${v}L</div></div>`
+                }).join('');
+                document.getElementById('game-stage').innerHTML=`<div class="flex flex-col items-center justify-center h-full w-full py-8 flex-1 pt-20"><div class="flex-1 flex items-end justify-center gap-2 w-full pb-12 h-full">${h}</div><div class="text-slate-400 font-bold text-xl mb-4">Chọn bình nguồn ➔ Chọn bình đích</div></div>`
+            }
+        }
+
+        class GameGraph {
+            constructor(){this.reset()}
+            reset(){this.nodes={1:{x:275,y:50},2:{x:175,y:130},3:{x:375,y:130},4:{x:175,y:230},5:{x:375,y:230},6:{x:175,y:330},7:{x:375,y:330},8:{x:275,y:410}};this.edges=[{u:1,v:2},{u:1,v:3},{u:2,v:3},{u:2,v:4},{u:2,v:5},{u:3,v:4},{u:3,v:5},{u:4,v:5},{u:4,v:6},{u:5,v:7},{u:6,v:7},{u:6,v:8},{u:7,v:8}];this.curr=null;this.visited=new Set();this.path=[];this.bt=0;
+            document.getElementById('game-stage').innerHTML=`<div class="w-full h-full flex items-center justify-center p-0 m-0 overflow-hidden"><canvas id="graph-canvas" class="w-full h-full"></canvas></div>`;
+            this.resizeObserver=new ResizeObserver(()=>window.requestAnimationFrame(()=>this.draw()));this.resizeObserver.observe(document.getElementById('game-stage'));setTimeout(()=>this.draw(),50)}
+            click(e){const c=e.target,r=c.getBoundingClientRect(),scale=(window.innerWidth>=768)?Math.min(c.width/550,c.height/450)*0.9:Math.min(c.width/550,c.height/450)*1.2,offX=(c.width-550*scale)/2,offY=(c.height-450*scale)/2,lx=(e.clientX-r.left-offX)/scale,ly=(e.clientY-r.top-offY)/scale;let h=null;for(let k in this.nodes){if(Math.hypot(lx-this.nodes[k].x,ly-this.nodes[k].y)<50)h=parseInt(k)}if(h){if(this.curr===null){this.curr=h;this.path.push(h);playSound('click')}else if(this.path.length>1&&h===this.path[this.path.length-2]){const u=Math.min(this.curr,h),v=Math.max(this.curr,h),ei=this.edges.findIndex(e=>e.u===u&&e.v===v);this.visited.delete(ei);this.path.pop();this.curr=h;this.bt++;playSound('click')}else{const u=Math.min(this.curr,h),v=Math.max(this.curr,h),ei=this.edges.findIndex(e=>e.u===u&&e.v===v);if(ei>-1&&!this.visited.has(ei)){this.visited.add(ei);this.path.push(h);this.curr=h;playSound('click')}}this.draw();if(this.visited.size===13)GameManager.win(this.bt===0)}}
+            draw(){const c=document.getElementById('graph-canvas');if(!c)return;c.onclick=(e)=>this.click(e);const con=c.parentElement;c.width=con.clientWidth;c.height=con.clientHeight;const ctx=c.getContext('2d'),scale=(window.innerWidth>=768)?Math.min(c.width/550,c.height/450)*0.9:Math.min(c.width/550,c.height/450)*1.2,offX=(c.width-550*scale)/2,offY=(c.height-450*scale)/2;ctx.setTransform(scale,0,0,scale,offX,offY);ctx.clearRect(-offX/scale,-offY/scale,c.width/scale,c.height/scale);ctx.lineWidth=8;this.edges.forEach((e,i)=>{const n1=this.nodes[e.u],n2=this.nodes[e.v];ctx.beginPath();ctx.moveTo(n1.x,n1.y);ctx.lineTo(n2.x,n2.y);ctx.strokeStyle=this.visited.has(i)?'#fbbf24':'#475569';ctx.stroke()});for(let k in this.nodes){const n=this.nodes[k];ctx.beginPath();ctx.arc(n.x,n.y,28,0,6.28);ctx.fillStyle=parseInt(k)===this.curr?'#fbbf24':'#3b82f6';if(this.curr===null)ctx.fillStyle='#fbbf24';ctx.fill();ctx.fillStyle='white';ctx.font='bold 24px Arial';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(k,n.x,n.y)}document.getElementById('game-metric').innerText=`${13-this.visited.size} cạnh`}
+        }
+
+        class GameRiver {
+            constructor(){this.reset()}
+            reset(){this.L=[1,3,6,8,12];this.R=[];this.lamp=[];this.side='L';this.time=0;this.names={1:'🐕',3:'👦',6:'🧙‍♂️',8:'🐻',12:'🤖'};this.render()}
+            move(id,loc){if(loc===this.side){if(this.lamp.length<2){this[this.side]=this[this.side].filter(x=>x!==id);this.lamp.push(id);playSound('click')}}else if(loc==='lamp'){this.lamp=this.lamp.filter(x=>x!==id);this[this.side].push(id);playSound('click')}this.render()}
+            go(){if(this.lamp.length===0){showToast('Cần người cầm đèn!', 'error');playSound('fail');return}this.time+=Math.max(...this.lamp);this.side=this.side==='L'?'R':'L';this.render();playSound('click');if(this.L.length===0&&this.side==='R')setTimeout(()=>GameManager.win(this.time<=29),500)}
+            render(){
+                document.getElementById('game-metric').innerText=`${this.time}s`;
+                const d=(arr,loc)=>arr.map(id=>`<div onclick="window.ActiveGame.move(${id},'${loc}')" class="char-card bg-slate-700 p-2 rounded-lg border-2 border-slate-500 flex flex-col items-center justify-center shadow-lg cursor-pointer transform active:scale-95 w-full"><span class="char-emoji text-2xl md:text-3xl">${this.names[id].split(' ')[0]}</span><span class="font-bold text-emerald-400 text-xs md:text-sm">${id}s</span></div>`).join('');
+                
+                // DESKTOP LAYOUT (Unified Frame)
+                const desktopHTML = `
+                <div class="bridge-layout shadow-2xl relative w-full h-[600px] flex">
+                    <div class="cliff-side"><div class="col-span-full text-xs font-black text-slate-500 w-full text-center mb-2 tracking-widest uppercase">VÁCH TRÁI</div>${d(this.L,'L')}</div>
+                    
+                    <div class="bridge-zone">
+                        <div class="bridge-cable"></div>
+                        <div class="lamp-carrier ${this.side==='L'?'pos-left':'pos-right'}">
+                            <div class="absolute -top-10 text-4xl animate-pulse">🏮</div>
+                            ${this.lamp.map(id=>`<div onclick="window.ActiveGame.move(${id},'lamp')" class="char-card bg-amber-900/90 border-amber-500 p-1 rounded-lg text-center z-30 transform hover:scale-110 shadow-xl" style="width:50px; height:50px; min-height:0;"><div class="text-xl">${this.names[id].split(' ')[0]}</div></div>`).join('')}
+                        </div>
+                        <button onclick="window.ActiveGame.go()" class="btn-go-round hover:scale-105">ĐI</button>
+                    </div>
+                    
+                    <div class="cliff-side right"><div class="col-span-full text-xs font-black text-slate-500 w-full text-center mb-2 tracking-widest uppercase">VÁCH PHẢI</div>${d(this.R,'R')}</div>
+                </div>`;
+
+                // MOBILE LAYOUT (Stacked)
+                const mobileHTML = `
+                <div class="bridge-layout shadow-2xl relative">
+                    <div class="cliff-side"><div class="col-span-full text-xs font-black text-slate-500 w-full text-center mb-2 tracking-widest uppercase">VÁCH TRÁI</div>${d(this.L,'L')}</div>
+                    <div class="bridge-zone">
+                        <div class="bridge-track-area w-full md:w-full relative h-full">
+                            <div class="bridge-cable"></div>
+                            <div class="lamp-carrier ${this.side==='L'?'pos-left':'pos-right'}">
+                                <div class="absolute -top-10 text-4xl animate-pulse">🏮</div>
+                                ${this.lamp.map(id=>`<div onclick="window.ActiveGame.move(${id},'lamp')" class="char-card bg-amber-900/90 border-amber-500 p-1 rounded-lg text-center z-30 transform hover:scale-110 shadow-xl" style="width:50px; height:50px; min-height:0;"><div class="text-xl">${this.names[id].split(' ')[0]}</div></div>`).join('')}
+                            </div>
+                        </div>
+                    </div>
+                    <div class="cliff-side right"><div class="col-span-full text-xs font-black text-slate-500 w-full text-center mb-2 tracking-widest uppercase">VÁCH PHẢI</div>${d(this.R,'R')}</div>
+                    
+                    <!-- MOBILE GO BUTTON (IN FLOW, AT BOTTOM) -->
+                    <div class="w-full p-4 mt-2 flex justify-center pb-8">
+                         <button onclick="window.ActiveGame.go()" class="btn-go-mobile">BĂNG QUA</button>
+                    </div>
+                </div>`;
+
+                const content = window.innerWidth >= 768 ? desktopHTML : mobileHTML;
+                
+                document.getElementById('game-stage').innerHTML = `
+                <div class="w-full max-w-5xl mx-auto flex flex-col h-full md:justify-center md:pt-10 pb-20"> 
+                    ${content}
+                </div>`;
+            }
+        }
+
+        class GameCat {
+            constructor(){this.reset()}
+            reset(){this.day=1;this.pos=new Set([1,2,3,4,5]);this.logs=[];this.render()}
+            check(i){if(this.pos.has(i)){if(this.pos.size===1)GameManager.win(this.day<=6);else this.pos.delete(i)}const n=new Set();this.pos.forEach(p=>{if(p>1)n.add(p-1);if(p<5)n.add(p+1)});this.pos=n;this.logs.unshift(`Lần ${this.day}: Hộp ${i} -> Trống.`);this.day++;this.render()}
+            render(){
+                document.getElementById('game-metric').innerText=`Lần ${this.day}`;
+                const boxes = [1,2,3,4,5].map(i=>`<button onclick="window.ActiveGame.check(${i})" class="box-btn h-24 md:h-40 flex-1 bg-slate-800 border-4 border-slate-600 rounded-2xl text-5xl md:text-7xl font-black text-slate-500 hover:text-indigo-400 hover:border-indigo-500 quantum-active transition-all shadow-xl">${i}</button>`).join('');
+                const logs = this.logs.map(l=>`<div class="flex justify-between text-sm md:text-base text-slate-400 mb-2 border-b border-slate-800 pb-1 font-mono"><span>${l}</span></div>`).join('');
+                document.getElementById('game-stage').innerHTML=`<div class="flex flex-col items-center gap-8 w-full max-w-4xl h-full justify-center pt-4 pb-8"><div class="flex gap-3 w-full justify-center">${boxes}</div><div class="text-slate-400 font-mono text-sm mb-2">Khả năng ẩn nấp: <span class="text-indigo-400 font-bold text-2xl">${this.pos.size}</span> vị trí</div><div class="w-full bg-slate-950/50 p-6 rounded-2xl border border-slate-800 h-64 flex-1 overflow-y-auto shadow-inner"><div class="text-xs font-bold text-slate-500 mb-4 uppercase tracking-widest border-b border-slate-800 pb-2 sticky top-0 bg-slate-950/90">LỊCH SỬ MỞ HỘP</div>${logs || '<div class="text-center text-slate-600 italic mt-10 text-lg">Chưa mở hộp nào...</div>'}</div></div>`}
+        }
+
+        class GameSpider {
+            constructor(){this.reset()}
+            reset(){
+                this.player=12; this.spider=4; this.moves=15; this.over=false;
+                this.adj = {};
+                this.adj[0] = [1,2,3,4,5]; 
+                for(let r=0; r<4; r++) { 
+                    for(let ray=0; ray<5; ray++) { 
+                        const id = 1 + (r*5) + ray;
+                        if(!this.adj[id]) this.adj[id] = [];
+                        if(ray > 0) this.adj[id].push(id - 1); 
+                        if(ray < 4) this.adj[id].push(id + 1);
+                        if(r===0) { this.adj[id].push(0); } else { this.adj[id].push(id - 5); }
+                        if(r<3) { this.adj[id].push(id + 5); }
+                    }
+                }
+                this.player = 18; this.spider = 20;
+                document.getElementById('game-stage').innerHTML=`<div class="w-full h-full flex flex-col items-center justify-center p-4"><div class="spider-frame relative"><div class="absolute top-4 left-4 text-white font-bold text-xl z-10 flex items-center gap-2 pointer-events-none"><span class="text-3xl">🕸️</span> Vây Bắt</div><canvas id="spider-canvas" width="600" height="600" class="w-full h-full object-contain"></canvas></div></div>`;
+                this.draw();
+            }
+            
+            getPos(id){
+                const cx=300, cy=520; 
+                if(id===0) return {x:cx, y:cy};
+                const val = id-1;
+                const ring = Math.floor(val/5); 
+                const ray = val % 5; 
+                
+                const maxDists = [300, 420, 480, 420, 300];
+                const maxDist = maxDists[ray];
+                const ratio = (ring + 1) / 4;
+                const dist = ratio * maxDist;
+                
+                const startAngle = -150 * (Math.PI/180);
+                const step = 30 * (Math.PI/180);
+                const angle = startAngle + (ray * step);
+                return { x: cx + dist * Math.cos(angle), y: cy + dist * Math.sin(angle) };
+            }
+
+            click(e){
+                if(this.over)return;
+                const canvas = document.getElementById('spider-canvas');
+                const rect = canvas.getBoundingClientRect();
+                const scaleX = canvas.width / rect.width;
+                const scaleY = canvas.height / rect.height;
+                
+                const lx = (e.clientX - rect.left) * scaleX;
+                const ly = (e.clientY - rect.top) * scaleY;
+                
+                // SMART TOUCH: Find CLOSEST node
+                let bestNode = -1;
+                let minDist = 9999;
+                
+                for(let i=0; i<=20; i++){
+                    const p = this.getPos(i);
+                    const dist = Math.hypot(lx-p.x, ly-p.y);
+                    if(dist < minDist){
+                        minDist = dist;
+                        bestNode = i;
+                    }
+                }
+                
+                // Check if closest node is within threshold (30px for precision in center)
+                if(bestNode !== -1 && minDist < 30){
+                    if(this.adj[this.player].includes(bestNode)){
+                        this.player = bestNode; 
+                        playSound('click');
+                        if(this.player===this.spider) this.win();
+                        else {
+                            this.moves--; document.getElementById('game-metric').innerText=`${this.moves} bước`;
+                            if(this.moves===0) this.fail(); else setTimeout(()=>this.ai(),300)
+                        }
+                        this.draw()
+                    }
+                }
+            }
+
+            ai(){
+                if(this.over)return;
+                const nb=this.adj[this.spider];
+                let best=-1, max=-1;
+                nb.forEach(n=>{
+                    const pp=this.getPos(this.player); const np=this.getPos(n);
+                    const d=Math.hypot(pp.x-np.x, pp.y-np.y);
+                    if(n!==this.player){ if(d>max){ max=d; best=n; } }
+                });
+                if(best===-1) best=nb[0];
+                this.spider=best; playSound('click');
+                if(this.player===this.spider) this.win();
+                this.draw();
+            }
+
+            win(){this.over=true;GameManager.win(15-this.moves<=10)}
+            fail(){this.over=true;showToast('Thoát!', 'error');playSound('fail')}
+
+            draw(){
+                const c=document.getElementById('spider-canvas');if(!c)return;c.onclick=(e)=>this.click(e);
+                const ctx=c.getContext('2d');
+                ctx.clearRect(0,0,c.width,c.height);
+                const cx=300, cy=520;
+                ctx.lineWidth=2; ctx.strokeStyle='#475569';
+                
+                for(let r=0; r<4; r++) {
+                    ctx.beginPath();
+                    for(let ray=0; ray<5; ray++) {
+                       const id = 1 + (r*5) + ray;
+                       const p = this.getPos(id);
+                       if(ray===0) ctx.moveTo(p.x, p.y); else ctx.lineTo(p.x, p.y);
+                    }
+                    ctx.stroke();
+                }
+                
+                for(let ray=0; ray<5; ray++) {
+                    ctx.beginPath(); ctx.moveTo(cx, cy);
+                    const outerId = 1 + (3*5) + ray;
+                    const p = this.getPos(outerId);
+                    ctx.lineTo(p.x, p.y);
+                    ctx.stroke();
+                }
+
+                for(let i=0; i<=20; i++){
+                    const p=this.getPos(i);
+                    const isNeighbor = this.adj[this.player].includes(i);
+                    ctx.beginPath(); ctx.arc(p.x,p.y, i===0?15:10, 0, 6.28);
+                    if(i===this.player) { ctx.fillStyle='#3b82f6'; ctx.shadowBlur=20; ctx.shadowColor='#3b82f6'; }
+                    else if(i===this.spider) { ctx.fillStyle='#f472b6'; ctx.shadowBlur=20; ctx.shadowColor='#f472b6'; }
+                    else if(isNeighbor) { ctx.fillStyle='#94a3b8'; ctx.shadowBlur=0; }
+                    else { ctx.fillStyle='#1e293b'; ctx.shadowBlur=0; }
+                    ctx.fill();
+                    if(isNeighbor) { ctx.lineWidth=2; ctx.strokeStyle='white'; ctx.stroke(); }
+                    ctx.shadowBlur=0;
+                }
+                ctx.fillStyle = '#ef4444'; ctx.font="bold 12px sans-serif"; ctx.textAlign="center"; ctx.fillText("O", cx, cy+30);
+            }
+        }
+
+        class GameHorses {
+            constructor(){this.reset()}
+            reset(){this.pool=Array.from({length:25},(_,i)=>i+1);this.track=[];this.races=0;let s=[...this.pool];for(let i=24;i>0;i--){const j=Math.floor(Math.random()*(i+1));[s[i],s[j]]=[s[j],s[i]]}this.speeds={};this.pool.forEach((id,i)=>this.speeds[id]=s[i]);this.renderHTML()}
+            renderHTML(){
+                document.getElementById('game-stage').innerHTML=`
+                <div class="flex flex-col w-full h-full pb-10 px-4 overflow-y-auto pt-6">
+                    <div class="bg-slate-800 p-4 rounded-2xl border-2 border-slate-600 min-h-[100px] flex items-center justify-center gap-3 shadow-lg mb-4 sticky top-0 z-10"><div class="text-slate-500 text-xs font-black uppercase mr-2 tracking-widest">ĐƯỜNG ĐUA</div><div id="horse-track-container" class="flex gap-2"></div><button onclick="window.ActiveGame.race()" class="px-6 py-2 bg-pink-600 hover:bg-pink-500 rounded-xl font-black text-white shadow-lg text-sm uppercase tracking-wider active:scale-95">ĐUA</button></div>
+                    
+                    <div class="flex flex-col lg:flex-row gap-6 flex-1">
+                        <div class="w-full lg:w-1/2 bg-slate-800 p-4 rounded-2xl border-2 border-slate-600 flex-1 flex-col"><div class="w-full text-slate-500 text-xs font-black uppercase mb-3 border-b border-slate-700 pb-2">TRẠI RỒNG</div><div id="horse-pool-container" class="grid grid-cols-5 gap-3 place-items-center"></div></div>
+                        <div class="w-full lg:w-1/2 flex flex-col gap-4">
+                            <div class="bg-slate-800 p-4 rounded-2xl border-2 border-slate-600 flex-1 min-h-[200px] flex flex-col"><div class="text-xs font-black text-indigo-400 mb-3 uppercase tracking-widest border-b border-indigo-900 pb-2">THÀNH TÍCH</div><div id="horse-logs" class="log-box flex-1 text-base space-y-3"></div></div>
+                            <div class="p-5 bg-indigo-950/50 border-2 border-indigo-800 rounded-2xl shrink-0"><div class="text-xs font-black text-indigo-400 mb-3 uppercase tracking-widest">DỰ ĐOÁN TOP 3</div><div class="flex space-x-3 mb-4"><input type="number" id="h-pred-1" placeholder="#1" class="bg-slate-900 border-2 border-slate-600 rounded-lg p-3 w-full text-white text-center text-lg font-bold outline-none"><input type="number" id="h-pred-2" placeholder="#2" class="bg-slate-900 border-2 border-slate-600 rounded-lg p-3 w-full text-white text-center text-lg font-bold outline-none"><input type="number" id="h-pred-3" placeholder="#3" class="bg-slate-900 border-2 border-slate-600 rounded-lg p-3 w-full text-white text-center text-lg font-bold outline-none"></div><button onclick="window.ActiveGame.check()" class="w-full py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl text-base uppercase shadow-lg active:scale-95">GỬI KẾT QUẢ</button></div>
+                        </div>
+                    </div>
+                </div>`;
+                this.updateUI();
+            }
+            updateUI(){document.getElementById('game-metric').innerText=`Cuộc đua #${this.races}`;document.getElementById('horse-track-container').innerHTML=this.track.map(id=>`<div class="horse" onclick="window.ActiveGame.toggle(${id})">${id}</div>`).join('');document.getElementById('horse-pool-container').innerHTML=this.pool.sort((a,b)=>a-b).map(id=>`<div class="horse bg-slate-700 border-slate-500 text-slate-300 hover:bg-slate-600 hover:border-slate-300" onclick="window.ActiveGame.toggle(${id})">${id}</div>`).join('')}
+            toggle(id){const p=this.pool.indexOf(id);if(p>-1){if(this.track.length<5){this.pool.splice(p,1);this.track.push(id);playSound('click')}}else{const t=this.track.indexOf(id);if(t>-1){this.track.splice(t,1);this.pool.push(id);playSound('click')}}this.pool.sort((a,b)=>a-b);this.updateUI()}
+            race(){if(this.track.length<2)return;this.races++;const r=[...this.track].sort((a,b)=>this.speeds[a]-this.speeds[b]);const l=document.getElementById('horse-logs');l.innerHTML=`<div class="mb-3 pb-2 border-b border-slate-700"><div class="text-pink-400 font-bold mb-1">Cuộc đua #${this.races}</div><div class="text-emerald-400 font-bold text-base tracking-wide">${r.join(' > ')}</div></div>`+l.innerHTML;this.pool.push(...this.track);this.track=[];this.pool.sort((a,b)=>a-b);this.updateUI()}
+            check(){const p1=parseInt(document.getElementById('h-pred-1').value),p2=parseInt(document.getElementById('h-pred-2').value),p3=parseInt(document.getElementById('h-pred-3').value);if(!p1||!p2||!p3){showToast("Nhập đủ 3!", 'warning');return}const s=Object.keys(this.speeds).sort((a,b)=>this.speeds[a]-this.speeds[b]);if(p1==s[0]&&p2==s[1]&&p3==s[2])GameManager.win(this.races<=7);else{playSound('fail');showToast("Sai rồi!", 'error')}}
+        }
+
+        class GameBalls {
+            constructor(){this.reset()}
+            reset(){this.pool=Array.from({length:12},(_,i)=>i+1);this.L=[];this.R=[];this.weighs=3;this.fake=Math.floor(Math.random()*12)+1;this.heavy=Math.random()>0.5;this.selPan=null;this.render()}
+            selectPan(s){this.selPan=(this.selPan===s)?null:s;this.updateUI()}
+            click(id){if(this.L.includes(id)){this.L=this.L.filter(x=>x!==id);this.pool.push(id)}else if(this.R.includes(id)){this.R=this.R.filter(x=>x!==id);this.pool.push(id)}else{if(!this.selPan){showToast("Chọn đĩa cân trước!", 'warning');return}this.pool=this.pool.filter(x=>x!==id);if(this.selPan==='L')this.L.push(id);else this.R.push(id)}this.pool.sort((a,b)=>a-b);this.L.sort((a,b)=>a-b);this.R.sort((a,b)=>a-b);playSound('click');this.updateUI()}
+            weigh(){
+                if(this.weighs<=0)return;this.weighs--;
+                const arm=document.getElementById('scale-arm');
+                let res=0; if(this.L.length>this.R.length)res=-1;else if(this.R.length>this.L.length)res=1;else{if(this.L.includes(this.fake))res=this.heavy?-1:1;else if(this.R.includes(this.fake))res=this.heavy?1:-1}
+                if(res===-1){ arm.classList.add('tilt-left'); } else if(res===1){ arm.classList.add('tilt-right'); }
+                else { arm.classList.add('balanced-anim'); } 
+                
+                const txt=res===0?"CÂN BẰNG":(res===-1?"TRÁI NẶNG":"PHẢI NẶNG");
+                document.getElementById('balls-logs').innerHTML=`<div class="mb-3 pb-2 border-b border-slate-700 flex flex-col"><div class="text-amber-400 font-bold text-base">Lần #${3-this.weighs}: ${txt}</div><div class="text-slate-400 text-xs mt-1 leading-relaxed">L:[${this.L}] <br> R:[${this.R}]</div></div>`+document.getElementById('balls-logs').innerHTML;
+                
+                setTimeout(()=>{
+                    arm.classList.remove('tilt-left','tilt-right','balanced-anim');
+                    this.pool.push(...this.L, ...this.R); this.L=[]; this.R=[]; this.pool.sort((a,b)=>a-b); this.updateUI();
+                },2500);
+                this.updateUI();
+            }
+            check(){const id=parseInt(document.getElementById('balls-guess-id').value),st=document.getElementById('balls-guess-status').value;if(!id||!st){showToast("Chọn bóng!", 'warning');return}if(id===this.fake&&st===(this.heavy?'Heavy':'Light'))GameManager.win(true);else{playSound('fail');showToast("Sai rồi!", 'error')}}
+            render(){
+                document.getElementById('game-stage').innerHTML=`
+                <div class="flex flex-col lg:flex-row gap-8 w-full max-w-7xl items-start h-full pb-10 overflow-y-auto pt-6">
+                    <div class="w-full lg:w-2/3 flex flex-col items-center justify-center min-h-[450px]">
+                        <div class="relative w-full max-w-xl mx-auto mb-8 mt-4">
+                             <div class="flex justify-between items-end px-4 mb-[-5px] gap-8">
+                                <div id="pan-container-L" class="pan-container w-[45%] flex flex-col items-center cursor-pointer group" onclick="window.ActiveGame.selectPan('L')">
+                                    <div class="text-xs font-bold text-slate-500 mb-2 group-hover:text-white transition-colors uppercase tracking-widest">Đĩa Trái</div>
+                                    <div id="pan-L" class="pan w-full border-4 border-slate-500 group-hover:border-slate-300 transition-colors shadow-2xl bg-slate-800/50"></div>
+                                    <div class="h-12 w-2 bg-slate-500 mt-[-2px]"></div>
+                                </div>
+                                <div id="pan-container-R" class="pan-container w-[45%] flex flex-col items-center cursor-pointer group" onclick="window.ActiveGame.selectPan('R')">
+                                    <div class="text-xs font-bold text-slate-500 mb-2 group-hover:text-white transition-colors uppercase tracking-widest">Đĩa Phải</div>
+                                    <div id="pan-R" class="pan w-full border-4 border-slate-500 group-hover:border-slate-300 transition-colors shadow-2xl bg-slate-800/50"></div>
+                                    <div class="h-12 w-2 bg-slate-500 mt-[-2px]"></div>
+                                </div>
+                             </div>
+                             <div class="scale-arm-wrapper">
+                                <div id="scale-arm" class="scale-arm shadow-xl border border-slate-600"></div>
+                                <div class="scale-pivot"></div>
+                             </div>
+                        </div>
+                        <button onclick="window.ActiveGame.weigh()" class="px-12 py-4 bg-indigo-600 hover:bg-indigo-500 rounded-full font-black text-white shadow-2xl text-xl uppercase tracking-widest transition-transform hover:scale-105 mb-8 border-4 border-indigo-400/30">⚖️ CÂN NGAY</button>
+                        <div class="w-full bg-slate-800 p-6 rounded-2xl border-2 border-slate-600 shadow-inner">
+                            <div class="text-xs font-bold text-slate-500 mb-3 uppercase tracking-widest">KHO BÓNG</div>
+                            <div id="balls-pool" class="flex flex-wrap justify-start gap-3 min-h-[80px]"></div>
+                        </div>
+                    </div>
+                    <div class="w-full lg:w-1/3 flex flex-col gap-4 h-full">
+                        <div class="bg-slate-800 p-4 rounded-2xl border-2 border-slate-600 flex-1 min-h-[250px] flex flex-col max-h-[60vh]">
+                            <div class="text-xs font-black text-indigo-400 mb-3 uppercase tracking-widest border-b border-indigo-900 pb-2">LỊCH SỬ CÂN</div>
+                            <div id="balls-logs" class="log-box flex-1 text-base space-y-2"></div>
+                        </div>
+                        <div class="p-5 bg-emerald-900/30 border-2 border-emerald-700 rounded-2xl">
+                            <div class="text-xs font-black text-emerald-400 mb-3 uppercase tracking-widest">ĐÁP ÁN</div>
+                            <div class="flex gap-3 mb-4">
+                                <select id="balls-guess-id" class="bg-slate-900 border-2 border-slate-600 rounded-xl p-3 text-white w-1/2 font-bold outline-none focus:border-emerald-500"><option value="">Bóng #</option>${Array.from({length:12},(_,i)=>`<option value="${i+1}">${i+1}</option>`).join('')}</select>
+                                <select id="balls-guess-status" class="bg-slate-900 border-2 border-slate-600 rounded-xl p-3 text-white w-1/2 font-bold outline-none focus:border-emerald-500"><option value="">?</option><option value="Heavy">Nặng</option><option value="Light">Nhẹ</option></select>
+                            </div>
+                            <button onclick="window.ActiveGame.check()" class="w-full py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl text-base uppercase shadow-lg transition-transform hover:scale-105">KIỂM TRA</button>
+                        </div>
+                    </div>
+                </div>`;
+                this.updateUI();
+            }
+            updateUI(){
+                document.getElementById('game-metric').innerText=`${this.weighs} lần`;
+                const b=(id)=>`<div onclick="event.stopPropagation(); window.ActiveGame.click(${id})" class="ball text-base shadow-md flex items-center justify-center hover:scale-110 border-2 border-indigo-500/30 transition-transform cursor-pointer font-bold">${id}</div>`;
+                document.getElementById('balls-pool').innerHTML = this.pool.map(b).join('');
+                document.getElementById('pan-L').innerHTML = this.L.map(b).join('');
+                document.getElementById('pan-R').innerHTML = this.R.map(b).join('');
+                const pL = document.getElementById('pan-L'), pR = document.getElementById('pan-R');
+                if(this.selPan === 'L') { pL.parentElement.classList.add('scale-105'); pL.classList.add('selected-pan'); pR.classList.remove('selected-pan'); pR.parentElement.classList.remove('scale-105'); }
+                else if(this.selPan === 'R') { pR.parentElement.classList.add('scale-105'); pR.classList.add('selected-pan'); pL.classList.remove('selected-pan'); pL.parentElement.classList.remove('scale-105'); }
+                else { pL.classList.remove('selected-pan'); pR.classList.remove('selected-pan'); pL.parentElement.classList.remove('scale-105'); pR.parentElement.classList.remove('scale-105'); }
+            }
+        }
+
+        const GameManager = {
+            idx:0, gears:0, progress:{}, isTransitioning: false, visited: {}, // Added visited state
+            init(){
+                const s=localStorage.getItem('an_v240_save');
+                if(s){
+                    const d=JSON.parse(s);
+                    this.idx=d.idx;
+                    this.gears=d.gears;
+                    this.progress=d.prog;
+                    this.visited=d.visited || {};
+                }
+                this.renderSidebar();
+                this.loadContent();
+            },
+            save(){
+                localStorage.setItem('an_v240_save',JSON.stringify({
+                    idx:this.idx,
+                    gears:this.gears,
+                    prog:this.progress,
+                    visited:this.visited
+                }));
+            },
+            renderSidebar(){
+                const nav=document.getElementById('sidebar-nav'), mob=document.getElementById('mobile-nav-list');
+                if(nav) nav.innerHTML=''; if(mob) mob.innerHTML='';
+                if(document.getElementById('gear-count')) document.getElementById('gear-count').innerText=`${this.gears}/8`;
+                if(document.getElementById('mobile-gear')) document.getElementById('mobile-gear').innerText=`${this.gears} ⚙️`;
+                let cur='';
+                STORY.forEach((d,i)=>{
+                    if(d.type==='text')return;
+                    if(d.part!==cur){cur=d.part;if(nav)nav.innerHTML+=`<div class="nav-part-header text-xs font-bold text-slate-500 uppercase tracking-widest mt-4 mb-2 pl-2 border-l-2 border-indigo-500/30">${cur}</div>`}
+                    const p=this.progress[d.id];let st='text-slate-500 cursor-not-allowed',ic='🔒';
+                    const prev=STORY[i-1];
+                    if(i===0||i<=this.idx||(prev&&this.progress[prev.id]?.done))st='text-slate-300 hover:bg-slate-800 cursor-pointer';
+                    if(i===this.idx) st='text-indigo-400 bg-indigo-950/30 border-r-2 border-indigo-500 font-bold';
+                    if(p&&p.done){st='text-emerald-400';ic='✅'}
+                    if(p&&p.opt){st='text-amber-400 font-bold';ic='⚙️'}
+                    const el=`<div class="flex items-center px-3 py-2 rounded-md transition-all mb-1 gap-2 ${st}" onclick="GameManager.jump(${i})"><span class="text-xs">${ic}</span><span class="truncate text-sm">${d.title.split(':')[1]}</span></div>`;
+                    if(nav)nav.innerHTML+=el; if(mob)mob.innerHTML+=el;
+                })
+            },
+            loadContent(){
+                const d=STORY[this.idx];
+                
+                // --- SPECIAL HANDLING FOR START PAGE ---
+                if (d.id === 'intro') {
+                    document.body.classList.add('intro-active');
+                    // Force expand accordion
+                    const wrap = document.getElementById('story-content-wrapper');
+                    wrap.classList.remove('accordion-collapsed');
+                    wrap.classList.add('accordion-expanded');
+                } else {
+                    document.body.classList.remove('intro-active');
+                }
+
+                // Update text content
+                if (document.getElementById('chapter-tag-mobile')) document.getElementById('chapter-tag-mobile').innerText = d.title.split(':')[0];
+                if (document.getElementById('story-title-mobile')) document.getElementById('story-title-mobile').innerText = d.title.split(':')[1] || d.title;
+                if (document.getElementById('part-tag')) document.getElementById('part-tag').innerText=d.part;
+                if (document.getElementById('chapter-tag')) document.getElementById('chapter-tag').innerText=d.title;
+                if (document.getElementById('story-title')) document.getElementById('story-title').innerText=d.title;
+                if (document.getElementById('story-text')) document.getElementById('story-text').innerText=d.text;
+                if (document.getElementById('hint-text')) document.getElementById('hint-text').innerText=d.hint||'';
+                if (document.getElementById('math-text')) document.getElementById('math-text').innerText=d.math||'';
+
+                // --- CHAPTER 1 STORY OVERLAY ---
+                const vic = document.getElementById('victory-overlay');
+                if (d.id === 'c1' && !this.visited['c1']) {
+                    // Show Story Overlay
+                    const storyHTML = `
+                    <div class="max-w-2xl bg-slate-900 p-8 rounded-2xl border border-slate-700 shadow-2xl relative animate-fade-in mx-4">
+                        <div class="text-xs font-black text-indigo-400 uppercase tracking-widest mb-4">CHƯƠNG 1</div>
+                        <h2 class="text-3xl font-serif font-bold text-white mb-4">${d.title.split(':')[1]}</h2>
+                        <div class="text-slate-300 text-base leading-relaxed mb-8 max-h-[60vh] overflow-y-auto">
+                            ${d.text}
+                        </div>
+                        <button onclick="GameManager.closeStoryOverlay()" class="w-full py-4 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl uppercase tracking-wider transition-transform active:scale-95">TIẾP TỤC</button>
+                    </div>`;
+                    vic.innerHTML = storyHTML;
+                    vic.classList.add('victory-visible');
+                    vic.style.pointerEvents = 'auto'; // Enable clicks
+                    
+                    // Mark as visited
+                    this.visited['c1'] = true;
+                    this.save();
+                } else {
+                    if(!vic.classList.contains('victory-visible') || d.id !== 'c1') {
+                       vic.classList.remove('victory-visible');
+                       vic.style.pointerEvents = 'none';
+                       vic.innerHTML = '';
+                    }
+                }
+
+                // Show Rules
+                const rulesSection = document.getElementById('game-rules-section');
+                const rulesText = document.getElementById('game-rules-text');
+                if (d.rules) {
+                    rulesText.innerHTML = d.rules;
+                    rulesSection.classList.remove('hidden');
+                } else {
+                    rulesSection.classList.add('hidden');
+                }
+                
+                const gw=document.getElementById('game-container'),ph=document.getElementById('placeholder');
+                const b1=document.getElementById('btn-play');
+                
+                // Hide Game Container initially
+                if(gw) gw.classList.add('hidden'); 
+                if(ph) ph.classList.remove('hidden');
+                
+                document.getElementById('hint-modal').style.display = 'none';
+                
+                // Accordion Logic
+                if(window.innerWidth >= 768) {
+                    document.body.classList.add('desktop-game-active');
+                    // On desktop, keep accordion expanded unless explicitly collapsed by user
+                    // We reset state for new chapter
+                    const wrap = document.getElementById('story-content-wrapper');
+                    const id = document.getElementById('accordion-icon-desktop');
+                    if(wrap) {
+                        wrap.classList.remove('accordion-collapsed');
+                        wrap.classList.add('accordion-expanded');
+                    }
+                    if(id) id.innerText='▲ Thu gọn';
+                } else {
+                    document.body.classList.remove('desktop-game-active');
+                    // On Mobile: Intro handled above. For C1+, auto collapse handled in playLevel
+                }
+
+                // Auto-Play logic for non-text levels
+                if(d.type!=='text'){
+                      this.playLevel(); 
+                }
+
+                if(d.type==='text'){
+                    if(b1) {b1.classList.remove('hidden');b1.innerText="BẮT ĐẦU";}
+                }else{
+                    if(b1) {b1.classList.remove('hidden');b1.innerText="BẮT ĐẦU / TIẾP TỤC";}
+                }
+                
+                setTimeout(() => { this.isTransitioning = false; }, 500);
+            },
+            closeStoryOverlay() {
+                const vic = document.getElementById('victory-overlay');
+                vic.classList.remove('victory-visible');
+                vic.style.pointerEvents = 'none';
+                this.playLevel();
+            },
+            playLevel(){
+                const d=STORY[this.idx];
+                
+                // --- FORCE COLLAPSE STORY ON BUTTON CLICK ---
+                forceCollapseStory();
+
+                if(d.type==='text'){this.next();return}
+                
+                document.getElementById('game-container').classList.remove('hidden');
+                document.getElementById('placeholder').classList.add('hidden');
+                if (document.getElementById('game-msg')) document.getElementById('game-msg').innerText="";
+
+                if(window.ActiveGame && window.ActiveGame.reset) window.ActiveGame = null;
+
+                if(d.game==='switches')window.ActiveGame=new GameSwitches();
+                if(d.game==='jugs')window.ActiveGame=new GameJugs();
+                if(d.game==='graph')window.ActiveGame=new GameGraph();
+                if(d.game==='river')window.ActiveGame=new GameRiver();
+                if(d.game==='cat')window.ActiveGame=new GameCat();
+                if(d.game==='spider')window.ActiveGame=new GameSpider();
+                if(d.game==='horses')window.ActiveGame=new GameHorses();
+                if(d.game==='balls')window.ActiveGame=new GameBalls();
+            },
+            skip(){showToast("Đã bỏ qua màn chơi!", 'warning');this.win(false)},
+            win(opt){
+                if(this.isTransitioning) return; 
+
+                playSound('win');
+                const d=STORY[this.idx];
+                this.progress[d.id]={done:true,opt:opt};
+                let g=0;Object.values(this.progress).forEach(v=>{if(v.opt)g++});this.gears=g;
+                this.save();
+                this.renderSidebar();
+                
+                const nextTitle = STORY[this.idx+1] ? STORY[this.idx+1].title : "KẾT THÚC";
+                const nextText = STORY[this.idx+1] ? STORY[this.idx+1].text : "Bạn đã hoàn thành hành trình!";
+                
+                const overlayHTML = `
+                <div class="animate-bounce text-6xl mb-4">🎉</div>
+                <h2 class="text-4xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-cyan-400 mb-2">CHIẾN THẮNG!</h2>
+                <p class="text-slate-300 text-lg mb-8 font-medium">${opt ? "Xuất sắc! +1 Bánh Răng Vàng ⚙️" : "Hoàn thành! (Chưa tối ưu)"}</p>
+                
+                <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700 max-w-lg w-full text-left mb-8 shadow-2xl transform rotate-1 overflow-y-auto max-h-[40vh]">
+                    <div class="text-[10px] font-black text-indigo-400 uppercase tracking-widest mb-2">CHƯƠNG TIẾP THEO</div>
+                    <div class="text-xl font-bold text-white mb-2">${nextTitle}</div>
+                    <p class="text-slate-400 text-sm leading-relaxed">${nextText}</p>
+                </div>
+
+                <button onclick="GameManager.next()" class="px-10 py-4 bg-white text-black font-black text-xl rounded-full shadow-[0_0_30px_rgba(255,255,255,0.3)] hover:scale-105 transition-transform flex items-center gap-2 group">
+                    TIẾP TỤC <span class="group-hover:translate-x-1 transition-transform">➜</span>
+                </button>
+                <div class="mt-4 text-xs text-slate-500 font-mono">Nhấn Enter để tiếp tục</div>
+                `;
+                
+                const vic = document.getElementById('victory-overlay');
+                vic.innerHTML = overlayHTML;
+                vic.classList.add('victory-visible');
+                vic.style.pointerEvents = 'auto'; // Enable pointer events for buttons
+            },
+            next(){
+                if(this.isTransitioning) return;
+                this.isTransitioning = true;
+
+                const vic = document.getElementById('victory-overlay');
+                vic.classList.remove('victory-visible');
+                vic.style.pointerEvents = 'none';
+                
+                if(this.idx<STORY.length-1){
+                    this.idx++;
+                    this.save();
+                    this.loadContent();
+                } else {
+                    this.ending();
+                }
+            },
+            jump(i){
+                const prev=STORY[i-1];if((i===0)||(prev&&this.progress[prev.id]?.done)||this.progress[STORY[i].id]?.done){
+                    this.idx=i;
+                    this.loadContent();
+                    document.getElementById('mobile-menu').classList.add('hidden');
+                }
+            },
+            ending(){document.getElementById('ending-screen').classList.remove('hidden');document.getElementById('end-score').innerText=`${this.gears}/8 ⚙️`;const t=document.getElementById('end-title'),d=document.getElementById('end-desc');if(this.gears===8){t.innerText="TRUE ENDING";d.innerText="Huyền thoại! Bạn đã cứu cha và thanh tẩy Hắc Pháp Sư."}else{t.innerText="NORMAL ENDING";d.innerText="Bạn cứu được cha nhưng Hắc Pháp Sư đã trốn thoát."}}
+        };
+        
+        // Enter Key Listener
+        document.addEventListener('keydown', (e) => {
+            if(e.key === 'Enter' && !GameManager.isTransitioning) {
+                const overlay = document.getElementById('victory-overlay');
+                if(overlay.classList.contains('victory-visible')) { 
+                    GameManager.next(); 
+                } else {
+                   const btn = document.getElementById('btn-play');
+                   if(btn && !btn.classList.contains('hidden')) btn.click();
+                }
+            }
+        });
+        
+        window.GameManager = GameManager;
+        window.closeModal=(id)=>document.getElementById(id).style.display='none';
+        window.openModal=(id)=>document.getElementById(id).style.display='flex';
+        document.addEventListener('DOMContentLoaded', () => { GameManager.init(); });
+    </script>
+</body>
+</html>
