@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Hành Trình Của An - v2.48.0 Logic Journey</title>
+    <title>Hành Trình Của An - v53.0 Final Stable</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&family=Merriweather:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
     <style>
         /* --- CORE --- */
-        body { font-family: 'Inter', sans-serif; background-color: #020617; color: #e2e8f0; overflow: hidden; touch-action: manipulation; }
+        body { font-family: 'Inter', sans-serif; background-color: #020617; color: #e2e8f0; overflow: hidden; touch-action: none; }
         .font-serif { font-family: 'Merriweather', serif; }
         ::-webkit-scrollbar { width: 4px; height: 4px; }
         ::-webkit-scrollbar-track { background: #0f172a; }
@@ -37,22 +37,14 @@
         .modal-content { background-color: #1e293b; border: 1px solid #334155; border-radius: 1rem; max-width: 600px; width: 100%; max-height: 85vh; overflow-y: auto; animation: zoomIn 0.2s ease-out; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); display: flex; flex-direction: column; }
 
         /* ITEM & SKILL STYLES */
-        .item-slot { 
-            width: 40px; height: 40px; border-radius: 8px; background: #1e293b; border: 1px solid #475569; 
-            display: flex; align-items: center; justify-content: center; font-size: 1.2rem; cursor: pointer; transition: all 0.2s; position: relative;
-        }
+        .item-slot { width: 40px; height: 40px; border-radius: 8px; background: #1e293b; border: 1px solid #475569; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; cursor: pointer; transition: all 0.2s; position: relative; }
         .item-slot:hover { background: #334155; border-color: #94a3b8; transform: translateY(-2px); }
         .item-slot.locked { opacity: 0.3; cursor: not-allowed; filter: grayscale(100%); pointer-events: none; }
         .item-slot.used { opacity: 0.5; filter: grayscale(100%); cursor: default; }
         .item-slot.used::after { content: '✓'; position: absolute; bottom: -4px; right: -4px; background: #10b981; color: white; font-size: 10px; padding: 2px 4px; border-radius: 4px; font-weight: bold; }
         .item-slot.usable { border-color: #fbbf24; box-shadow: 0 0 10px rgba(251, 191, 36, 0.3); animation: pulse-border 2s infinite; }
-        
         @keyframes pulse-border { 0% { border-color: #fbbf24; } 50% { border-color: #f59e0b; box-shadow: 0 0 15px rgba(251, 191, 36, 0.5); } 100% { border-color: #fbbf24; } }
-
-        .skill-btn {
-            width: 100%; padding: 12px; border-radius: 8px; font-weight: bold; text-align: center; margin-top: 8px;
-            transition: all 0.2s; border: 1px solid transparent;
-        }
+        .skill-btn { width: 100%; padding: 12px; border-radius: 8px; font-weight: bold; text-align: center; margin-top: 8px; transition: all 0.2s; border: 1px solid transparent; }
         .skill-btn.available { background: #4f46e5; color: white; cursor: pointer; }
         .skill-btn.available:hover { background: #4338ca; }
         .skill-btn.used { background: #1e293b; color: #64748b; cursor: default; border-color: #334155; }
@@ -62,19 +54,17 @@
         /* GAME STYLES */
         .bulb-btn { transition: all 0.1s; } .bulb-btn:active { transform: scale(0.98); } .bulb-on { background-color: #fcd34d !important; color: #713f12 !important; box-shadow: 0 0 40px #fcd34d; border-color: #fbbf24 !important; } .bulb-off { background-color: #1e293b; color: #64748b; border-color: #475569; }
         .jug-container { position: relative; background: #334155; border-radius: 0 0 12px 12px; border: 4px solid #64748b; border-top: none; overflow: hidden; transition: all 0.2s; cursor: pointer; width: 90px; margin: 0 8px; } .jug-container:hover { border-color: #94a3b8; } .jug-water { position: absolute; bottom: 0; left: 0; width: 100%; background-color: #fbbf24; transition: height 0.5s ease; opacity: 0.9; box-shadow: inset 0 -5px 10px rgba(0,0,0,0.1); } .jug-selected { border-color: #d946ef !important; box-shadow: 0 0 0 4px rgba(217, 70, 239, 0.5) !important; transform: translateY(-4px); }
-        
-        /* Bridge & others */
         .char-card { transition: all 0.2s; cursor: pointer; user-select: none; position: relative; z-index: 20; box-shadow: 0 4px 6px rgba(0,0,0,0.4); background: #1e293b; border: 2px solid #475569; display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: 8px; width: 100%; aspect-ratio: 1/1; } .char-card:hover { transform: translateY(-3px); border-color: #fbbf24; background: #334155; }
         .bridge-layout { display: flex; width: 100%; height: 600px; border: 2px solid #334155; border-radius: 16px; overflow: hidden; background: #0f172a; position: relative; } .cliff-side { width: 250px; height: 100%; background: #1e293b; border-right: 2px solid #334155; padding: 16px; overflow-y: auto; flex-shrink: 0; display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; align-content: start; justify-items: center; z-index: 5; } .cliff-side.right { border-left: 2px solid #334155; border-right: none; } .bridge-zone { flex: 1; height: 100%; position: relative; background: linear-gradient(180deg, #020617 0%, #0f172a 100%); overflow: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center; } .bridge-zone .btn-go-round { margin-top: 60px; } .bridge-cable { position: absolute; width: 100%; height: 8px; background: #64748b; top: 40%; transform: translateY(-50%); border-radius: 4px; box-shadow: 0 10px 20px rgba(0,0,0,0.5); } .lamp-carrier { width: 180px; height: 180px; border-radius: 50%; border: 4px dashed rgba(251, 191, 36, 0.6); display: flex; justify-content: center; align-items: center; flex-wrap: wrap; gap: 8px; padding: 20px; background: radial-gradient(circle, rgba(251,191,36,0.15) 0%, transparent 70%); transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1); z-index: 10; position: absolute; box-shadow: 0 0 30px rgba(251, 191, 36, 0.1); top: 40%; margin-top: -90px; } .pos-left { transform: translateX(0); left: 10px; } .pos-right { transform: translateX(0); left: calc(100% - 190px); }
         .btn-go-round { width: 90px; height: 90px; border-radius: 50%; background: linear-gradient(135deg, #d97706, #b45309); color: white; font-weight: 900; box-shadow: 0 4px 15px rgba(217, 119, 6, 0.5); border: 4px solid rgba(251, 191, 36, 0.3); letter-spacing: 0.05em; font-size: 1.3rem; display: flex; align-items: center; justify-content: center; transition: all 0.2s; z-index: 40; cursor: pointer; } .btn-go-round:active { transform: scale(0.9); box-shadow: 0 2px 5px rgba(217, 119, 6, 0.5); }
         .btn-go-mobile { width: 100%; padding: 12px; border-radius: 8px; background: linear-gradient(to right, #d97706, #b45309); color: white; font-weight: 900; box-shadow: 0 4px 15px rgba(217, 119, 6, 0.4); border: 2px solid rgba(251, 191, 36, 0.5); letter-spacing: 0.1em; font-size: 1.1rem; text-transform: uppercase; transition: all 0.2s; margin-bottom: 0; } .btn-go-mobile:active { transform: scale(0.98); }
-        
         @media (max-width: 767px) { 
             .bridge-layout { flex-direction: column; height: auto; min-height: auto; border: none; background: transparent; overflow: visible; gap: 4px; } 
             .cliff-side { width: 100%; height: auto; min-height: 70px; border: 2px solid #334155; border-radius: 12px; background: #1e293b; padding: 8px; margin: 0; display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px; } 
-            .bridge-zone { min-height: 200px; border: 2px solid #334155; border-radius: 12px; background: linear-gradient(180deg, #0f172a 0%, #1e293b 100%); margin: 0; display: flex; flex-direction: column; justify-content: center; } 
+            /* COMPACT BRIDGE ZONE (180px) */
+            .bridge-zone { min-height: 180px; border: 2px solid #334155; border-radius: 12px; background: linear-gradient(180deg, #0f172a 0%, #1e293b 100%); margin: 0; display: flex; flex-direction: column; justify-content: center; } 
             .bridge-zone .btn-go-round { display: none; } 
-            .mobile-action-bar { margin-top: 0px; padding: 0; display: flex; justify-content: center; }
+            .mobile-action-bar { margin-top: 0px; padding: 0; display: flex; justify-content: center; } 
             .bridge-cable { width: 6px; height: 100%; top: 0; left: 50%; transform: translateX(-50%); } 
             .lamp-carrier { left: 50%; width: 100px; height: 100px; margin-left: -50px; top: 10px; margin-top: 0; transition: top 0.8s cubic-bezier(0.4, 0, 0.2, 1); } 
             .pos-left { top: 10px; transform: none; left: 50%; } 
@@ -84,7 +74,7 @@
         }
 
         .box-btn { transition: all 0.2s; cursor: pointer; touch-action: manipulation; } .box-btn:active { transform: scale(0.95); } .quantum-active { animation: pulse-glow 2s infinite; border-color: #818cf8; } @keyframes pulse-glow { 0%, 100% { box-shadow: 0 0 5px rgba(99, 102, 241, 0.2); } 50% { box-shadow: 0 0 20px rgba(99, 102, 241, 0.5); } }
-        .spider-frame { border: 2px solid #475569; border-radius: 24px; background: #0f172a; box-shadow: inset 0 0 40px rgba(0,0,0,0.6); overflow: hidden; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; max-width: 600px; margin: 0 auto; aspect-ratio: 1/1; }
+        .spider-frame { border: 2px solid #475569; border-radius: 24px; background: #0f172a; box-shadow: inset 0 0 40px rgba(0,0,0,0.6); overflow: hidden; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; max-width: 600px; margin: 0 auto; aspect-ratio: 1/1; touch-action: none; position: relative; }
         .horse { width: 40px; height: 40px; border-radius: 8px; background-color: #be185d; color: white; display: flex; align-items: center; justify-content: center; font-weight: 800; cursor: pointer; transition: all 0.2s; user-select: none; border: 2px solid #fbcfe8; font-size: 0.9rem; box-shadow: 0 2px 4px rgba(0,0,0,0.3); } .horse:active { transform: scale(1.1); } #horse-pool-container { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; width: 100%; max-width: 350px; margin: 0 auto; }
         .ball { width: 38px; height: 38px; border-radius: 50%; background-color: #4f46e5; color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; cursor: pointer; transition: transform 0.1s; font-size: 0.8rem; margin: 2px; box-shadow: inset -5px -5px 10px rgba(0,0,0,0.4); border: 2px solid #818cf8; } .pan { min-height: 120px; border: 3px solid #64748b; border-top: none; border-radius: 0 0 20px 20px; background-color: #1e293b; display: grid; grid-template-columns: repeat(2, 1fr); align-content: start; justify-items: center; gap: 5px; padding: 10px; transition: border-color 0.3s; cursor: pointer; width: 100%; position: relative; } .pan::before { content:''; position: absolute; top: -40px; left: 50%; width: 4px; height: 40px; background: #64748b; transform: translateX(-50%); } @media (min-width: 768px) { .pan { grid-template-columns: repeat(4, 1fr); } } .pan:hover { border-color: #94a3b8; } .pan.selected-pan { border-color: #fbbf24; background-color: rgba(251, 191, 36, 0.08); box-shadow: 0 0 20px rgba(251, 191, 36, 0.15); } .pan.selected-pan::before { background: #fbbf24; } .scale-arm { width: 100%; height: 8px; background: #64748b; border-radius: 4px; transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1); transform-origin: center; position: relative; } .scale-pivot { width: 0; height: 0; border-left: 20px solid transparent; border-right: 20px solid transparent; border-bottom: 40px solid #475569; position: absolute; bottom: -48px; left: 50%; transform: translateX(-50%); } .balanced-anim { animation: balancePulse 0.5s ease-in-out; } @keyframes balancePulse { 0% { transform: scaleX(1); } 50% { transform: scaleX(1.1); background-color: #10b981; } 100% { transform: scaleX(1); } } .tilt-left { transform: rotate(-10deg); } .tilt-right { transform: rotate(10deg); } .pan-container { transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1); width: 40%; display: flex; flex-direction: column; items-center; } .pan-tilt-up { transform: translateY(-30px); } .pan-tilt-down { transform: translateY(30px); }
 
@@ -101,7 +91,7 @@
     <aside class="hidden md:flex flex-col w-72 bg-slate-900 border-r border-slate-800 h-full shrink-0 z-30">
         <div class="p-6 border-b border-slate-800">
             <h1 class="text-lg font-black text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-cyan-400">HÀNH TRÌNH CỦA AN</h1>
-            <div class="text-[10px] text-slate-500 font-bold mt-1 tracking-widest">v2.48.0 JOURNEY RESET</div>
+            <div class="text-[10px] text-slate-500 font-bold mt-1 tracking-widest">v53.0 FINAL STABLE</div>
         </div>
         <nav id="sidebar-nav" class="flex-1 overflow-y-auto pb-4 space-y-1 p-2"></nav>
         <div id="inventory-section" class="p-4 border-t border-slate-800 bg-slate-900/50">
@@ -177,15 +167,14 @@
                     <p id="hint-text" class="text-slate-300 text-sm italic">...</p>
                 </div>
                 <div class="space-y-2">
-                    <div id="comp-dog" class="bg-slate-800 p-4 rounded-lg border border-slate-700 opacity-50"><div class="flex justify-between items-center"><span class="font-bold text-yellow-500">🐕 Chó Vàng (Thám Tử)</span><span class="text-xs text-slate-500 status-text">Chưa mở khóa</span></div><div id="btn-dog" class="skill-btn" onclick="GameManager.useSkill('dog')">Đánh Hơi (1 lần)</div><div id="content-dog" class="skill-content text-sm text-yellow-200"></div></div>
-                    <div id="comp-bear" class="bg-slate-800 p-4 rounded-lg border border-slate-700 opacity-50"><div class="flex justify-between items-center"><span class="font-bold text-amber-600">🐻 Gấu (Giáo Sư)</span><span class="text-xs text-slate-500 status-text">Chưa mở khóa</span></div><div id="btn-bear" class="skill-btn" onclick="GameManager.useSkill('bear')">Chỉ Dẫn (1 lần)</div><div id="content-bear" class="skill-content text-sm text-amber-200"></div></div>
-                    <div id="comp-robo" class="bg-slate-800 p-4 rounded-lg border border-slate-700 opacity-50"><div class="flex justify-between items-center"><span class="font-bold text-cyan-400">🤖 Robo (Máy Tính)</span><span class="text-xs text-slate-500 status-text">Chưa mở khóa</span></div><div id="btn-robo" class="skill-btn" onclick="GameManager.useSkill('robo')">Phân Tích (1 lần)</div><div id="content-robo" class="skill-content text-sm text-cyan-200 font-mono"></div></div>
+                    <div id="comp-dog" class="bg-slate-800 p-4 rounded-lg border border-slate-700 opacity-50"><div class="flex justify-between items-center"><span class="font-bold text-yellow-500">🐕 <span class="name">Chó Vàng</span></span><span class="text-xs text-slate-500 status-text">Chưa mở khóa</span></div><div id="btn-dog" class="skill-btn" onclick="GameManager.useSkill('dog')">Đánh Hơi (1 lần)</div><div id="content-dog" class="skill-content text-sm text-yellow-200"></div></div>
+                    <div id="comp-bear" class="bg-slate-800 p-4 rounded-lg border border-slate-700 opacity-50"><div class="flex justify-between items-center"><span class="font-bold text-amber-600">🐻 <span class="name">Gấu</span></span><span class="text-xs text-slate-500 status-text">Chưa mở khóa</span></div><div id="btn-bear" class="skill-btn" onclick="GameManager.useSkill('bear')">Chỉ Dẫn (1 lần)</div><div id="content-bear" class="skill-content text-sm text-amber-200"></div></div>
+                    <div id="comp-robo" class="bg-slate-800 p-4 rounded-lg border border-slate-700 opacity-50"><div class="flex justify-between items-center"><span class="font-bold text-cyan-400">🤖 <span class="name">Robo</span></span><span class="text-xs text-slate-500 status-text">Chưa mở khóa</span></div><div id="btn-robo" class="skill-btn" onclick="GameManager.useSkill('robo')">Phân Tích (1 lần)</div><div id="content-robo" class="skill-content text-sm text-cyan-200 font-mono"></div></div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- RESET CONFIRM MODAL -->
     <div id="reset-modal" class="modal" style="display:none;" onclick="closeModal('reset-modal')">
         <div class="bg-slate-900 border border-slate-700 p-6 rounded-xl shadow-2xl max-w-sm w-full mx-4 text-center" onclick="event.stopPropagation()">
             <div class="text-4xl mb-4">⚠️</div>
@@ -198,7 +187,6 @@
         </div>
     </div>
 
-    <!-- ENDING SCREEN -->
     <div id="ending-screen" class="hidden fixed inset-0 z-[200] bg-black flex flex-col items-center justify-center animate-fadeIn overflow-y-auto">
         <div class="w-full min-h-screen flex items-center justify-center p-4 py-12">
             <div class="max-w-3xl w-full bg-slate-900/95 p-8 rounded-3xl border-2 border-slate-700 shadow-2xl relative overflow-hidden transform scale-95 animate-zoomIn flex flex-col max-h-[95vh]">
@@ -232,13 +220,13 @@
 
         const STORY = [
             { id: 'intro', type: 'text', part: 'MỞ ĐẦU', title: 'Lời Nhắn Từ Quá Khứ', text: 'An, con trai yêu quý của ta. Nếu con đọc được những dòng này, có lẽ ta đã không còn ở bên con. Hắc Pháp Sư Muội Than - kẻ thù truyền kiếp của Hoàng Gia - đã trỗi dậy và bắt cóc ta. Ta đã kịp giấu Cây Đèn Chân Lý vào gói bưu phẩm này. Nó không chỉ là một công cụ, mà là người dẫn đường. Hãy lắng nghe tiếng nói của ánh sáng, nó sẽ chỉ cho con con đường cứu ta và cả Vương Quốc Logic. Hãy dũng cảm lên, con trai!', rules: null },
-            { id: 'c1', type: 'game', game: 'switches', part: 'PHẦN 1', title: 'Chương 1: Căn Nhà Gỗ', text: 'Theo chỉ dẫn của ngọn đèn, An tìm đến căn nhà gỗ bìa rừng nơi người bạn trung thành của cha - Chú Chó Vàng - đang bị giam giữ. Căn phòng tối om, chỉ có một lồng năng lượng nhiệt đang nhốt Chú Chó. Để phá lồng, An cần tìm đúng công tắc kích hoạt trong 4 công tắc. Ngọn đèn thì thầm: "Ánh sáng không phải là tất cả, hãy cảm nhận hơi ấm còn vương lại..."', hint: 'Bật công tắc, đợi nóng, rồi tắt đi. Bóng đèn tắt nhưng còn NÓNG chính là chìa khóa.', math: 'Nguyên lý: Sử dụng biến trạng thái thứ 3 (Nhiệt độ) để phân biệt 2 trạng thái đầu ra (Sáng/Tối).', rules: '<p>1. Có 4 công tắc và 4 bóng đèn.</p><p>2. Bật/Tắt công tắc tùy ý, nhấn "Chờ 10 phút" để làm nóng đèn.</p><p>3. Nhấn "Vào Phòng" để kiểm tra trạng thái.</p><p>4. Xác định công tắc nối với đèn nào.</p>', hint2: null, guide: null },
+            { id: 'c1', type: 'game', game: 'switches', part: 'PHẦN 1', title: 'Chương 1: Căn Nhà Gỗ', text: 'Theo chỉ dẫn của ngọn đèn, An tìm đến căn nhà gỗ bìa rừng nơi người bạn trung thành của cha - Chú Chó Vàng - đang bị giam giữ. Căn phòng tối om, chỉ có một lồng năng lượng nhiệt đang nhốt Chú Chó. Để phá lồng, An cần tìm đúng công tắc kích hoạt trong 4 công tắc. Ngọn đèn thì thầm: "Ánh sáng không phải là tất cả, hãy cảm nhận hơi ấm còn vương lại..."', hint: 'Bật công tắc, đợi nóng, rồi tắt đi. Bóng đèn tắt nhưng còn NÓNG chính là chìa khóa.', math: 'Nguyên lý: Sử dụng biến trạng thái thứ 3 (Nhiệt độ) để phân biệt 2 trạng thái đầu ra (Sáng/Tối).', rules: '<p>1. Có 4 công tắc và 4 bóng đèn.</p><p>2. Bật/Tắt công tắc tùy ý, nhấn "Chờ 10 phút" để làm nóng đèn.</p><p>3. Nhấn "Vào Phòng" để kiểm tra trạng thái.</p><p>4. <strong>Nhiệm vụ:</strong> Tìm chính xác công tắc nào điều khiển bóng đèn nào.</p>', hint2: null, guide: null },
             { id: 'c2', type: 'game', game: 'jugs', part: 'PHẦN 1', title: 'Chương 2: Suối Dầu Cạn', text: 'Giải cứu thành công, Chú Chó Vàng dẫn An đến suối dầu cạn. Tại đó, Robo Tin-Tin đang nằm bất động. Lõi năng lượng của Tin-Tin yêu cầu nạp chính xác 4 Lít dầu để tái khởi động. An chỉ tìm thấy 3 chiếc bình rỗng với dung tích 8L, 5L và 3L.', hint: 'Tập trung vào sự chênh lệch. 5 - 3 = 2. Làm sao từ 2 ra 4?', hint2: 'Gâu! Mùi dầu ở bình 5L và 3L là nồng nhất, hãy dùng chúng để tạo ra số dư!', guide: null, math: 'Nguyên lý: 5x + 3y = 4 (Phương trình Diophantine).', rules: '<p>1. Có 3 bình: 8L, 5L, 3L.</p><p>2. Đổ dầu qua lại giữa các bình.</p><p>3. Tạo ra chính xác 4 Lít dầu trong bất kỳ bình nào.</p>' },
             { id: 'c3', type: 'game', game: 'graph', part: 'PHẦN 1', title: 'Chương 3: Cổng Đá Cổ Đại', text: 'Cả nhóm bị chặn lại bởi Cổng Đá Cổ Đại. Giáo Sư Gấu đang loay hoay trước cổng. "Cổng này phong ấn bằng một hình vẽ sao," Giáo Sư nói, "Phải vẽ lại toàn bộ hình này bằng một nét bút liền mạch."', hint: 'Bắt đầu từ điểm có số đường nối LẺ.', hint2: 'Gâu! Điểm góc dưới này có mùi lạ, hãy bắt đầu từ đó!', guide: 'Chỉ có thể bắt đầu từ một trong hai điểm ở đáy (bậc 5). Đi theo viền ngoài rồi vào trong.', math: 'Nguyên lý Euler: Đồ thị vẽ được 1 nét khi và chỉ khi có 0 hoặc 2 đỉnh bậc lẻ.', rules: '<p>1. Vẽ lại hình ngôi sao bằng một nét liền.</p><p>2. Không được đi lại đường đã vẽ.</p>' },
             { id: 'c4', type: 'game', game: 'river', part: 'PHẦN 2', title: 'Chương 4: Cây Cầu Đứt Gãy', text: 'Cây cầu treo duy nhất đã bị đứt gãy. Ngọn đèn cảnh báo năng lượng chỉ còn 29 giây. Cả nhóm (5 người) phải qua cầu. Cầu chỉ chịu được 2 người/lượt, và phải có đèn.', hint: 'Đừng để người nhanh nhất làm mọi việc. Hãy để hai người chậm nhất đi cùng nhau.', hint2: 'Gâu! Để tôi cầm đèn chạy về cho nhanh, tôi chạy có 1 giây thôi!', guide: 'Lượt quan trọng: Cho Gấu (8s) và Robo (12s) đi cùng nhau để "gói" thời gian chậm nhất lại.', math: 'Tối ưu hóa: Giảm thiểu tổng thời gian chờ (Wait Time Minimization).', rules: '<p>1. Đưa 5 người qua bờ phải trong 29s.</p><p>2. Tối đa 2 người/lượt. Phải có đèn.</p><p>3. Tốc độ: Chó 1s, An 3s, Khách 6s, Gấu 8s, Robo 12s.</p>' },
-            { id: 'c5', type: 'game', game: 'cat', part: 'PHẦN 2', title: 'Chương 5: Sự Phản Bội', text: 'Lữ Khách lộ mặt là Hắc Pháp Sư! Hắn trốn vào khu rừng ma thuật có 5 bụi cây. Mỗi đêm, hắn bắt buộc phải nhảy sang bụi cây ngay bên cạnh.', hint: 'Nếu hắn ở ô Chẵn, lần sau hắn phải sang Lẻ.', hint2: 'Gâu! Hắn có mùi ở hộp số 2...', guide: 'Chiến thuật "Dồn toa": Kiểm tra ô 2, nếu không có, ngày mai hắn chắc chắn ở ô lẻ.', math: 'Nguyên lý Parity (Chẵn/Lẻ): Trạng thái thay đổi luân phiên sau mỗi bước.', rules: '<p>1. Tìm Hắc Pháp Sư trong 5 hộp.</p><p>2. Sau mỗi lần mở hộp, hắn sẽ nhảy sang hộp liền kề.</p>' },
+            { id: 'c5', type: 'game', game: 'cat', part: 'PHẦN 2', title: 'Chương 5: Sự Phản Bội', text: 'Lữ Khách lộ mặt là Hắc Pháp Sư! Hắn trốn vào khu rừng ma thuật có 5 bụi cây. Mỗi đêm, hắn bắt buộc phải nhảy sang bụi cây ngay bên cạnh.', hint: 'Nếu hắn ở ô Chẵn, lần sau hắn phải sang Lẻ.', hint2: 'Gâu! Hắn có mùi ở hộp số 2...', guide: 'Chiến thuật "Dồn toa": Kiểm tra ô 2, nếu không có, ngày mai hắn chắc chắn ở ô lẻ.', math: 'Nguyên lý Parity (Chẵn/Lẻ): Trạng thái thay đổi luân phiên sau mỗi bước.', rules: '<p>1. Tìm Hắc Pháp Sư trong 5 hộp.</p><p>2. Sau mỗi lần mở hộp, hắn sẽ nhảy sang hộp liền kề.</p><p>3. Giới hạn 10 lượt.</p>' },
             { id: 'c6', type: 'game', game: 'spider', part: 'PHẦN 2', title: 'Chương 6: Vây Bắt Nhện Máy', text: 'Hắc Pháp Sư triệu hồi Nhện Máy Khổng Lồ. An phải điều khiển hệ thống radar để vây bắt nó trên mạng nhện.', hint: 'Đừng chạy theo đuôi. Hãy chiếm các giao lộ quan trọng để cắt đường rút lui.', hint2: 'Gâu! Chặn đầu nó ở cái vòng ngoài kia kìa!', guide: 'Chiến thuật "Bao vây": Đi vào trung tâm trước để kiểm soát các hướng ra.', math: 'Nguyên lý Voronoi: Chiếm lĩnh các điểm trung tâm để thu hẹp vùng di chuyển của đối phương.', rules: '<p>1. Bạn (Xanh) bắt Nhện (Hồng).</p><p>2. Nhện luôn chạy xa bạn.</p><p>3. Bắt được trong 15 bước.</p>' },
-            { id: 'c7', type: 'game', game: 'horses', part: 'PHẦN 3', title: 'Chương 7: Triệu Hồi Rồng', text: 'Tại Trại Rồng, An cần tìm 3 con rồng nhanh nhất trong 25 con. Không có đồng hồ, chỉ biết thứ tự về đích.', hint: 'Chia 25 con thành 5 nhóm đua. Loại bỏ những con không thể nằm trong Top 3.', hint2: 'Gâu! (Kính Lúp) Mấy con về bét ở vòng loại chắc chắn loại rồi!', guide: 'Đua 5 nhóm đầu. Lấy 5 con nhất đua với nhau (Lần 6). Từ đó loại trừ tiếp.', math: 'Thuật toán Sắp xếp: Sử dụng tính chất bắc cầu (A>B, B>C => A>C) để loại bỏ dữ liệu thừa.', rules: '<p>1. 25 con rồng, đua tối đa 5 con/lần.</p><p>2. Chỉ biết thứ tự về đích.</p><p>3. Tìm 3 con nhanh nhất.</p>' },
+            { id: 'c7', type: 'game', game: 'horses', part: 'PHẦN 3', title: 'Chương 7: Triệu Hồi Rồng', text: 'Tại Trại Rồng, An cần tìm 3 con rồng nhanh nhất trong 25 con. Không có đồng hồ, chỉ biết thứ tự về đích.', hint: 'Chia 25 con thành 5 nhóm đua. Loại bỏ những con không thể nằm trong Top 3.', hint2: 'Gâu! (Kính Lúp) Mấy con về bét ở vòng loại chắc chắn loại rồi!', guide: 'Đua 5 nhóm đầu. Lấy 5 con nhất đua với nhau (Lần 6). Từ đó loại trừ tiếp.', math: 'Thuật toán Sắp xếp: Sử dụng tính chất bắc cầu (A>B, B>C => A>C) để loại bỏ dữ liệu thừa.', rules: '<p>1. 25 con rồng, đua tối đa 5 con/lần.</p><p>2. Chỉ biết thứ tự về đích.</p><p>3. Tìm 3 con nhanh nhất. Giới hạn 7 lần.</p>' },
             { id: 'c8', type: 'game', game: 'balls', part: 'PHẦN 3', title: 'Chương 8: Trái Tim Thời Gian', text: 'Đỉnh tháp! Hắc Pháp Sư trộn Lõi Thời Gian thật vào 12 quả cầu giống hệt nhau. Dùng cân 3 lần để tìm ra quả khác biệt.', hint: 'Chia 12 quả thành 3 nhóm (4-4-4). Cân nhóm 1 và 2 sẽ loại trừ được nhiều nhất.', hint2: null, guide: 'Lần 1: Cân 1,2,3,4 vs 5,6,7,8. Nếu cân bằng -> Lỗi ở nhóm còn lại.', math: 'Cây quyết định Tam phân: 3 lần cân cho 3^3 = 27 khả năng, đủ tìm ra 1/12.', rules: '<p>1. 12 quả cầu, 1 quả giả (khác khối lượng).</p><p>2. Cân tối đa 3 lần.</p><p>3. Tìm quả giả và xác định Nặng/Nhẹ.</p>' }
         ];
 
@@ -250,13 +238,158 @@
 
         class GameJugs { constructor(){this.reset()} reset(){this.jugs=[8,0,0];this.caps=[8,5,3];this.moves=0;this.sel=null;this.render()} click(i){if(this.sel===null){if(this.jugs[i]>0){this.sel=i;playSound('click')}}else{if(this.sel!==i)this.pour(this.sel,i);this.sel=null}this.render()} pour(f,t){const a=Math.min(this.jugs[f],this.caps[t]-this.jugs[t]);if(a>0){this.jugs[f]-=a;this.jugs[t]+=a;this.moves++;playSound('click')}if(this.jugs.includes(4))GameManager.win(this.moves===6)} render(){ document.getElementById('game-metric').innerText=`${this.moves} bước`; const hArr = [320, 200, 120]; const h=this.jugs.map((v,i)=>{ const cls=this.sel===i?'jug-selected':'border-slate-500'; const pct = (v/this.caps[i])*100; return `<div onclick="window.ActiveGame.click(${i})" style="height:${[320,200,120][i]}px" class="jug-container ${cls} flex-shrink-0"><div class="jug-water" style="height:${pct}%"></div><div class="absolute inset-0 flex items-center justify-center font-bold text-white drop-shadow-md z-10 text-3xl">${v}L</div></div>` }).join(''); document.getElementById('game-stage').innerHTML=`<div class="flex flex-col items-center justify-center h-full w-full py-8 flex-1 pt-20"><div class="flex-1 flex items-end justify-center gap-2 w-full pb-12 h-full">${h}</div><div class="text-slate-400 font-bold text-xl mb-4">Chọn bình nguồn ➔ Chọn bình đích</div></div>` } getHint(t){ if(t==='dog') return "Gâu! Mùi dầu ở bình 5L và 3L là nồng nhất, hãy dùng chúng để tạo ra số dư!"; return ""; } }
         class GameGraph { constructor(){this.reset()} reset(){this.nodes={1:{x:275,y:50},2:{x:175,y:130},3:{x:375,y:130},4:{x:175,y:230},5:{x:375,y:230},6:{x:175,y:330},7:{x:375,y:330},8:{x:275,y:410}};this.edges=[{u:1,v:2},{u:1,v:3},{u:2,v:3},{u:2,v:4},{u:2,v:5},{u:3,v:4},{u:3,v:5},{u:4,v:5},{u:4,v:6},{u:5,v:7},{u:6,v:7},{u:6,v:8},{u:7,v:8}];this.curr=null;this.visited=new Set();this.path=[];this.bt=0; document.getElementById('game-stage').innerHTML=`<div class="w-full h-full flex items-center justify-center p-0 m-0 overflow-hidden"><canvas id="graph-canvas" class="w-full h-full"></canvas></div>`; this.resizeObserver=new ResizeObserver(()=>window.requestAnimationFrame(()=>this.draw()));this.resizeObserver.observe(document.getElementById('game-stage'));setTimeout(()=>this.draw(),50)} click(e){const c=e.target,r=c.getBoundingClientRect(),scale=(window.innerWidth>=768)?Math.min(c.width/550,c.height/450)*0.9:Math.min(c.width/550,c.height/450)*1.2,offX=(c.width-550*scale)/2,offY=(c.height-450*scale)/2,lx=(e.clientX-r.left-offX)/scale,ly=(e.clientY-r.top-offY)/scale;let h=null;for(let k in this.nodes){if(Math.hypot(lx-this.nodes[k].x,ly-this.nodes[k].y)<50)h=parseInt(k)}if(h){if(this.curr===null){this.curr=h;this.path.push(h);playSound('click')}else if(this.path.length>1&&h===this.path[this.path.length-2]){const u=Math.min(this.curr,h),v=Math.max(this.curr,h),ei=this.edges.findIndex(e=>e.u===u&&e.v===v);this.visited.delete(ei);this.path.pop();this.curr=h;this.bt++;playSound('click')}else{const u=Math.min(this.curr,h),v=Math.max(this.curr,h),ei=this.edges.findIndex(e=>e.u===u&&e.v===v);if(ei>-1&&!this.visited.has(ei)){this.visited.add(ei);this.path.push(h);this.curr=h;playSound('click')}}this.draw();if(this.visited.size===13)GameManager.win(this.bt===0)}} draw(){const c=document.getElementById('graph-canvas');if(!c)return;c.onclick=(e)=>this.click(e);const con=c.parentElement;c.width=con.clientWidth;c.height=con.clientHeight;const ctx=c.getContext('2d'),scale=(window.innerWidth>=768)?Math.min(c.width/550,c.height/450)*0.9:Math.min(c.width/550,c.height/450)*1.2,offX=(c.width-550*scale)/2,offY=(c.height-450*scale)/2;ctx.setTransform(scale,0,0,scale,offX,offY);ctx.clearRect(-offX/scale,-offY/scale,c.width/scale,c.height/scale);ctx.lineWidth=8;this.edges.forEach((e,i)=>{const n1=this.nodes[e.u],n2=this.nodes[e.v];ctx.beginPath();ctx.moveTo(n1.x,n1.y);ctx.lineTo(n2.x,n2.y);ctx.strokeStyle=this.visited.has(i)?'#fbbf24':'#475569';ctx.stroke()});for(let k in this.nodes){const n=this.nodes[k];ctx.beginPath();ctx.arc(n.x,n.y,28,0,6.28);ctx.fillStyle=parseInt(k)===this.curr?'#fbbf24':'#3b82f6';if(this.curr===null)ctx.fillStyle='#fbbf24';ctx.fill();ctx.fillStyle='white';ctx.font='bold 24px Arial';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(k,n.x,n.y)}document.getElementById('game-metric').innerText=`${13-this.visited.size} cạnh`} getHint(t){ if(t==='dog') return "Gâu! Điểm góc dưới này có mùi lạ, hãy bắt đầu từ đó!"; if(t==='robo') return "Dữ liệu: Điểm bắt đầu phải có số đường nối là số lẻ."; return ""; } }
-        class GameRiver { constructor(){this.reset()} reset(){this.L=[1,3,6,8,12];this.R=[];this.lamp=[];this.side='L';this.time=0;this.names={1:'🐕',3:'👦',6:'🧙‍♂️',8:'🐻',12:'🤖'};this.render()} move(id,loc){if(loc===this.side){if(this.lamp.length<2){this[this.side]=this[this.side].filter(x=>x!==id);this.lamp.push(id);playSound('click')}}else if(loc==='lamp'){this.lamp=this.lamp.filter(x=>x!==id);this[this.side].push(id);playSound('click')}this.render()} go(){if(this.lamp.length===0){showToast('Cần người cầm đèn!', 'error');playSound('fail');return}this.time+=Math.max(...this.lamp);this.side=this.side==='L'?'R':'L';this.render();playSound('click');if(this.L.length===0&&this.side==='R')setTimeout(()=>GameManager.win(this.time<=29),500)} render(){ document.getElementById('game-metric').innerText=`${this.time}s`; const d=(arr,loc)=>arr.map(id=>`<div onclick="window.ActiveGame.move(${id},'${loc}')" class="char-card bg-slate-700 p-2 rounded-lg border-2 border-slate-500 flex flex-col items-center justify-center shadow-lg cursor-pointer transform active:scale-95 w-full"><span class="char-emoji text-2xl md:text-3xl">${this.names[id].split(' ')[0]}</span><span class="font-bold text-emerald-400 text-xs md:text-sm">${id}s</span></div>`).join(''); const desktopHTML = `<div class="bridge-layout shadow-2xl relative w-full h-[600px] flex"><div class="cliff-side"><div class="col-span-full text-xs font-black text-slate-500 w-full text-center mb-2 tracking-widest uppercase">VÁCH TRÁI</div>${d(this.L,'L')}</div><div class="bridge-zone"><div class="bridge-cable"></div><div class="lamp-carrier ${this.side==='L'?'pos-left':'pos-right'}"><div class="absolute -top-10 text-4xl animate-pulse">🏮</div>${this.lamp.map(id=>`<div onclick="window.ActiveGame.move(${id},'lamp')" class="char-card bg-amber-900/90 border-amber-500 p-1 rounded-lg text-center z-30 transform hover:scale-110 shadow-xl" style="width:50px; height:50px; min-height:0;"><div class="text-xl">${this.names[id].split(' ')[0]}</div></div>`).join('')}</div><button onclick="window.ActiveGame.go()" class="btn-go-round hover:scale-105">ĐI</button></div><div class="cliff-side right"><div class="col-span-full text-xs font-black text-slate-500 w-full text-center mb-2 tracking-widest uppercase">VÁCH PHẢI</div>${d(this.R,'R')}</div></div>`; const mobileHTML = `<div class="bridge-layout shadow-2xl relative"><div class="cliff-side"><div class="col-span-full text-xs font-black text-slate-500 w-full text-center mb-2 tracking-widest uppercase">VÁCH TRÁI</div>${d(this.L,'L')}</div><div class="bridge-zone"><div class="bridge-track-area w-full md:w-full relative h-full"><div class="bridge-cable"></div><div class="lamp-carrier ${this.side==='L'?'pos-left':'pos-right'}"><div class="absolute -top-10 text-4xl animate-pulse">🏮</div>${this.lamp.map(id=>`<div onclick="window.ActiveGame.move(${id},'lamp')" class="char-card bg-amber-900/90 border-amber-500 p-1 rounded-lg text-center z-30 transform hover:scale-110 shadow-xl" style="width:50px; height:50px; min-height:0;"><div class="text-xl">${this.names[id].split(' ')[0]}</div></div>`).join('')}</div></div></div><div class="cliff-side right"><div class="col-span-full text-xs font-black text-slate-500 w-full text-center mb-2 tracking-widest uppercase">VÁCH PHẢI</div>${d(this.R,'R')}</div><div class="w-full p-4 mt-2 flex justify-center pb-8"><button onclick="window.ActiveGame.go()" class="btn-go-mobile">BĂNG QUA</button></div></div>`; const content = window.innerWidth >= 768 ? desktopHTML : mobileHTML; document.getElementById('game-stage').innerHTML = `<div class="w-full max-w-5xl mx-auto flex flex-col h-full md:justify-center md:pt-10 pb-20">${content}</div>`; } getHint(t){ if(t==='dog') return "Gâu! Để tôi cầm đèn chạy về cho nhanh, tôi chạy có 1 giây thôi!"; if(t==='bear') return "Chiến thuật: Lượt đi quan trọng nhất hãy cho 2 người chậm nhất đi cùng nhau."; if(t==='robo') return "Tính toán: Cần tối ưu lượt đi để giảm tổng thời gian chờ xuống dưới 29s."; return ""; } }
-        class GameCat { constructor(){this.reset()} reset(){this.day=1;this.pos=new Set([1,2,3,4,5]);this.logs=[];this.render()} check(i){if(this.pos.has(i)){if(this.pos.size===1)GameManager.win(this.day<=6);else this.pos.delete(i)}const n=new Set();this.pos.forEach(p=>{if(p>1)n.add(p-1);if(p<5)n.add(p+1)});this.pos=n;this.logs.unshift(`Lần ${this.day}: Hộp ${i} -> Trống.`);this.day++;this.render()} render(){ document.getElementById('game-metric').innerText=`Lần ${this.day}`; const boxes = [1,2,3,4,5].map(i=>`<button onclick="window.ActiveGame.check(${i})" class="box-btn h-24 md:h-40 flex-1 bg-slate-800 border-4 border-slate-600 rounded-2xl text-5xl md:text-7xl font-black text-slate-500 hover:text-indigo-400 hover:border-indigo-500 quantum-active transition-all shadow-xl">${i}</button>`).join(''); const logs = this.logs.map(l=>`<div class="flex justify-between text-sm md:text-base text-slate-400 mb-2 border-b border-slate-800 pb-1 font-mono"><span>${l}</span></div>`).join(''); document.getElementById('game-stage').innerHTML=`<div class="flex flex-col items-center gap-8 w-full max-w-4xl h-full justify-center pt-4 pb-8"><div class="flex gap-3 w-full justify-center">${boxes}</div><div class="text-slate-400 font-mono text-sm mb-2">Khả năng ẩn nấp: <span class="text-indigo-400 font-bold text-2xl">${this.pos.size}</span> vị trí</div><div class="w-full bg-slate-950/50 p-6 rounded-2xl border border-slate-800 h-64 flex-1 overflow-y-auto shadow-inner"><div class="text-xs font-bold text-slate-500 mb-4 uppercase tracking-widest border-b border-slate-800 pb-2 sticky top-0 bg-slate-950/90">LỊCH SỬ MỞ HỘP</div>${logs || '<div class="text-center text-slate-600 italic mt-10 text-lg">Chưa mở hộp nào...</div>'}</div></div>`} getHint(t){ if(t==='dog') return "Gâu! Hắn có mùi ở hộp số 2..."; if(t==='bear') return "Chiến thuật 'Dồn toa': Kiểm tra ô 2, nếu không có, ngày mai hắn chắc chắn ở ô lẻ."; if(t==='robo') return "Dữ liệu: Trạng thái thay đổi luân phiên Chẵn/Lẻ sau mỗi bước."; return ""; } }
-        class GameSpider { constructor(){this.reset()} reset(){this.player=12; this.spider=4; this.moves=15; this.over=false; this.adj = {}; this.adj[0] = [1,2,3,4,5]; for(let r=0; r<4; r++) { for(let ray=0; ray<5; ray++) { const id = 1 + (r*5) + ray; if(!this.adj[id]) this.adj[id] = []; if(ray > 0) this.adj[id].push(id - 1); if(ray < 4) this.adj[id].push(id + 1); if(r===0) { this.adj[id].push(0); } else { this.adj[id].push(id - 5); } if(r<3) { this.adj[id].push(id + 5); } } } this.player = 18; this.spider = 20; document.getElementById('game-stage').innerHTML=`<div class="w-full h-full flex flex-col items-center justify-center p-4"><div class="spider-frame relative"><div class="absolute top-4 left-4 text-white font-bold text-xl z-10 flex items-center gap-2 pointer-events-none"><span class="text-3xl">🕸️</span> Vây Bắt</div><canvas id="spider-canvas" width="600" height="600" class="w-full h-full object-contain"></canvas></div></div>`; this.draw(); } getPos(id){ const cx=300, cy=520; if(id===0) return {x:cx, y:cy}; const val = id-1; const ring = Math.floor(val/5); const ray = val % 5; const maxDists = [300, 420, 480, 420, 300]; const maxDist = maxDists[ray]; const ratio = (ring + 1) / 4; const dist = ratio * maxDist; const startAngle = -150 * (Math.PI/180); const step = 30 * (Math.PI/180); const angle = startAngle + (ray * step); return { x: cx + dist * Math.cos(angle), y: cy + dist * Math.sin(angle) }; } click(e){ if(this.over)return; const canvas = document.getElementById('spider-canvas'); const rect = canvas.getBoundingClientRect(); const scaleX = canvas.width / rect.width; const scaleY = canvas.height / rect.height; const lx = (e.clientX - rect.left) * scaleX; const ly = (e.clientY - rect.top) * scaleY; let bestNode = -1; let minDist = 9999; for(let i=0; i<=20; i++){ const p = this.getPos(i); const dist = Math.hypot(lx-p.x, ly-p.y); if(dist < minDist){ minDist = dist; bestNode = i; } } 
-        /* FIX HITBOX to 50px */ if(bestNode !== -1 && minDist < 50){ if(this.adj[this.player].includes(bestNode)){ this.player = bestNode; playSound('click'); if(this.player===this.spider) this.win(); else { this.moves--; document.getElementById('game-metric').innerText=`${this.moves} bước`; if(this.moves===0) this.fail(); else setTimeout(()=>this.ai(),300) } this.draw() } } } ai(){ if(this.over)return; const nb=this.adj[this.spider]; let best=-1, max=-1; nb.forEach(n=>{ const pp=this.getPos(this.player); const np=this.getPos(n); const d=Math.hypot(pp.x-np.x, pp.y-np.y); if(n!==this.player){ if(d>max){ max=d; best=n; } } }); if(best===-1) best=nb[0]; this.spider=best; playSound('click'); if(this.player===this.spider) this.win(); this.draw(); } win(){this.over=true;GameManager.win(15-this.moves<=10)} fail(){this.over=true;showToast('Thoát!', 'error');playSound('fail')} draw(){ const c=document.getElementById('spider-canvas');if(!c)return;c.onclick=(e)=>this.click(e); const ctx=c.getContext('2d'); ctx.clearRect(0,0,c.width,c.height); const cx=300, cy=520; ctx.lineWidth=2; ctx.strokeStyle='#475569'; for(let r=0; r<4; r++) { ctx.beginPath(); for(let ray=0; ray<5; ray++) { const id = 1 + (r*5) + ray; const p = this.getPos(id); if(ray===0) ctx.moveTo(p.x, p.y); else ctx.lineTo(p.x, p.y); } ctx.stroke(); } for(let ray=0; ray<5; ray++) { ctx.beginPath(); ctx.moveTo(cx, cy); const outerId = 1 + (3*5) + ray; const p = this.getPos(outerId); ctx.lineTo(p.x, p.y); ctx.stroke(); } for(let i=0; i<=20; i++){ const p=this.getPos(i); const isNeighbor = this.adj[this.player].includes(i); ctx.beginPath(); ctx.arc(p.x,p.y, i===0?15:10, 0, 6.28); if(i===this.player) { ctx.fillStyle='#3b82f6'; ctx.shadowBlur=20; ctx.shadowColor='#3b82f6'; } else if(i===this.spider) { ctx.fillStyle='#f472b6'; ctx.shadowBlur=20; ctx.shadowColor='#f472b6'; } else if(isNeighbor) { ctx.fillStyle='#94a3b8'; ctx.shadowBlur=0; } else { ctx.fillStyle='#1e293b'; ctx.shadowBlur=0; } ctx.fill(); if(isNeighbor) { ctx.lineWidth=2; ctx.strokeStyle='white'; ctx.stroke(); } ctx.shadowBlur=0; } ctx.fillStyle = '#ef4444'; ctx.font="bold 12px sans-serif"; ctx.textAlign="center"; ctx.fillText("O", cx, cy+30); } getHint(t){ if(t==='dog') return "Gâu! Chặn đầu nó ở cái vòng ngoài kia kìa!"; if(t==='bear') return "Chiến thuật 'Bao vây': Đi vào trung tâm trước để kiểm soát các hướng ra."; if(t==='robo') return "Dữ liệu: Chiếm lĩnh các điểm trung tâm để thu hẹp vùng di chuyển."; return ""; } }
-        class GameHorses { constructor(){this.reset()} reset(){this.pool=Array.from({length:25},(_,i)=>i+1);this.track=[];this.races=0;let s=[...this.pool];for(let i=24;i>0;i--){const j=Math.floor(Math.random()*(i+1));[s[i],s[j]]=[s[j],s[i]]}this.speeds={};this.pool.forEach((id,i)=>this.speeds[id]=s[i]);this.renderHTML()} renderHTML(){ document.getElementById('game-stage').innerHTML=`<div class="flex flex-col w-full h-full pb-10 px-4 overflow-y-auto pt-6"><div class="bg-slate-800 p-4 rounded-2xl border-2 border-slate-600 min-h-[100px] flex items-center justify-center gap-3 shadow-lg mb-4 sticky top-0 z-10"><div class="text-slate-500 text-xs font-black uppercase mr-2 tracking-widest">ĐƯỜNG ĐUA</div><div id="horse-track-container" class="flex gap-2"></div><button onclick="window.ActiveGame.race()" class="px-6 py-2 bg-pink-600 hover:bg-pink-500 rounded-xl font-black text-white shadow-lg text-sm uppercase tracking-wider active:scale-95">ĐUA</button></div><div class="flex flex-col lg:flex-row gap-6 flex-1"><div class="w-full lg:w-1/2 bg-slate-800 p-4 rounded-2xl border-2 border-slate-600 flex-1 flex-col"><div class="w-full text-slate-500 text-xs font-black uppercase mb-3 border-b border-slate-700 pb-2">TRẠI RỒNG</div><div id="horse-pool-container" class="grid grid-cols-5 gap-3 place-items-center"></div></div><div class="w-full lg:w-1/2 flex flex-col gap-4"><div class="bg-slate-800 p-4 rounded-2xl border-2 border-slate-600 flex-1 min-h-[200px] flex flex-col"><div class="text-xs font-black text-indigo-400 mb-3 uppercase tracking-widest border-b border-indigo-900 pb-2">THÀNH TÍCH</div><div id="horse-logs" class="log-box flex-1 text-base space-y-3"></div></div><div class="p-5 bg-indigo-950/50 border-2 border-indigo-800 rounded-2xl shrink-0"><div class="text-xs font-black text-indigo-400 mb-3 uppercase tracking-widest">DỰ ĐOÁN TOP 3</div><div class="flex space-x-3 mb-4"><input type="number" id="h-pred-1" placeholder="#1" class="bg-slate-900 border-2 border-slate-600 rounded-lg p-3 w-full text-white text-center text-lg font-bold outline-none"><input type="number" id="h-pred-2" placeholder="#2" class="bg-slate-900 border-2 border-slate-600 rounded-lg p-3 w-full text-white text-center text-lg font-bold outline-none"><input type="number" id="h-pred-3" placeholder="#3" class="bg-slate-900 border-2 border-slate-600 rounded-lg p-3 w-full text-white text-center text-lg font-bold outline-none"></div><button onclick="window.ActiveGame.check()" class="w-full py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl text-base uppercase shadow-lg active:scale-95">GỬI KẾT QUẢ</button></div></div></div></div>`; this.updateUI(); } updateUI(){document.getElementById('game-metric').innerText=`Cuộc đua #${this.races}`;document.getElementById('horse-track-container').innerHTML=this.track.map(id=>`<div class="horse" onclick="window.ActiveGame.toggle(${id})">${id}</div>`).join('');document.getElementById('horse-pool-container').innerHTML=this.pool.sort((a,b)=>a-b).map(id=>`<div class="horse bg-slate-700 border-slate-500 text-slate-300 hover:bg-slate-600 hover:border-slate-300" onclick="window.ActiveGame.toggle(${id})">${id}</div>`).join('')} toggle(id){const p=this.pool.indexOf(id);if(p>-1){if(this.track.length<5){this.pool.splice(p,1);this.track.push(id);playSound('click')}}else{const t=this.track.indexOf(id);if(t>-1){this.track.splice(t,1);this.pool.push(id);playSound('click')}}this.pool.sort((a,b)=>a-b);this.updateUI()} race(){if(this.track.length<2)return;this.races++;const r=[...this.track].sort((a,b)=>this.speeds[a]-this.speeds[b]);const l=document.getElementById('horse-logs');l.innerHTML=`<div class="mb-3 pb-2 border-b border-slate-700"><div class="text-pink-400 font-bold mb-1">Cuộc đua #${this.races}</div><div class="text-emerald-400 font-bold text-base tracking-wide">${r.join(' > ')}</div></div>`+l.innerHTML;this.pool.push(...this.track);this.track=[];this.pool.sort((a,b)=>a-b);this.updateUI()} check(){const p1=parseInt(document.getElementById('h-pred-1').value),p2=parseInt(document.getElementById('h-pred-2').value),p3=parseInt(document.getElementById('h-pred-3').value);if(!p1||!p2||!p3){showToast("Nhập đủ 3!", 'warning');return}const s=Object.keys(this.speeds).sort((a,b)=>this.speeds[a]-this.speeds[b]);if(p1==s[0]&&p2==s[1]&&p3==s[2])GameManager.win(this.races<=7);else{playSound('fail');showToast("Sai rồi!", 'error')}} useGlass(){ const l = document.getElementById('horse-logs'); const slowest = Object.keys(this.speeds).sort((a,b)=>this.speeds[b]-this.speeds[a]).slice(0,5); l.innerHTML=`<div class="mb-3 pb-2 border-b border-yellow-500/50 bg-yellow-900/20 p-2 rounded"><div class="text-yellow-400 font-bold mb-1">🔍 KÍNH LÚP PHÁT HIỆN:</div><div class="text-slate-300 text-sm">5 Rồng chậm nhất: ${slowest.join(', ')}</div></div>`+l.innerHTML; } getHint(t){ if(t==='dog') return "Gâu! Mấy con về bét ở vòng loại chắc chắn loại rồi!"; if(t==='bear') return "Đua 5 nhóm đầu. Lấy 5 con nhất đua với nhau (Lần 6). Từ đó loại trừ tiếp."; if(t==='robo') return "Thuật toán: Sử dụng tính chất bắc cầu (A>B, B>C => A>C) để loại bỏ dữ liệu thừa."; return ""; } }
-        class GameBalls { constructor(){this.reset()} reset(){this.pool=Array.from({length:12},(_,i)=>i+1);this.L=[];this.R=[];this.weighs=3;this.fake=Math.floor(Math.random()*12)+1;this.heavy=Math.random()>0.5;this.selPan=null;this.render();
-            /* FIX: Pre-calculate different safe balls for Magnet and Dog */
+        class GameRiver { constructor(){this.reset()} reset(){this.L=[1,3,6,8,12];this.R=[];this.lamp=[];this.side='L';this.time=0;this.names={1:'🐕',3:'👦',6:'🧙‍♂️',8:'🐻',12:'🤖'};this.render()} move(id,loc){if(loc===this.side){if(this.lamp.length<2){this[this.side]=this[this.side].filter(x=>x!==id);this.lamp.push(id);playSound('click')}}else if(loc==='lamp'){this.lamp=this.lamp.filter(x=>x!==id);this[this.side].push(id);playSound('click')}this.render()} go(){if(this.lamp.length===0){showToast('Cần người cầm đèn!', 'error');playSound('fail');return}this.time+=Math.max(...this.lamp);this.side=this.side==='L'?'R':'L';this.render();playSound('click');
+            /* FIX: STRICT FAIL LOGIC */
+            if(this.time > 30) {
+                showToast('Thất bại! Quá 30 giây.', 'error');
+                setTimeout(()=>this.reset(), 1500);
+                return;
+            }
+            if(this.L.length===0&&this.side==='R')setTimeout(()=>GameManager.win(this.time<=29),500)} render(){ document.getElementById('game-metric').innerText=`${this.time}s`; const d=(arr,loc)=>arr.map(id=>`<div onclick="window.ActiveGame.move(${id},'${loc}')" class="char-card bg-slate-700 p-2 rounded-lg border-2 border-slate-500 flex flex-col items-center justify-center shadow-lg cursor-pointer transform active:scale-95 w-full"><span class="char-emoji text-2xl md:text-3xl">${this.names[id].split(' ')[0]}</span><span class="font-bold text-emerald-400 text-xs md:text-sm">${id}s</span></div>`).join(''); const desktopHTML = `<div class="bridge-layout shadow-2xl relative w-full h-[600px] flex"><div class="cliff-side"><div class="col-span-full text-xs font-black text-slate-500 w-full text-center mb-2 tracking-widest uppercase">VÁCH TRÁI</div>${d(this.L,'L')}</div><div class="bridge-zone"><div class="bridge-cable"></div><div class="lamp-carrier ${this.side==='L'?'pos-left':'pos-right'}"><div class="absolute -top-10 text-4xl animate-pulse">🏮</div>${this.lamp.map(id=>`<div onclick="window.ActiveGame.move(${id},'lamp')" class="char-card bg-amber-900/90 border-amber-500 p-1 rounded-lg text-center z-30 transform hover:scale-110 shadow-xl" style="width:50px; height:50px; min-height:0;"><div class="text-xl">${this.names[id].split(' ')[0]}</div></div>`).join('')}</div><button onclick="window.ActiveGame.go()" class="btn-go-round hover:scale-105">ĐI</button></div><div class="cliff-side right"><div class="col-span-full text-xs font-black text-slate-500 w-full text-center mb-2 tracking-widest uppercase">VÁCH PHẢI</div>${d(this.R,'R')}</div></div>`; const mobileHTML = `<div class="bridge-layout shadow-2xl relative"><div class="cliff-side"><div class="col-span-full text-xs font-black text-slate-500 w-full text-center mb-2 tracking-widest uppercase">VÁCH TRÁI</div>${d(this.L,'L')}</div><div class="bridge-zone"><div class="bridge-track-area w-full md:w-full relative h-full"><div class="bridge-cable"></div><div class="lamp-carrier ${this.side==='L'?'pos-left':'pos-right'}"><div class="absolute -top-10 text-4xl animate-pulse">🏮</div>${this.lamp.map(id=>`<div onclick="window.ActiveGame.move(${id},'lamp')" class="char-card bg-amber-900/90 border-amber-500 p-1 rounded-lg text-center z-30 transform hover:scale-110 shadow-xl" style="width:50px; height:50px; min-height:0;"><div class="text-xl">${this.names[id].split(' ')[0]}</div></div>`).join('')}</div></div></div><div class="cliff-side right"><div class="col-span-full text-xs font-black text-slate-500 w-full text-center mb-2 tracking-widest uppercase">VÁCH PHẢI</div>${d(this.R,'R')}</div><div class="w-full p-4 mt-2 flex justify-center pb-8"><button onclick="window.ActiveGame.go()" class="btn-go-mobile">BĂNG QUA</button></div></div>`; const content = window.innerWidth >= 768 ? desktopHTML : mobileHTML; document.getElementById('game-stage').innerHTML = `<div class="w-full max-w-5xl mx-auto flex flex-col h-full md:justify-center md:pt-10 pb-20">${content}</div>`; } getHint(t){ if(t==='dog') return "Gâu! Để tôi cầm đèn chạy về cho nhanh, tôi chạy có 1 giây thôi!"; if(t==='bear') return "Chiến thuật: Lượt đi quan trọng nhất hãy cho 2 người chậm nhất đi cùng nhau."; if(t==='robo') return "Tính toán: Cần tối ưu lượt đi để giảm tổng thời gian chờ xuống dưới 29s."; return ""; } }
+        class GameCat { constructor(){this.reset()} reset(){this.day=1;this.pos=new Set([1,2,3,4,5]);this.logs=[];this.render()} check(i){if(this.pos.has(i)){if(this.pos.size===1)GameManager.win(this.day<=6);else this.pos.delete(i)}const n=new Set();this.pos.forEach(p=>{if(p>1)n.add(p-1);if(p<5)n.add(p+1)});this.pos=n;this.logs.unshift(`Lần ${this.day}: Hộp ${i} -> Trống.`);this.day++;this.render(); if(this.day > 10) { showToast("Thất bại! Quá 10 ngày.", "error"); setTimeout(()=>this.giveUp(), 1500); }} 
+        giveUp(){
+            /* LOGIC: GENERATE VALID PATH */
+            let path = [];
+            let current = Array.from(this.pos)[0] || 1; // Pick a possible position
+            // Generate backwards to Day 1 for visual effect, but here we just show a valid sequence
+            // Simpler: Show one possible current position and movement rule
+            let sequence = [current];
+            for(let i=0; i<5; i++) {
+                let next = (current === 1) ? 2 : (current === 5) ? 4 : (Math.random()>0.5 ? current-1 : current+1);
+                sequence.push(next);
+                current = next;
+            }
+            this.logs.unshift(`<div class="text-amber-500 font-bold">GAVE UP. Mèo đã đi: ${sequence.join(" -> ")}...</div>`);
+            this.render();
+            setTimeout(()=>this.reset(), 4000);
+        }
+        render(){ document.getElementById('game-metric').innerText=`Lần ${this.day}`; const boxes = [1,2,3,4,5].map(i=>`<button onclick="window.ActiveGame.check(${i})" class="box-btn h-24 md:h-40 flex-1 bg-slate-800 border-4 border-slate-600 rounded-2xl text-5xl md:text-7xl font-black text-slate-500 hover:text-indigo-400 hover:border-indigo-500 quantum-active transition-all shadow-xl">${i}</button>`).join(''); const logs = this.logs.map(l=>`<div class="flex justify-between text-sm md:text-base text-slate-400 mb-2 border-b border-slate-800 pb-1 font-mono"><span>${l}</span></div>`).join(''); document.getElementById('game-stage').innerHTML=`<div class="flex flex-col items-center gap-8 w-full max-w-4xl h-full justify-center pt-4 pb-8"><div class="flex gap-3 w-full justify-center">${boxes}</div><div class="text-slate-400 font-mono text-sm mb-2">Khả năng ẩn nấp: <span class="text-indigo-400 font-bold text-2xl">${this.pos.size}</span> vị trí</div><div class="w-full bg-slate-950/50 p-6 rounded-2xl border border-slate-800 h-64 flex-1 overflow-y-auto shadow-inner"><div class="text-xs font-bold text-slate-500 mb-4 uppercase tracking-widest border-b border-slate-800 pb-2 sticky top-0 bg-slate-950/90">LỊCH SỬ MỞ HỘP</div>${logs || '<div class="text-center text-slate-600 italic mt-10 text-lg">Chưa mở hộp nào...</div>'}</div></div>`} getHint(t){ if(t==='dog') return "Gâu! Hắn có mùi ở hộp số 2..."; if(t==='bear') return "Chiến thuật 'Dồn toa': Kiểm tra ô 2, nếu không có, ngày mai hắn chắc chắn ở ô lẻ."; if(t==='robo') return "Dữ liệu: Trạng thái thay đổi luân phiên Chẵn/Lẻ sau mỗi bước."; return ""; } }
+        class GameSpider { 
+            constructor(){this.reset()} 
+            reset(){
+                this.player=12; this.spider=4; this.moves=15; this.over=false; this.adj = {}; this.adj[0] = [1,2,3,4,5]; 
+                for(let r=0; r<4; r++) { for(let ray=0; ray<5; ray++) { const id = 1 + (r*5) + ray; if(!this.adj[id]) this.adj[id] = []; if(ray > 0) this.adj[id].push(id - 1); if(ray < 4) this.adj[id].push(id + 1); if(r===0) { this.adj[id].push(0); } else { this.adj[id].push(id - 5); } if(r<3) { this.adj[id].push(id + 5); } } } 
+                this.player = 18; this.spider = 20; 
+                document.getElementById('game-stage').innerHTML=`<div class="w-full h-full flex flex-col items-center justify-center p-4" style="touch-action:none; overflow:hidden;"><div class="spider-frame relative w-full h-full flex items-center justify-center" id="spider-wrapper"><div class="absolute top-4 left-4 text-white font-bold text-xl z-10 flex items-center gap-2 pointer-events-none"><span class="text-3xl">🕸️</span> Vây Bắt</div><canvas id="spider-canvas" width="600" height="600" style="max-width:100%; max-height:100%; object-fit:contain"></canvas></div></div>`; 
+                this.draw(); 
+                this.initPanZoom();
+            } 
+            
+            initPanZoom() {
+                const wrapper = document.getElementById('spider-wrapper');
+                const canvas = document.getElementById('spider-canvas');
+                let scale = 1, panning = false, pointX = 0, pointY = 0, start = { x: 0, y: 0 };
+                wrapper.onmousedown = (e) => { e.preventDefault(); start = { x: e.clientX - pointX, y: e.clientY - pointY }; panning = true; }
+                wrapper.onmouseup = () => { panning = false; }
+                wrapper.onmousemove = (e) => { if (!panning) return; e.preventDefault(); pointX = (e.clientX - start.x); pointY = (e.clientY - start.y); canvas.style.transform = `translate(${pointX}px, ${pointY}px) scale(${scale})`; }
+                wrapper.addEventListener('wheel', (e) => { e.preventDefault(); scale += e.deltaY * -0.001; scale = Math.min(Math.max(.5, scale), 3); canvas.style.transform = `translate(${pointX}px, ${pointY}px) scale(${scale})`; });
+            }
+            
+            // BFS Algorithm
+            getDist(start, end) {
+                let q = [[start, 0]]; let visited = new Set([start]);
+                while(q.length > 0) {
+                    let [node, d] = q.shift();
+                    if(node === end) return d;
+                    (this.adj[node]||[]).forEach(n => {
+                        if(!visited.has(n)) { visited.add(n); q.push([n, d+1]); }
+                    });
+                }
+                return 999;
+            }
+
+            getPos(id){ const cx=300, cy=520; if(id===0) return {x:cx, y:cy}; const val = id-1; const ring = Math.floor(val/5); const ray = val % 5; const maxDists = [300, 420, 480, 420, 300]; const maxDist = maxDists[ray]; const ratio = (ring + 1) / 4; const dist = ratio * maxDist; const startAngle = -150 * (Math.PI/180); const step = 30 * (Math.PI/180); const angle = startAngle + (ray * step); return { x: cx + dist * Math.cos(angle), y: cy + dist * Math.sin(angle) }; } 
+            
+            getMousePos(canvas, evt) {
+                var rect = canvas.getBoundingClientRect();
+                return { x: (evt.clientX - rect.left) * (canvas.width / rect.width), y: (evt.clientY - rect.top) * (canvas.height / rect.height) };
+            }
+
+            click(e){ 
+                if(this.over)return; 
+                const canvas = document.getElementById('spider-canvas');
+                const pos = this.getMousePos(canvas, e);
+                let bestNode = -1; let minDist = 9999; 
+                for(let i=0; i<=20; i++){ const p = this.getPos(i); const dist = Math.hypot(pos.x-p.x, pos.y-p.y); if(dist < minDist){ minDist = dist; bestNode = i; } } 
+                /* FIX HITBOX to 40px */ 
+                if(bestNode !== -1 && minDist < 40){ 
+                    if(this.adj[this.player].includes(bestNode)){ 
+                        this.player = bestNode; playSound('click'); 
+                        if(this.player===this.spider) this.win(); 
+                        else { this.moves--; document.getElementById('game-metric').innerText=`${this.moves} bước`; if(this.moves===0) this.fail(); else setTimeout(()=>this.ai(),300) } 
+                        this.draw() 
+                    } 
+                } 
+            } 
+            ai(){ 
+                if(this.over)return; 
+                const nb=this.adj[this.spider]; 
+                let best=-1, maxDist=-1; 
+                nb.forEach(n=>{ 
+                    const d = this.getDist(n, this.player); // Use BFS Distance
+                    if(n!==this.player){ if(d > maxDist){ maxDist = d; best = n; } } 
+                }); 
+                if(best===-1) best=nb[0]; 
+                this.spider=best; playSound('click'); 
+                if(this.player===this.spider) this.win(); 
+                this.draw(); 
+            } 
+            win(){this.over=true;GameManager.win(15-this.moves<=10)} 
+            fail(){this.over=true;showToast('Thoát!', 'error');playSound('fail')} 
+            draw(){ 
+                const cvs=document.getElementById('spider-canvas'); if(!cvs)return;
+                cvs.width = 600; cvs.height = 600; cvs.onclick=(e)=>this.click(e); 
+                const ctx=cvs.getContext('2d'); ctx.clearRect(0,0,600,600); 
+                const cx=300, cy=520; ctx.lineWidth=2; ctx.strokeStyle='#475569'; 
+                for(let r=0; r<4; r++) { ctx.beginPath(); for(let ray=0; ray<5; ray++) { const id = 1 + (r*5) + ray; const p = this.getPos(id); if(ray===0) ctx.moveTo(p.x, p.y); else ctx.lineTo(p.x, p.y); } ctx.stroke(); } 
+                for(let ray=0; ray<5; ray++) { ctx.beginPath(); ctx.moveTo(cx, cy); const outerId = 1 + (3*5) + ray; const p = this.getPos(outerId); ctx.lineTo(p.x, p.y); ctx.stroke(); } 
+                for(let i=0; i<=20; i++){ const p=this.getPos(i); const isNeighbor = this.adj[this.player].includes(i); ctx.beginPath(); ctx.arc(p.x,p.y, i===0?15:10, 0, 6.28); if(i===this.player) { ctx.fillStyle='#3b82f6'; ctx.shadowBlur=20; ctx.shadowColor='#3b82f6'; } else if(i===this.spider) { ctx.fillStyle='#f472b6'; ctx.shadowBlur=20; ctx.shadowColor='#f472b6'; } else if(isNeighbor) { ctx.fillStyle='#94a3b8'; ctx.shadowBlur=0; } else { ctx.fillStyle='#1e293b'; ctx.shadowBlur=0; } ctx.fill(); if(isNeighbor) { ctx.lineWidth=2; ctx.strokeStyle='white'; ctx.stroke(); } ctx.shadowBlur=0; } ctx.fillStyle = '#ef4444'; ctx.font="bold 12px sans-serif"; ctx.textAlign="center"; ctx.fillText("O", cx, cy+30); 
+            } 
+            getHint(t){ if(t==='dog') return "Gâu! Chặn đầu nó ở cái vòng ngoài kia kìa!"; if(t==='bear') return "Chiến thuật 'Bao vây': Đi vào trung tâm trước để kiểm soát các hướng ra."; if(t==='robo') return "Dữ liệu: Chiếm lĩnh các điểm trung tâm để thu hẹp vùng di chuyển."; return ""; } 
+        }
+        class GameHorses { 
+            constructor(){this.reset()} 
+            reset(){
+                this.track=[];this.races=0;
+                this.pool=Array.from({length:25},(_,i)=>i+1);
+                // RIGGED LOGIC: Put #1 and #2 in SAME initial group
+                let s=Array.from({length:25},(_,i)=>i+1); 
+                let group = Math.floor(Math.random()*5); 
+                let idx1 = group*5 + Math.floor(Math.random()*5);
+                let idx2 = group*5 + Math.floor(Math.random()*5);
+                while(idx1 === idx2) idx2 = group*5 + Math.floor(Math.random()*5); // Ensure distinct positions in same group
+                
+                let temp = [...s];
+                temp = temp.filter(x => x!==1 && x!==2);
+                for(let i=temp.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[temp[i],temp[j]]=[temp[j],temp[i]]}
+                
+                this.speeds = {};
+                let tempIdx = 0;
+                for(let i=0; i<25; i++) {
+                    if(i === idx1) this.speeds[i+1] = 1;
+                    else if (i === idx2) this.speeds[i+1] = 2;
+                    else this.speeds[i+1] = temp[tempIdx++];
+                }
+                this.renderHTML();
+            } 
+            renderHTML(){ document.getElementById('game-stage').innerHTML=`<div class="flex flex-col w-full h-full pb-10 px-4 overflow-y-auto pt-6"><div class="bg-slate-800 p-4 rounded-2xl border-2 border-slate-600 min-h-[100px] flex items-center justify-center gap-3 shadow-lg mb-4 sticky top-0 z-10"><div class="text-slate-500 text-xs font-black uppercase mr-2 tracking-widest">ĐƯỜNG ĐUA</div><div id="horse-track-container" class="flex gap-2"></div><button onclick="window.ActiveGame.race()" class="px-6 py-2 bg-pink-600 hover:bg-pink-500 rounded-xl font-black text-white shadow-lg text-sm uppercase tracking-wider active:scale-95">ĐUA</button></div><div class="flex flex-col lg:flex-row gap-6 flex-1"><div class="w-full lg:w-1/2 bg-slate-800 p-4 rounded-2xl border-2 border-slate-600 flex-1 flex-col"><div class="w-full text-slate-500 text-xs font-black uppercase mb-3 border-b border-slate-700 pb-2">TRẠI RỒNG</div><div id="horse-pool-container" class="grid grid-cols-5 gap-3 place-items-center"></div></div><div class="w-full lg:w-1/2 flex flex-col gap-4"><div class="bg-slate-800 p-4 rounded-2xl border-2 border-slate-600 flex-1 min-h-[200px] flex flex-col"><div class="text-xs font-black text-indigo-400 mb-3 uppercase tracking-widest border-b border-indigo-900 pb-2">THÀNH TÍCH</div><div id="horse-logs" class="log-box flex-1 text-base space-y-3"></div></div><div class="p-5 bg-indigo-950/50 border-2 border-indigo-800 rounded-2xl shrink-0"><div class="text-xs font-black text-indigo-400 mb-3 uppercase tracking-widest">DỰ ĐOÁN TOP 3</div><div class="flex space-x-3 mb-4"><input type="number" id="h-pred-1" placeholder="#1" class="bg-slate-900 border-2 border-slate-600 rounded-lg p-3 w-full text-white text-center text-lg font-bold outline-none"><input type="number" id="h-pred-2" placeholder="#2" class="bg-slate-900 border-2 border-slate-600 rounded-lg p-3 w-full text-white text-center text-lg font-bold outline-none"><input type="number" id="h-pred-3" placeholder="#3" class="bg-slate-900 border-2 border-slate-600 rounded-lg p-3 w-full text-white text-center text-lg font-bold outline-none"></div><button onclick="window.ActiveGame.check()" class="w-full py-3 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl text-base uppercase shadow-lg active:scale-95">GỬI KẾT QUẢ</button></div></div></div></div>`; this.updateUI(); } updateUI(){document.getElementById('game-metric').innerText=`Cuộc đua #${this.races}`;document.getElementById('horse-track-container').innerHTML=this.track.map(id=>`<div class="horse" onclick="window.ActiveGame.toggle(${id})">${id}</div>`).join('');document.getElementById('horse-pool-container').innerHTML=this.pool.sort((a,b)=>a-b).map(id=>`<div class="horse bg-slate-700 border-slate-500 text-slate-300 hover:bg-slate-600 hover:border-slate-300" onclick="window.ActiveGame.toggle(${id})">${id}</div>`).join('')} toggle(id){const p=this.pool.indexOf(id);if(p>-1){if(this.track.length<5){this.pool.splice(p,1);this.track.push(id);playSound('click')}}else{const t=this.track.indexOf(id);if(t>-1){this.track.splice(t,1);this.pool.push(id);playSound('click')}}this.pool.sort((a,b)=>a-b);this.updateUI()} race(){
+                if(this.races >= 7) { showToast("Hết lượt đua (Max 7)", "error"); return; }
+                if(this.track.length<2)return;
+                this.races++;
+                const r=[...this.track].sort((a,b)=>this.speeds[a]-this.speeds[b]);
+                const l=document.getElementById('horse-logs');
+                l.innerHTML=`<div class="mb-3 pb-2 border-b border-slate-700"><div class="text-pink-400 font-bold mb-1">Race #${this.races}</div><div class="flex flex-wrap gap-2 text-xs text-white">${r.map((h,i)=>`<span class="${i===0?'text-emerald-400 font-bold':''}">#${i+1}: ${h}</span>`).join('<span class="text-slate-500 mx-1">|</span>')}</div></div>`+l.innerHTML;
+                this.pool.push(...this.track);this.track=[];this.updateUI();
+            } 
+            check(){const p1=parseInt(document.getElementById('h-pred-1').value),p2=parseInt(document.getElementById('h-pred-2').value),p3=parseInt(document.getElementById('h-pred-3').value);if(!p1||!p2||!p3){showToast("Nhập đủ 3!", 'warning');return}const s=Object.keys(this.speeds).sort((a,b)=>this.speeds[a]-this.speeds[b]);if(p1==s[0]&&p2==s[1]&&p3==s[2])GameManager.win(this.races<=7);else{playSound('fail');showToast("Sai rồi!", 'error')}} 
+            useGlass(){ const l = document.getElementById('horse-logs'); const slowest = Object.keys(this.speeds).sort((a,b)=>this.speeds[b]-this.speeds[a]).slice(0,5); l.innerHTML=`<div class="mb-3 pb-2 border-b border-yellow-500/50 bg-yellow-900/20 p-2 rounded"><div class="text-yellow-400 font-bold mb-1">🔍 KÍNH LÚP PHÁT HIỆN:</div><div class="text-slate-300 text-sm">5 Rồng chậm nhất: ${slowest.join(', ')}</div></div>`+l.innerHTML; } 
+            getHint(t){ if(t==='dog') return "Gâu! Mấy con về bét ở vòng loại chắc chắn loại rồi!"; if(t==='bear') return "Đua 5 nhóm đầu. Lấy 5 con nhất đua với nhau (Lần 6). Từ đó loại trừ tiếp."; if(t==='robo') return "Thuật toán: Sử dụng tính chất bắc cầu (A>B, B>C => A>C) để loại bỏ dữ liệu thừa."; return ""; } 
+        }
+        class GameBalls { constructor(){this.reset()} reset(){this.pool=Array.from({length:12},(_,i)=>i+1);this.L=[];this.R=[];this.weighs=3;
+            // FIX: RANDOM FAKE 3-10
+            this.fake=Math.floor(Math.random()*8)+3; 
+            this.heavy=Math.random()>0.5;this.selPan=null;this.render();
+            /* LOGIC: Magnet finds Safe1, Dog finds Safe2. Ensure Safe1 != Safe2 != Fake */
             let safe1, safe2;
             do { safe1 = Math.floor(Math.random() * 12) + 1; } while (safe1 === this.fake);
             do { safe2 = Math.floor(Math.random() * 12) + 1; } while (safe2 === this.fake || safe2 === safe1);
@@ -296,12 +429,7 @@
                     usedSkills: this.usedSkills, usedItems: this.usedItems
                 }));
             },
-            resetJourney(){
-                // NEW: Reset Function
-                openModal('reset-modal');
-            },
             confirmReset(){
-                // NEW: Clear and Reload
                 localStorage.removeItem('an_v248_save');
                 location.reload();
             },
@@ -351,7 +479,7 @@
                 
                 // NEW: Add Reset Button to Mobile Menu
                 if(mob) {
-                    mob.innerHTML += `<div class="mt-6 pt-4 border-t border-slate-800"><button onclick="GameManager.resetJourney()" class="w-full py-3 bg-red-900/30 hover:bg-red-900/50 text-red-400 font-bold rounded-lg flex items-center justify-center gap-2"><span>🗑️</span> XÓA HÀNH TRÌNH</button></div>`;
+                    mob.innerHTML += `<div class="mt-6 pt-4 border-t border-slate-800"><button onclick="openModal('reset-modal')" class="w-full py-3 bg-red-900/30 hover:bg-red-900/50 text-red-400 font-bold rounded-lg flex items-center justify-center gap-2"><span>🗑️</span> XÓA HÀNH TRÌNH</button></div>`;
                 }
             },
             useItem(itemId) {
@@ -382,9 +510,19 @@
             },
             loadContent(){
                 const d=STORY[this.idx];
-                if (d.id === 'intro') { document.body.classList.add('intro-active'); forceCollapseStory(); } 
-                else { document.body.classList.remove('intro-active'); }
+                
+                // --- SPECIAL HANDLING FOR START PAGE ---
+                if (d.id === 'intro') {
+                    document.body.classList.add('intro-active');
+                    // Force expand accordion
+                    const wrap = document.getElementById('story-content-wrapper');
+                    wrap.classList.remove('accordion-collapsed');
+                    wrap.classList.add('accordion-expanded');
+                } else {
+                    document.body.classList.remove('intro-active');
+                }
 
+                // Update text content
                 if (document.getElementById('chapter-tag-mobile')) document.getElementById('chapter-tag-mobile').innerText = d.title.split(':')[0];
                 if (document.getElementById('story-title-mobile')) document.getElementById('story-title-mobile').innerText = d.title.split(':')[1] || d.title;
                 if (document.getElementById('part-tag')) document.getElementById('part-tag').innerText=d.part;
@@ -430,7 +568,10 @@
                 
                 const gw=document.getElementById('game-container'),ph=document.getElementById('placeholder');
                 const b1=document.getElementById('btn-play');
-                if(gw) gw.classList.add('hidden'); if(ph) ph.classList.remove('hidden');
+                
+                // Hide Game Container initially
+                if(gw) gw.classList.add('hidden'); 
+                if(ph) ph.classList.remove('hidden');
                 
                 const vic = document.getElementById('victory-overlay');
                 // CLEANUP OVERLAY STATE ON LOAD
@@ -446,37 +587,28 @@
                     document.body.classList.add('desktop-game-active');
                     const wrap = document.getElementById('story-content-wrapper');
                     const id = document.getElementById('accordion-icon-desktop');
-                    if(wrap) { wrap.classList.remove('accordion-collapsed'); wrap.classList.add('accordion-expanded'); }
+                    if(wrap) {
+                        wrap.classList.remove('accordion-collapsed');
+                        wrap.classList.add('accordion-expanded');
+                    }
                     if(id) id.innerText='▲ Thu gọn';
                 } else {
                     document.body.classList.remove('desktop-game-active');
+                    // On Mobile: Intro handled above. For C1+, auto collapse handled in playLevel
                 }
 
-                if (d.id === 'c1' && !this.visited['c1']) {
-                     const storyHTML = `<div class="max-w-2xl bg-slate-900 p-8 rounded-2xl border border-slate-700 shadow-2xl relative animate-fade-in mx-4"><div class="text-xs font-black text-indigo-400 uppercase tracking-widest mb-4">CHƯƠNG 1</div><h2 class="text-3xl font-serif font-bold text-white mb-4">${d.title.split(':')[1]}</h2><div class="text-slate-300 text-base leading-relaxed mb-8 max-h-[60vh] overflow-y-auto">${d.text}</div><button onclick="GameManager.closeStoryOverlay()" class="w-full py-4 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl uppercase tracking-wider transition-transform active:scale-95">TIẾP TỤC</button></div>`;
-                     vic.innerHTML = storyHTML; 
-                     vic.classList.add('victory-visible'); 
-                     vic.classList.add('is-story-overlay'); 
-                     vic.style.pointerEvents = 'auto';
-                     this.visited['c1'] = true; this.save();
+                // Auto-Play logic for non-text levels
+                if(d.type!=='text'){
+                      this.playLevel(); 
                 }
 
-                if(d.type!=='text'){ this.playLevel(); }
-                if(d.type==='text'){ if(b1) {b1.classList.remove('hidden');b1.innerText="BẮT ĐẦU";} }else{ if(b1) {b1.classList.remove('hidden');b1.innerText="BẮT ĐẦU / TIẾP TỤC";} }
+                if(d.type==='text'){
+                    if(b1) {b1.classList.remove('hidden');b1.innerText="BẮT ĐẦU";}
+                }else{
+                    if(b1) {b1.classList.remove('hidden');b1.innerText="BẮT ĐẦU / TIẾP TỤC";}
+                }
+                
                 setTimeout(() => { this.isTransitioning = false; }, 500);
-            },
-            switchTab(tab) {
-                if(tab === 'dog' && !this.unlockedCompanions.has('dog')) return;
-                if(tab === 'robo' && !this.unlockedCompanions.has('robo')) return;
-                if(tab === 'bear' && !this.unlockedCompanions.has('bear')) return;
-                
-                document.querySelectorAll('.hint-tab').forEach(t => t.classList.remove('active'));
-                document.querySelectorAll('.hint-content').forEach(c => c.classList.remove('active'));
-                
-                if(tab === 'basic') { document.querySelector('.hint-tab:nth-child(1)').classList.add('active'); document.getElementById('hint-content-basic').classList.add('active'); }
-                if(tab === 'dog') { document.getElementById('tab-dog').classList.add('active'); document.getElementById('hint-content-dog').classList.add('active'); }
-                if(tab === 'bear') { document.getElementById('tab-bear').classList.add('active'); document.getElementById('hint-content-bear').classList.add('active'); }
-                if(tab === 'robo') { document.getElementById('tab-robo').classList.add('active'); document.getElementById('hint-content-robo').classList.add('active'); }
             },
             closeStoryOverlay() { 
                 const vic = document.getElementById('victory-overlay'); 
@@ -487,14 +619,18 @@
             },
             playLevel(){
                 const d=STORY[this.idx];
+                
+                // --- FORCE COLLAPSE STORY ON BUTTON CLICK ---
                 forceCollapseStory();
+
                 if(d.type==='text'){this.next();return}
+                
                 document.getElementById('game-container').classList.remove('hidden');
                 document.getElementById('placeholder').classList.add('hidden');
                 if (document.getElementById('game-msg')) document.getElementById('game-msg').innerText="";
+
                 if(window.ActiveGame && window.ActiveGame.reset) window.ActiveGame = null;
-                
-                // Init Game first so hints work
+
                 if(d.game==='switches')window.ActiveGame=new GameSwitches();
                 if(d.game==='jugs')window.ActiveGame=new GameJugs();
                 if(d.game==='graph')window.ActiveGame=new GameGraph();
@@ -504,11 +640,12 @@
                 if(d.game==='horses')window.ActiveGame=new GameHorses();
                 if(d.game==='balls')window.ActiveGame=new GameBalls();
                 
-                this.renderSidebar(); 
+                this.renderSidebar(); // Re-render for active items
             },
             skip(){showToast("Đã bỏ qua màn chơi!", 'warning');this.win(false)},
             win(opt){
                 if(this.isTransitioning) return; 
+
                 playSound('win');
                 const d=STORY[this.idx];
                 this.progress[d.id]={done:true,opt:opt};
@@ -524,18 +661,50 @@
                 
                 const nextTitle = STORY[this.idx+1] ? STORY[this.idx+1].title : "KẾT THÚC";
                 const nextText = STORY[this.idx+1] ? STORY[this.idx+1].text : "Bạn đã hoàn thành hành trình!";
-                const overlayHTML = `<div class="animate-bounce text-6xl mb-4">🎉</div><h2 class="text-4xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-cyan-400 mb-2">CHIẾN THẮNG!</h2><p class="text-slate-300 text-lg mb-8 font-medium">${opt ? "Xuất sắc! +1 Bánh Răng Vàng ⚙️" : "Hoàn thành! (Chưa tối ưu)"}</p><div class="bg-slate-800 p-6 rounded-2xl border border-slate-700 max-w-lg w-full text-left mb-8 shadow-2xl transform rotate-1 overflow-y-auto max-h-[40vh]"><div class="text-[10px] font-black text-indigo-400 uppercase tracking-widest mb-2">CHƯƠNG TIẾP THEO</div><div class="text-xl font-bold text-white mb-2">${nextTitle}</div><p class="text-slate-400 text-sm leading-relaxed">${nextText}</p></div><button onclick="GameManager.next()" class="px-10 py-4 bg-white text-black font-black text-xl rounded-full shadow-[0_0_30px_rgba(255,255,255,0.3)] hover:scale-105 transition-transform flex items-center gap-2 group">TIẾP TỤC <span class="group-hover:translate-x-1 transition-transform">➜</span></button><div class="mt-4 text-xs text-slate-500 font-mono">Nhấn Enter để tiếp tục</div>`;
-                const vic = document.getElementById('victory-overlay'); vic.innerHTML = overlayHTML; vic.classList.add('victory-visible'); vic.style.pointerEvents = 'auto';
+                
+                const overlayHTML = `
+                <div class="animate-bounce text-6xl mb-4">🎉</div>
+                <h2 class="text-4xl md:text-5xl font-black text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-cyan-400 mb-2">CHIẾN THẮNG!</h2>
+                <p class="text-slate-300 text-lg mb-8 font-medium">${opt ? "Xuất sắc! +1 Bánh Răng Vàng ⚙️" : "Hoàn thành! (Chưa tối ưu)"}</p>
+                
+                <div class="bg-slate-800 p-6 rounded-2xl border border-slate-700 max-w-lg w-full text-left mb-8 shadow-2xl transform rotate-1 overflow-y-auto max-h-[40vh]">
+                    <div class="text-[10px] font-black text-indigo-400 uppercase tracking-widest mb-2">CHƯƠNG TIẾP THEO</div>
+                    <div class="text-xl font-bold text-white mb-2">${nextTitle}</div>
+                    <p class="text-slate-400 text-sm leading-relaxed">${nextText}</p>
+                </div>
+
+                <button onclick="GameManager.next()" class="px-10 py-4 bg-white text-black font-black text-xl rounded-full shadow-[0_0_30px_rgba(255,255,255,0.3)] hover:scale-105 transition-transform flex items-center gap-2 group">
+                    TIẾP TỤC <span class="group-hover:translate-x-1 transition-transform">➜</span>
+                </button>
+                <div class="mt-4 text-xs text-slate-500 font-mono">Nhấn Enter để tiếp tục</div>
+                `;
+                
+                const vic = document.getElementById('victory-overlay');
+                vic.innerHTML = overlayHTML;
+                vic.classList.add('victory-visible');
+                vic.style.pointerEvents = 'auto'; // Enable pointer events for buttons
             },
             next(){
                 if(this.isTransitioning) return;
                 this.isTransitioning = true;
-                const vic = document.getElementById('victory-overlay'); vic.classList.remove('victory-visible'); vic.style.pointerEvents = 'none';
-                if(this.idx<STORY.length-1){ this.idx++; this.save(); this.loadContent(); } else { this.ending(); }
+
+                const vic = document.getElementById('victory-overlay');
+                vic.classList.remove('victory-visible');
+                vic.style.pointerEvents = 'none';
+                
+                if(this.idx<STORY.length-1){
+                    this.idx++;
+                    this.save();
+                    this.loadContent();
+                } else {
+                    this.ending();
+                }
             },
             jump(i){
                 const prev=STORY[i-1];if((i===0)||(prev&&this.progress[prev.id]?.done)||this.progress[STORY[i].id]?.done){
-                    this.idx=i; this.loadContent(); document.getElementById('mobile-menu').classList.add('hidden');
+                    this.idx=i;
+                    this.loadContent();
+                    document.getElementById('mobile-menu').classList.add('hidden');
                 }
             },
             ending(){
@@ -566,7 +735,6 @@
             }
         };
         
-        // FIXED ENTER KEY LOGIC
         document.addEventListener('keydown', (e) => {
             if(e.key === 'Enter' && !GameManager.isTransitioning) {
                 const overlay = document.getElementById('victory-overlay');
