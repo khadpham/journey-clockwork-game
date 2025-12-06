@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Hành Trình Của An - v54.0 Rank & Polish</title>
+    <title>Hành Trình Của An - v57.2 Rollback & Stable</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&family=Merriweather:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
     <style>
@@ -36,6 +36,18 @@
         .modal { display: none; position: fixed; z-index: 100; inset: 0; background-color: rgba(0,0,0,0.9); backdrop-filter: blur(5px); align-items: center; justify-content: center; padding: 16px; }
         .modal-content { background-color: #1e293b; border: 1px solid #334155; border-radius: 1rem; max-width: 600px; width: 100%; max-height: 85vh; overflow-y: auto; animation: zoomIn 0.2s ease-out; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); display: flex; flex-direction: column; }
 
+        /* SIDEBAR COLLAPSED LOGIC */
+        .sidebar-collapsed { width: 80px !important; }
+        .sidebar-collapsed .nav-text { display: none !important; }
+        .sidebar-collapsed .sidebar-header-content { display: none !important; }
+        .sidebar-collapsed .nav-item { justify-content: center !important; padding: 12px 0 !important; }
+        .sidebar-collapsed .nav-icon { margin: 0 !important; font-size: 1.5rem !important; }
+        .sidebar-collapsed #inventory-section-content { display: none !important; }
+        .sidebar-collapsed #btn-reset-journey span { display: inline-block; font-size: 1.2rem; }
+        .sidebar-collapsed #btn-reset-journey { padding: 10px 0; justify-content: center; }
+        .sidebar-collapsed #btn-reset-text { display: none; }
+        .sidebar-collapsed #toggle-sidebar-btn { transform: rotate(180deg); }
+
         /* ITEM & SKILL STYLES */
         .item-slot { width: 40px; height: 40px; border-radius: 8px; background: #1e293b; border: 1px solid #475569; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; cursor: pointer; transition: all 0.2s; position: relative; }
         .item-slot:hover { background: #334155; border-color: #94a3b8; transform: translateY(-2px); }
@@ -62,6 +74,7 @@
         @media (max-width: 767px) { 
             .bridge-layout { flex-direction: column; height: auto; min-height: auto; border: none; background: transparent; overflow: visible; gap: 4px; } 
             .cliff-side { width: 100%; height: auto; min-height: 70px; border: 2px solid #334155; border-radius: 12px; background: #1e293b; padding: 8px; margin: 0; display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px; } 
+            /* COMPACT BRIDGE ZONE (180px) */
             .bridge-zone { min-height: 180px; border: 2px solid #334155; border-radius: 12px; background: linear-gradient(180deg, #0f172a 0%, #1e293b 100%); margin: 0; display: flex; flex-direction: column; justify-content: center; } 
             .bridge-zone .btn-go-round { display: none; } 
             .mobile-action-bar { margin-top: 0px; padding: 0; display: flex; justify-content: center; } 
@@ -88,23 +101,31 @@
     <div id="toast-container"></div>
 
     <!-- SIDEBAR -->
-    <aside class="hidden md:flex flex-col w-72 bg-slate-900 border-r border-slate-800 h-full shrink-0 z-30">
-        <div class="p-6 border-b border-slate-800">
-            <h1 class="text-lg font-black text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-cyan-400">HÀNH TRÌNH CỦA AN</h1>
-            <div class="text-[10px] text-slate-500 font-bold mt-1 tracking-widest">v54.0 RANK & POLISH</div>
+    <aside id="desktop-sidebar" class="hidden md:flex flex-col w-72 bg-slate-900 border-r border-slate-800 h-full shrink-0 z-30 transition-all duration-300 relative">
+        <div class="p-6 border-b border-slate-800 flex justify-between items-center overflow-hidden h-[80px]">
+            <div class="sidebar-header-content">
+                <h1 id="app-title" class="text-lg font-black text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-cyan-400 whitespace-nowrap">HÀNH TRÌNH CỦA AN</h1>
+                <div class="text-[10px] text-slate-500 font-bold mt-1 tracking-widest">v57.2 ROLLBACK</div>
+            </div>
         </div>
         <nav id="sidebar-nav" class="flex-1 overflow-y-auto pb-4 space-y-1 p-2"></nav>
         <div id="inventory-section" class="p-4 border-t border-slate-800 bg-slate-900/50">
-            <div class="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-2">KHO VẬT PHẨM</div>
-            <div id="inventory-grid" class="grid grid-cols-4 gap-2 mb-4"></div>
-            <div class="flex justify-between items-center bg-slate-800 p-3 rounded-lg border border-slate-700 shadow-inner mb-3">
-                <div class="flex items-center space-x-2"><span class="text-xl">⚙️</span><span class="text-xs font-bold text-amber-400 uppercase">Bánh Răng</span></div>
-                <span id="gear-count" class="text-xl font-black text-white">0/8</span>
+            <div id="inventory-section-content">
+                <div class="text-[10px] font-black text-slate-500 uppercase tracking-widest mb-2">KHO VẬT PHẨM</div>
+                <div id="inventory-grid" class="grid grid-cols-4 gap-2 mb-4"></div>
+                <div class="flex justify-between items-center bg-slate-800 p-3 rounded-lg border border-slate-700 shadow-inner mb-3">
+                    <div class="flex items-center space-x-2"><span class="text-xl">⚙️</span><span class="text-xs font-bold text-amber-400 uppercase">Bánh Răng</span></div>
+                    <span id="gear-count" class="text-xl font-black text-white">0/8</span>
+                </div>
             </div>
-            <button onclick="openModal('reset-modal')" class="w-full py-2 bg-red-900/30 hover:bg-red-900/50 border border-red-800 text-red-400 text-xs font-bold rounded uppercase tracking-wider transition flex items-center justify-center gap-2">
-                <span>🗑️</span> XÓA HÀNH TRÌNH
+            <button onclick="openModal('reset-modal')" id="btn-reset-journey" class="w-full py-2 bg-red-900/30 hover:bg-red-900/50 border border-red-800 text-red-400 text-xs font-bold rounded uppercase tracking-wider transition flex items-center justify-center gap-2">
+                <span>🗑️</span> <span id="btn-reset-text">XÓA HÀNH TRÌNH</span>
             </button>
         </div>
+        <!-- Collapse Button -->
+        <button id="toggle-sidebar-btn" onclick="GameManager.toggleSidebar()" class="absolute bottom-4 right-[-12px] bg-slate-800 border border-slate-600 rounded-full p-1 text-xs hover:bg-slate-700 transition-transform z-50 shadow-lg text-white w-6 h-6 flex items-center justify-center cursor-pointer">
+            «
+        </button>
     </aside>
 
     <!-- MOBILE HEADER -->
@@ -144,7 +165,7 @@
         <div class="flex-1 bg-[#020617] relative overflow-hidden flex flex-col w-full">
             <div id="game-container" class="flex flex-col h-full w-full hidden">
                 <div class="flex justify-between items-center p-2 px-4 border-b border-slate-800 bg-slate-900 z-30 shrink-0 h-14">
-                    <div class="flex items-center gap-3"><div class="flex flex-col"><span class="text-[9px] text-slate-500 font-bold uppercase">Trạng thái</span><span id="game-metric" class="font-mono text-sm text-emerald-400 font-bold">...</span></div><div id="game-msg" class="hidden"></div></div>
+                    <div class="flex items-center gap-3"><div class="flex flex-col"><span class="text-[9px] text-slate-500 font-bold uppercase">Trạng thái</span><span id="game-metric" class="font-mono text-3xl md:text-2xl text-emerald-400 font-black">...</span></div><div id="game-msg" class="hidden"></div></div>
                     <div class="flex gap-2"><button onclick="ActiveGame.reset()" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 border border-slate-600 rounded text-xs font-bold transition">↺ Reset</button><button onclick="openModal('hint-modal')" class="px-3 py-1.5 bg-amber-900/30 hover:bg-amber-800 text-amber-200 border border-amber-700/50 rounded text-xs font-bold transition">💡 Gợi ý</button><button onclick="GameManager.skip()" class="px-3 py-1.5 bg-rose-900/20 hover:bg-rose-900 text-rose-300 border border-rose-800 rounded text-xs font-bold transition">⏩ SKIP</button></div>
                 </div>
                 <div id="game-stage" class="flex-1 overflow-y-auto w-full p-4 relative flex flex-col items-center"></div>
@@ -197,8 +218,8 @@
                     <h1 id="end-title" class="text-3xl md:text-5xl font-serif font-black text-transparent bg-clip-text bg-gradient-to-r from-yellow-200 to-amber-500 mb-2">THE END</h1>
                     <div id="end-subtitle" class="text-sm font-bold text-slate-500 uppercase tracking-[0.3em] mb-6">HÀNH TRÌNH KHÉP LẠI</div>
                 </div>
-                <div class="bg-slate-950/60 p-6 rounded-2xl border border-slate-800 mb-8 text-left overflow-y-auto custom-scrollbar shadow-inner flex-1">
-                    <p id="end-desc" class="text-base md:text-lg text-slate-300 leading-relaxed font-light font-serif">...</p>
+                <div class="bg-slate-950/60 p-6 rounded-2xl border border-slate-800 mb-8 text-left overflow-y-auto custom-scrollbar shadow-inner flex-1" style="max-height: none; flex-grow: 1;">
+                    <p id="end-desc" class="text-base md:text-lg text-slate-300 leading-relaxed font-light font-serif pb-10">...</p>
                 </div>
                 <div class="flex justify-center items-center gap-6 mb-8 bg-slate-800/50 p-4 rounded-xl border border-slate-700 shrink-0">
                     <div class="flex flex-col text-center"><span class="text-[10px] text-slate-400 uppercase font-bold tracking-wider">BÁNH RĂNG</span><span id="end-score" class="text-2xl font-black text-white mt-1">0/8 ⚙️</span></div>
@@ -220,44 +241,42 @@
         function forceCollapseStory() { const w=document.getElementById('story-content-wrapper'); const im=document.getElementById('accordion-icon-mobile'); const id=document.getElementById('accordion-icon-desktop'); if(w) { w.classList.remove('accordion-expanded'); w.classList.add('accordion-collapsed'); if(im) im.innerText='▼'; if(id) id.innerText='▼ Mở rộng'; } }
 
         const STORY = [
-            { id: 'intro', type: 'text', part: 'MỞ ĐẦU', title: 'Lời Nhắn Từ Quá Khứ', text: 'An, con trai yêu quý của ta. Nếu con đọc được những dòng này, có lẽ ta đã không còn ở bên con. Hắc Pháp Sư Muội Than - kẻ thù truyền kiếp của Hoàng Gia - đã trỗi dậy và bắt cóc ta. Ta đã kịp giấu Cây Đèn Chân Lý vào gói bưu phẩm này. Nó không chỉ là một công cụ, mà là người dẫn đường. Hãy lắng nghe tiếng nói của ánh sáng, nó sẽ chỉ cho con con đường cứu ta và cả Vương Quốc Logic. Hãy dũng cảm lên, con trai!', rules: null },
-            { id: 'c1', type: 'game', game: 'switches', part: 'PHẦN 1', title: 'Chương 1: Căn Nhà Gỗ', text: 'Theo chỉ dẫn của ngọn đèn, An tìm đến căn nhà gỗ bìa rừng nơi người bạn trung thành của cha - Chú Chó Vàng - đang bị giam giữ. Căn phòng tối om, chỉ có một lồng năng lượng nhiệt đang nhốt Chú Chó. Để phá lồng, An cần tìm đúng công tắc kích hoạt trong 4 công tắc. Ngọn đèn thì thầm: "Ánh sáng không phải là tất cả, hãy cảm nhận hơi ấm còn vương lại..."', hint: 'Bật công tắc, đợi nóng, rồi tắt đi. Bóng đèn tắt nhưng còn NÓNG chính là chìa khóa.', math: 'Nguyên lý: Sử dụng biến trạng thái thứ 3 (Nhiệt độ) để phân biệt 2 trạng thái đầu ra (Sáng/Tối).', rules: '<p>1. Có 4 công tắc và 4 bóng đèn.</p><p>2. Bật/Tắt công tắc tùy ý, nhấn "Chờ 10 phút" để làm nóng đèn.</p><p>3. Nhấn "Vào Phòng" để kiểm tra trạng thái.</p><p>4. <strong>Nhiệm vụ:</strong> Tìm chính xác công tắc nào điều khiển bóng đèn nào. (Chỉ được vào phòng 1 lần).</p>', hint2: null, guide: null },
-            { id: 'c2', type: 'game', game: 'jugs', part: 'PHẦN 1', title: 'Chương 2: Suối Dầu Cạn', text: 'Giải cứu thành công, Chú Chó Vàng dẫn An đến suối dầu cạn. Tại đó, Robo Tin-Tin đang nằm bất động. Lõi năng lượng của Tin-Tin yêu cầu nạp chính xác 4 Lít dầu để tái khởi động. An chỉ tìm thấy 3 chiếc bình rỗng với dung tích 8L, 5L và 3L.', hint: 'Tập trung vào sự chênh lệch. 5 - 3 = 2. Làm sao từ 2 ra 4?', hint2: 'Gâu! Mùi dầu ở bình 5L và 3L là nồng nhất, hãy dùng chúng để tạo ra số dư!', guide: null, math: 'Nguyên lý: 5x + 3y = 4 (Phương trình Diophantine).', rules: '<p>1. Có 3 bình: 8L, 5L, 3L.</p><p>2. Đổ dầu qua lại giữa các bình.</p><p>3. Tạo ra chính xác 4 Lít dầu trong bất kỳ bình nào.</p>' },
-            { id: 'c3', type: 'game', game: 'graph', part: 'PHẦN 1', title: 'Chương 3: Cổng Đá Cổ Đại', text: 'Cả nhóm bị chặn lại bởi Cổng Đá Cổ Đại. Giáo Sư Gấu đang loay hoay trước cổng. "Cổng này phong ấn bằng một hình vẽ sao," Giáo Sư nói, "Phải vẽ lại toàn bộ hình này bằng một nét bút liền mạch."', hint: 'Bắt đầu từ điểm có số đường nối LẺ.', hint2: 'Gâu! Điểm góc dưới này có mùi lạ, hãy bắt đầu từ đó!', guide: 'Chỉ có thể bắt đầu từ một trong hai điểm ở đáy (bậc 5). Đi theo viền ngoài rồi vào trong.', math: 'Nguyên lý Euler: Đồ thị vẽ được 1 nét khi và chỉ khi có 0 hoặc 2 đỉnh bậc lẻ.', rules: '<p>1. Vẽ lại hình ngôi sao bằng một nét liền.</p><p>2. Không được đi lại đường đã vẽ.</p>' },
-            { id: 'c4', type: 'game', game: 'river', part: 'PHẦN 2', title: 'Chương 4: Cây Cầu Đứt Gãy', text: 'Cây cầu treo duy nhất đã bị đứt gãy. Ngọn đèn cảnh báo năng lượng chỉ còn 29 giây. Cả nhóm (5 người) phải qua cầu. Cầu chỉ chịu được 2 người/lượt, và phải có đèn.', hint: 'Đừng để người nhanh nhất làm mọi việc. Hãy để hai người chậm nhất đi cùng nhau.', hint2: 'Gâu! Để tôi cầm đèn chạy về cho nhanh, tôi chạy có 1 giây thôi!', guide: 'Lượt quan trọng: Cho Gấu (8s) và Robo (12s) đi cùng nhau để "gói" thời gian chậm nhất lại.', math: 'Tối ưu hóa: Giảm thiểu tổng thời gian chờ (Wait Time Minimization).', rules: '<p>1. Đưa 5 người qua bờ phải trong 29s.</p><p>2. Tối đa 2 người/lượt. Phải có đèn.</p><p>3. Tốc độ: Chó 1s, An 3s, Khách 6s, Gấu 8s, Robo 12s.</p>' },
-            { id: 'c5', type: 'game', game: 'cat', part: 'PHẦN 2', title: 'Chương 5: Sự Phản Bội', text: 'Lữ Khách lộ mặt là Hắc Pháp Sư! Hắn trốn vào khu rừng ma thuật có 5 bụi cây. Mỗi đêm, hắn bắt buộc phải nhảy sang bụi cây ngay bên cạnh.', hint: 'Nếu hắn ở ô Chẵn, lần sau hắn phải sang Lẻ.', hint2: 'Gâu! Hắn có mùi ở hộp số 2...', guide: 'Chiến thuật "Dồn toa": Kiểm tra ô 2, nếu không có, ngày mai hắn chắc chắn ở ô lẻ.', math: 'Nguyên lý Parity (Chẵn/Lẻ): Trạng thái thay đổi luân phiên sau mỗi bước.', rules: '<p>1. Tìm Hắc Pháp Sư trong 5 hộp.</p><p>2. Sau mỗi lần mở hộp, hắn sẽ nhảy sang hộp liền kề.</p><p>3. Giới hạn 10 lượt.</p>' },
-            { id: 'c6', type: 'game', game: 'spider', part: 'PHẦN 2', title: 'Chương 6: Vây Bắt Nhện Máy', text: 'Hắc Pháp Sư triệu hồi Nhện Máy Khổng Lồ. An phải điều khiển hệ thống radar để vây bắt nó trên mạng nhện.', hint: 'Đừng chạy theo đuôi. Hãy chiếm các giao lộ quan trọng để cắt đường rút lui.', hint2: 'Gâu! Chặn đầu nó ở cái vòng ngoài kia kìa!', guide: 'Chiến thuật "Bao vây": Đi vào trung tâm trước để kiểm soát các hướng ra.', math: 'Nguyên lý Voronoi: Chiếm lĩnh các điểm trung tâm để thu hẹp vùng di chuyển của đối phương.', rules: '<p>1. Bạn (Xanh) bắt Nhện (Hồng).</p><p>2. Nhện luôn chạy xa bạn.</p><p>3. Bắt được trong 15 bước.</p>' },
-            { id: 'c7', type: 'game', game: 'horses', part: 'PHẦN 3', title: 'Chương 7: Triệu Hồi Rồng', text: 'Tại Trại Rồng, An cần tìm 3 con rồng nhanh nhất trong 25 con. Không có đồng hồ, chỉ biết thứ tự về đích.', hint: 'Chia 25 con thành 5 nhóm đua. Loại bỏ những con không thể nằm trong Top 3.', hint2: 'Gâu! (Kính Lúp) Mấy con về bét ở vòng loại chắc chắn loại rồi!', guide: 'Đua 5 nhóm đầu. Lấy 5 con nhất đua với nhau (Lần 6). Từ đó loại trừ tiếp.', math: 'Thuật toán Sắp xếp: Sử dụng tính chất bắc cầu (A>B, B>C => A>C) để loại bỏ dữ liệu thừa.', rules: '<p>1. 25 con rồng, đua tối đa 5 con/lần.</p><p>2. Chỉ biết thứ tự về đích.</p><p>3. Tìm 3 con nhanh nhất. Giới hạn 7 lần.</p>' },
-            { id: 'c8', type: 'game', game: 'balls', part: 'PHẦN 3', title: 'Chương 8: Trái Tim Thời Gian', text: 'Đỉnh tháp! Hắc Pháp Sư trộn Lõi Thời Gian thật vào 12 quả cầu giống hệt nhau. Dùng cân 3 lần để tìm ra quả khác biệt.', hint: 'Chia 12 quả thành 3 nhóm (4-4-4). Cân nhóm 1 và 2 sẽ loại trừ được nhiều nhất.', hint2: null, guide: 'Lần 1: Cân 1,2,3,4 vs 5,6,7,8. Nếu cân bằng -> Lỗi ở nhóm còn lại.', math: 'Cây quyết định Tam phân: 3 lần cân cho 3^3 = 27 khả năng, đủ tìm ra 1/12.', rules: '<p>1. 12 quả cầu, 1 quả giả (khác khối lượng).</p><p>2. Cân tối đa 3 lần.</p><p>3. Tìm quả giả và xác định Nặng/Nhẹ.</p>' }
+            { id: 'intro', type: 'text', part: 'MỞ ĐẦU', title: 'Lời Nhắn Từ Quá Khứ', text: 'An, con trai yêu quý của ta. Nếu con đọc được những dòng này, có lẽ ta đã không còn ở bên con. Hắc Pháp Sư Muội Than - kẻ thù truyền kiếp của Hoàng Gia - đã trỗi dậy và bắt cóc ta để chiếm đoạt bí mật về Thời Gian. Ta đã kịp giấu Cây Đèn Chân Lý vào gói bưu phẩm này. Nó không chỉ là một công cụ, mà là người dẫn đường. Hãy lắng nghe tiếng nói của ánh sáng, nó sẽ chỉ cho con con đường cứu ta và cả Vương Quốc Logic. Hãy dũng cảm lên, con trai!', rules: null },
+            { id: 'c1', type: 'game', game: 'switches', part: 'PHẦN 1: KHỞI ĐẦU', title: 'Chương 1: Căn Nhà Gỗ', text: 'Theo chỉ dẫn của ngọn đèn, An tìm đến căn nhà gỗ bìa rừng nơi người bạn trung thành của cha - Chú Chó Vàng - đang bị giam giữ. Căn phòng tối om, chỉ có một lồng năng lượng nhiệt đang nhốt Chú Chó. Để phá lồng, An cần tìm đúng công tắc kích hoạt trong 4 công tắc trên tường. Ngọn đèn thì thầm: "Ánh sáng không phải là tất cả, hãy cảm nhận hơi ấm còn vương lại..."', hint: 'Bật công tắc, đợi nóng, rồi tắt đi. Bóng đèn tắt nhưng còn NÓNG chính là chìa khóa.', math: 'Logic Nhị phân mở rộng (Trạng thái thứ 3).', rules: '<p>1. Có 4 công tắc (A, B, C, D) và 4 bóng đèn (1, 2, 3, 4) trong phòng kín. Bạn không biết công tắc nào nối với đèn nào.</p><p>2. Bạn có thể BẬT/TẮT công tắc tùy ý.</p><p>3. Nhấn "⏱️ Chờ 10 phút" để các đèn đang BẬT nóng lên.</p><p>4. Sau khi thao tác xong, nhấn "🚪 Vào Phòng" để kiểm tra trạng thái (Sáng/Tối, Nóng/Ấm/Lạnh) của các bóng đèn.</p><p>5. <strong>Nhiệm vụ:</strong> Tìm chính xác cặp Công tắc - Bóng đèn tương ứng. (Chỉ được vào phòng 1 lần).</p>', hint2: null, guide: null },
+            { id: 'c2', type: 'game', game: 'jugs', part: 'PHẦN 1: KHỞI ĐẦU', title: 'Chương 2: Suối Dầu Cạn', text: 'Giải cứu thành công, Chú Chó Vàng dẫn An đến một suối dầu cạn. Tại đó, Robo Tin-Tin - hộ vệ khổng lồ của cha - đang nằm bất động vì cạn kiệt năng lượng. Lõi năng lượng của Tin-Tin yêu cầu nạp chính xác 4 Lít dầu để tái khởi động. An chỉ tìm thấy 3 chiếc bình rỗng với dung tích 8L, 5L và 3L. Một giọt cũng không được sai!', hint: 'Tập trung vào sự chênh lệch. 5 - 3 = 2. Làm sao từ 2 ra 4?', hint2: 'Gâu! Mùi dầu ở bình 5L và 3L là nồng nhất, hãy dùng chúng để tạo ra số dư!', guide: null, math: 'Phương trình Diophantine: 5x + 3y = 4.', rules: '<p>1. Bạn có 3 bình chứa với dung tích tối đa là 8L, 5L và 3L. Ban đầu bình 8L đầy, 2 bình kia rỗng.</p><p>2. <strong>Cách chơi:</strong> Nhấn vào một bình để chọn làm nguồn, sau đó nhấn vào bình khác để đổ dầu sang.</p><p>3. Dầu sẽ được đổ cho đến khi bình nguồn cạn HOẶC bình đích đầy.</p><p>4. <strong>Nhiệm vụ:</strong> Tạo ra chính xác 4 Lít dầu trong bất kỳ bình nào.</p>' },
+            { id: 'c3', type: 'game', game: 'graph', part: 'PHẦN 1: KHỞI ĐẦU', title: 'Chương 3: Cổng Đá Cổ Đại', text: 'Với sự gia nhập của Tin-Tin, cả nhóm tiến sâu vào rừng và bị chặn lại bởi một Cổng Đá Cổ Đại khổng lồ. Giáo Sư Gấu - nhà nghiên cứu cổ ngữ - đang loay hoay trước cổng. "Cổng này phong ấn bằng một hình vẽ sao," Giáo Sư nói, "Để mở nó, ta phải dùng năng lượng của đèn vẽ lại toàn bộ hình ngôi sao này bằng một nét bút liền mạch, không được nhấc tay và không được vẽ lại đường đã đi."', hint: 'Đếm số đường nối tại mỗi điểm. Bắt đầu từ điểm có số đường nối LẺ.', hint2: 'Gâu! Điểm góc dưới này có mùi lạ, hãy bắt đầu từ đó!', guide: 'Chỉ có thể bắt đầu từ một trong hai điểm ở đáy (bậc 5). Đi theo viền ngoài rồi vào trong.', math: 'Đường đi Euler: Đồ thị có 0 hoặc 2 đỉnh bậc lẻ.', rules: '<p>1. Bạn cần vẽ lại hình ngôi sao trên cổng đá.</p><p>2. <strong>Cách chơi:</strong> Nhấn vào một điểm (node) để bắt đầu. Sau đó nhấn vào các điểm kề nhau để di chuyển.</p><p>3. <strong>Luật:</strong> Bạn phải đi qua TẤT CẢ các đường nối (cạnh) màu xám đúng 1 lần duy nhất.</p><p>4. Nếu đi sai hoặc hết đường, nhấn nút "↺ Reset" để làm lại.</p>' },
+            { id: 'c4', type: 'game', game: 'river', part: 'PHẦN 2: HÀNH TRÌNH', title: 'Chương 4: Cây Cầu Đứt Gãy', text: 'Cổng đá mở ra một vực thẳm. Cây cầu treo duy nhất đã bị đứt gãy, chỉ hiện ra lờ mờ dưới ánh sáng của Cây Đèn Chân Lý. Một Lữ Khách Bí Ẩn xuất hiện và xin đi nhờ. Ngọn đèn cảnh báo năng lượng chỉ còn đủ chiếu sáng trong 29 giây. Cả nhóm phải qua cầu trước khi bóng tối nuốt chửng tất cả. Nhưng cây cầu chỉ chịu được tối đa 2 người một lúc, và bắt buộc phải có người cầm đèn để soi đường.', hint: 'Đừng để người nhanh nhất làm mọi việc. Hãy để hai người chậm nhất (Gấu & Robo) đi cùng nhau một lượt.', hint2: 'Gâu! Để tôi cầm đèn chạy về cho nhanh, tôi chạy có 1 giây thôi!', guide: 'Lượt quan trọng: Cho Gấu (8s) và Robo (12s) đi cùng nhau để "gói" thời gian chậm nhất lại.', math: 'Bài toán lập lịch tối ưu (Critical Path).', rules: '<p>1. <strong>Mục tiêu:</strong> Đưa tất cả 5 thành viên (Chó, An, Khách, Gấu, Robo) qua bờ phải trong vòng 29 giây.</p><p>2. <strong>Tốc độ:</strong> Chó(1s), An(3s), Khách(6s), Gấu(8s), Robo(12s).</p><p>3. <strong>Luật đi:</strong><br>- Tối đa 2 người lên cầu một lượt.<br>- Phải có người cầm đèn (🏮) mới được đi.<br>- Thời gian đi tính theo người chậm nhất trong lượt đó.</p><p>4. <strong>Cách chơi:</strong> Nhấn vào nhân vật để đưa lên/xuống đèn. Nhấn nút "BĂNG QUA" (hoặc nút tròn "ĐI") để di chuyển.</p>' },
+            { id: 'c5', type: 'game', game: 'cat', part: 'PHẦN 2: HÀNH TRÌNH', title: 'Chương 5: Sự Phản Bội', text: 'Ngay khi qua cầu an toàn, Lữ Khách Bí Ẩn cười nham hiểm và hiện nguyên hình là Hắc Pháp Sư Muội Than! Hắn giật lấy mảnh bản đồ từ tay An rồi biến mất vào khu rừng ma thuật. Khu rừng này có 5 bụi cây lượng tử, và hắn chỉ có thể lẩn trốn trong đó. Hắn có thói quen kỳ lạ: mỗi khi bạn kiểm tra một hộp, hắn bắt buộc phải nhảy sang một hộp ngay bên cạnh.', hint: 'Nếu hắn ở ô Chẵn, lần sau hắn phải sang Lẻ. Hãy kiểm tra theo trình tự.', hint2: 'Gâu! Hắn có mùi ở hộp số 2...', guide: 'Chiến thuật "Dồn toa": Kiểm tra ô 2, nếu không có, ngày mai hắn chắc chắn ở ô lẻ.', math: 'Đồ thị lưỡng phân (Tính chẵn lẻ/Parity).', rules: '<p>1. Hắc Pháp Sư trốn trong 1 trong 5 hộp (đánh số 1-5).</p><p>2. <strong>Mỗi lượt</strong>, bạn được phép chọn mở 1 hộp để kiểm tra.</p><p>3. <strong>Sau mỗi lần kiểm tra</strong>, hắn SẼ di chuyển sang hộp liền kề (VD: từ 2 sang 1 hoặc 3).</p><p>4. <strong>Nhiệm vụ:</strong> Tìm ra vị trí chính xác của hắn trong tối đa 10 lần thử.</p>' },
+            { id: 'c6', type: 'game', game: 'spider', part: 'PHẦN 2: HÀNH TRÌNH', title: 'Chương 6: Vây Bắt Nhện Máy', text: 'Bị dồn vào đường cùng, Hắc Pháp Sư triệu hồi một con Nhện Máy Khổng Lồ để chặn đường rồi tiếp tục bỏ chạy. Con nhện di chuyển cực nhanh trên mạng lưới của nó. An phải sử dụng khả năng của Cây Đèn để xâm nhập vào hệ thống radar, điều khiển các điểm nút trên mạng nhện để vây bắt và vô hiệu hóa con quái vật này trước khi nó trốn thoát.', hint: 'Đừng chạy theo đuôi. Hãy chiếm các giao lộ quan trọng để cắt đường rút lui.', hint2: 'Gâu! Chặn đầu nó ở cái vòng ngoài kia kìa!', guide: 'Chiến thuật "Bao vây": Đi vào trung tâm trước để kiểm soát các hướng ra.', math: 'Lý thuyết trò chơi đuổi bắt trên đồ thị.', rules: '<p>1. Bạn điều khiển điểm màu Xanh (🔵), Nhện là điểm màu Hồng (🔴).</p><p>2. <strong>Cách chơi:</strong> Nhấn vào các điểm nút lân cận (có đường nối màu trắng) để di chuyển.</p><p>3. <strong>Luật:</strong><br>- Bạn đi trước 1 bước, Nhện đi sau 1 bước.<br>- Nhện sẽ luôn cố gắng di chuyển ra xa bạn nhất có thể.</p><p>4. <strong>Nhiệm vụ:</strong> Bắt được Nhện (di chuyển vào cùng vị trí) trong tối đa 15 bước đi của bạn.</p>' },
+            { id: 'c7', type: 'game', game: 'horses', part: 'PHẦN 3: ĐỈNH CAO', title: 'Chương 7: Triệu Hồi Rồng', text: 'Vượt qua Nhện Máy, cả nhóm đến được chân Tòa Tháp Thời Gian. Cầu thang đã bị phá hủy. Cách duy nhất để lên đỉnh là nhờ sự trợ giúp của loài Rồng. Tại Trại Rồng gần đó, có 25 con rồng đang ngủ say. An cần đánh thức 3 con rồng nhanh nhất để đưa mọi người lên đỉnh tháp. Không có thiết bị đo thời gian, An chỉ có thể tổ chức các cuộc đua giữa chúng để xác định thứ hạng.', hint: 'Chia 25 con thành 5 nhóm đua. Loại bỏ những con không thể nằm trong Top 3 dựa trên tính chất bắc cầu.', hint2: 'Gâu! (Kính Lúp) Mấy con về bét ở vòng loại chắc chắn loại rồi!', guide: 'Đua 5 nhóm đầu. Lấy 5 con nhất đua với nhau (Lần 6). Từ đó loại trừ tiếp.', math: 'Thuật toán sắp xếp và lựa chọn tối ưu.', rules: '<p>1. Có 25 con rồng với tốc độ khác nhau (bạn không biết tốc độ cụ thể).</p><p>2. Đường đua chỉ cho phép tối đa 5 con rồng chạy cùng lúc.</p><p>3. Sau mỗi cuộc đua, bạn chỉ biết thứ tự về đích (nhất, nhì, ba...), không biết thời gian.</p><p>4. <strong>Cách chơi:</strong> Chọn 2-5 con rồng từ "Trại Rồng" đưa vào "Đường Đua", rồi nhấn "ĐUA".</p><p>5. <strong>Nhiệm vụ:</strong> Xác định chính xác 3 con rồng nhanh nhất (theo thứ tự #1, #2, #3) với số lần đua ít nhất (Tối ưu: 7 lần).</p>' },
+            { id: 'c8', type: 'game', game: 'balls', part: 'PHẦN 3: ĐỈNH CAO', title: 'Chương 8: Trái Tim Thời Gian', text: 'Đỉnh tháp! Cha của An đang bị giam giữ trong một khối pha lê thời gian. Hắc Pháp Sư đã trộn Lõi Thời Gian thật vào 12 quả cầu năng lượng giống hệt nhau. Hắn cười nhạo: "Chỉ có Lõi thật mới phá được pha lê. Nếu chọn sai, cha ngươi sẽ bị kẹt trong dòng thời gian mãi mãi!". Chiếc cân thăng bằng cổ xưa ở giữa phòng là hy vọng duy nhất. An chỉ có 3 lần cân để tìm ra quả cầu chứa Lõi thật và biết nó Nặng hay Nhẹ hơn các quả khác.', hint: 'Chia 12 quả thành 3 nhóm (4-4-4). Cân nhóm 1 và 2 sẽ loại trừ được nhiều nhất.', hint2: null, guide: 'Lần 1: Cân 1,2,3,4 vs 5,6,7,8. Nếu cân bằng -> Lỗi ở nhóm còn lại.', math: 'Cây quyết định tam phân (Ternary Search Tree).', rules: '<p>1. Có 12 quả cầu (đánh số 1-12). Một quả là giả (khác khối lượng), 11 quả còn lại là thật (cùng khối lượng).</p><p>2. Bạn có một chiếc cân thăng bằng và được phép cân tối đa 3 lần.</p><p>3. <strong>Cách chơi:</strong><br>- Nhấn chọn "Đĩa Trái" hoặc "Đĩa Phải".<br>- Nhấn vào các quả bóng để đặt lên đĩa cân đã chọn.<br>- Nhấn "⚖️ CÂN NGAY" để xem kết quả (Trái nặng, Phải nặng, hoặc Cân bằng).</p><p>4. <strong>Nhiệm vụ:</strong> Sau 3 lần cân, xác định chính xác quả bóng nào là giả và nó Nặng hay Nhẹ hơn bóng thật.</p>' }
         ];
 
         class GameSwitches { constructor(){this.reset()} reset(){this.map={};let s=['A','B','C','D'].sort(()=>Math.random()-0.5);[1,2,3,4].forEach((n,i)=>this.map[n]=s[i]);this.sw={A:{on:false,heat:0},B:{on:false,heat:0},C:{on:false,heat:0},D:{on:false,heat:0}};this.time=0;this.entered=false;this.render()} toggle(k){if(!this.entered){this.sw[k].on=!this.sw[k].on;playSound('click');this.render()}} wait(){if(!this.entered){this.time+=10;Object.keys(this.sw).forEach(k=>{if(this.sw[k].on)this.sw[k].heat+=10});playSound('click');this.render()}} enter(){this.entered=true;this.render()} check(){let c=0;[1,2,3,4].forEach(n=>{if(document.getElementById(`sel-${n}`).value===this.map[n])c++});if(c===4)GameManager.win(this.time<=20);else{playSound('fail');
-            /* FIX: SHOW ANSWER IN UI */
+            /* SHOW ANSWER IN UI */
             const ui=document.getElementById('game-stage').querySelector('.grid');
             if(ui) {
                [1,2,3,4].forEach(n => {
                    const sel = document.getElementById(`sel-${n}`);
                    if(sel) {
-                       sel.value = this.map[n]; // Force value
-                       sel.classList.add('bg-red-900', 'border-red-500', 'text-red-200'); // Highlight red
+                       sel.value = this.map[n]; 
+                       sel.classList.add('bg-red-900', 'border-red-500', 'text-red-200');
                    }
                });
                showToast('Sai rồi! Đang Reset...', 'error'); 
                GameManager.autoResetGame(4000);
             }
         }} render(){ const s = document.getElementById('game-stage'); if(!s) return; if(!this.entered){ s.innerHTML=`<div class="flex flex-col items-center w-full h-full justify-start pt-4 overflow-y-auto pb-20"><div class="grid grid-cols-2 md:grid-cols-4 gap-4 w-full max-w-5xl mb-8">${['A','B','C','D'].map(k=>`<button onclick="window.ActiveGame.toggle('${k}')" class="bulb-btn h-32 md:h-40 rounded-2xl border-2 border-slate-600 text-3xl font-bold flex flex-col items-center justify-center transition-all ${this.sw[k].on?'bulb-on':'bulb-off'} shadow-lg w-full hover:scale-105"><span class="text-5xl mb-2">💡</span><span>${k}</span><span class="text-xs opacity-70 font-normal mt-2 bg-black/30 px-3 py-1 rounded-full border border-white/20">${this.sw[k].on?'ON':'OFF'}</span></button>`).join('')}</div><div class="md:hidden fixed bottom-0 left-0 w-full flex z-50"><button onclick="window.ActiveGame.wait()" class="flex-1 py-5 bg-slate-800 hover:bg-slate-700 text-white font-bold text-lg border-r border-slate-700 rounded-none">⏱️ Chờ 10 phút</button><button onclick="window.ActiveGame.enter()" class="flex-1 py-5 bg-rose-700 hover:bg-rose-600 text-white font-bold text-lg rounded-none">🚪 Vào Phòng</button></div><div class="hidden md:flex gap-4 w-full max-w-lg mt-auto"><button onclick="window.ActiveGame.wait()" class="flex-1 py-4 bg-slate-700 hover:bg-slate-600 rounded-xl font-bold text-white text-lg shadow-xl border border-slate-500 active:scale-95 transition-transform">⏱️ Chờ 10 phút</button><button onclick="window.ActiveGame.enter()" class="flex-1 py-4 bg-rose-600 hover:bg-rose-500 rounded-xl font-bold text-white text-lg uppercase shadow-xl border border-rose-400 active:scale-95 transition-transform">🚪 Vào Phòng</button></div></div>`; }else{ s.innerHTML=`<div class="flex flex-col items-center w-full h-full justify-start pt-4 overflow-y-auto pb-24"><div class="grid grid-cols-1 md:grid-cols-4 gap-6 w-full max-w-6xl mb-8 px-4">${[1,2,3,4].map(n=>{const st=this.sw[this.map[n]];let txt='TẮT',sub='LẠNH',cls='bulb-off';if(st.on){txt='BẬT';sub='NÓNG';cls='bulb-on'}else if(st.heat>=15){sub='NÓNG';cls='heat-high text-white'}else if(st.heat>0){sub='ẤM';cls='heat-med text-slate-300'}return `<div class="flex flex-row md:flex-col gap-4 w-full bg-slate-800/50 p-4 rounded-2xl border border-slate-700 items-center shadow-md"><div class="${cls} h-24 w-24 md:w-full md:h-32 rounded-xl border-2 flex flex-col items-center justify-center shadow-lg transition-all shrink-0"><span class="text-xs font-bold opacity-50 mb-1">Đèn ${n}</span><span class="text-xl font-black mb-1">${txt}</span><span class="text-[10px] font-bold uppercase tracking-widest bg-black/20 px-2 py-0.5 rounded-full">${sub}</span></div><select id="sel-${n}" class="flex-1 md:w-full p-4 bg-slate-900 border-2 border-slate-600 rounded-xl text-white font-bold cursor-pointer hover:border-indigo-500 outline-none text-center appearance-none text-base shadow-md"><option value="">Chọn công tắc...</option><option value="A">Công tắc A</option><option value="B">Công tắc B</option><option value="C">Công tắc C</option><option value="D">Công tắc D</option></select></div>`}).join('')}</div><div class="fixed bottom-0 left-0 w-full p-4 bg-slate-900/90 border-t border-slate-700 z-50 flex justify-center"><button onclick="window.ActiveGame.check()" class="w-full max-w-md py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl text-xl shadow-xl hover:scale-105 transition-transform">KIỂM TRA ĐÁP ÁN</button></div></div>`; } 
-            if(document.getElementById('game-metric')) document.getElementById('game-metric').innerText=`${this.time} phút`; 
-        } 
-        getHint(t){ return ""; } 
-    }
+            if(document.getElementById('game-metric')) document.getElementById('game-metric').innerText=`${this.time} phút`; } getHint(t){ return ""; } 
+        }
 
         class GameJugs { constructor(){this.reset()} reset(){this.jugs=[8,0,0];this.caps=[8,5,3];this.moves=0;this.sel=null;this.render()} click(i){if(this.sel===null){if(this.jugs[i]>0){this.sel=i;playSound('click')}}else{if(this.sel!==i)this.pour(this.sel,i);this.sel=null}this.render()} pour(f,t){const a=Math.min(this.jugs[f],this.caps[t]-this.jugs[t]);if(a>0){this.jugs[f]-=a;this.jugs[t]+=a;this.moves++;playSound('click')}if(this.jugs.includes(4))GameManager.win(this.moves===6)} render(){ document.getElementById('game-metric').innerText=`${this.moves} bước`; const hArr = [320, 200, 120]; const h=this.jugs.map((v,i)=>{ const cls=this.sel===i?'jug-selected':'border-slate-500'; const pct = (v/this.caps[i])*100; return `<div onclick="window.ActiveGame.click(${i})" style="height:${[320,200,120][i]}px" class="jug-container ${cls} flex-shrink-0"><div class="jug-water" style="height:${pct}%"></div><div class="absolute inset-0 flex items-center justify-center font-bold text-white drop-shadow-md z-10 text-3xl">${v}L</div></div>` }).join(''); document.getElementById('game-stage').innerHTML=`<div class="flex flex-col items-center justify-center h-full w-full py-8 flex-1 pt-20"><div class="flex-1 flex items-end justify-center gap-2 w-full pb-12 h-full">${h}</div><div class="text-slate-400 font-bold text-xl mb-4">Chọn bình nguồn ➔ Chọn bình đích</div></div>` } getHint(t){ if(t==='dog') return "Gâu! Mùi dầu ở bình 5L và 3L là nồng nhất, hãy dùng chúng để tạo ra số dư!"; return ""; } }
         class GameGraph { constructor(){this.reset()} reset(){this.nodes={1:{x:275,y:50},2:{x:175,y:130},3:{x:375,y:130},4:{x:175,y:230},5:{x:375,y:230},6:{x:175,y:330},7:{x:375,y:330},8:{x:275,y:410}};this.edges=[{u:1,v:2},{u:1,v:3},{u:2,v:3},{u:2,v:4},{u:2,v:5},{u:3,v:4},{u:3,v:5},{u:4,v:5},{u:4,v:6},{u:5,v:7},{u:6,v:7},{u:6,v:8},{u:7,v:8}];this.curr=null;this.visited=new Set();this.path=[];this.bt=0; document.getElementById('game-stage').innerHTML=`<div class="w-full h-full flex items-center justify-center p-0 m-0 overflow-hidden"><canvas id="graph-canvas" class="w-full h-full"></canvas></div>`; this.resizeObserver=new ResizeObserver(()=>window.requestAnimationFrame(()=>this.draw()));this.resizeObserver.observe(document.getElementById('game-stage'));setTimeout(()=>this.draw(),50)} click(e){const c=e.target,r=c.getBoundingClientRect(),scale=(window.innerWidth>=768)?Math.min(c.width/550,c.height/450)*0.9:Math.min(c.width/550,c.height/450)*1.2,offX=(c.width-550*scale)/2,offY=(c.height-450*scale)/2,lx=(e.clientX-r.left-offX)/scale,ly=(e.clientY-r.top-offY)/scale;let h=null;for(let k in this.nodes){if(Math.hypot(lx-this.nodes[k].x,ly-this.nodes[k].y)<50)h=parseInt(k)}if(h){if(this.curr===null){this.curr=h;this.path.push(h);playSound('click')}else if(this.path.length>1&&h===this.path[this.path.length-2]){const u=Math.min(this.curr,h),v=Math.max(this.curr,h),ei=this.edges.findIndex(e=>e.u===u&&e.v===v);this.visited.delete(ei);this.path.pop();this.curr=h;this.bt++;playSound('click')}else{const u=Math.min(this.curr,h),v=Math.max(this.curr,h),ei=this.edges.findIndex(e=>e.u===u&&e.v===v);if(ei>-1&&!this.visited.has(ei)){this.visited.add(ei);this.path.push(h);this.curr=h;playSound('click')}}this.draw();if(this.visited.size===13)GameManager.win(this.bt===0)}} draw(){const c=document.getElementById('graph-canvas');if(!c)return;c.onclick=(e)=>this.click(e);const con=c.parentElement;c.width=con.clientWidth;c.height=con.clientHeight;const ctx=c.getContext('2d'),scale=(window.innerWidth>=768)?Math.min(c.width/550,c.height/450)*0.9:Math.min(c.width/550,c.height/450)*1.2,offX=(c.width-550*scale)/2,offY=(c.height-450*scale)/2;ctx.setTransform(scale,0,0,scale,offX,offY);ctx.clearRect(-offX/scale,-offY/scale,c.width/scale,c.height/scale);ctx.lineWidth=8;this.edges.forEach((e,i)=>{const n1=this.nodes[e.u],n2=this.nodes[e.v];ctx.beginPath();ctx.moveTo(n1.x,n1.y);ctx.lineTo(n2.x,n2.y);ctx.strokeStyle=this.visited.has(i)?'#fbbf24':'#475569';ctx.stroke()});for(let k in this.nodes){const n=this.nodes[k];ctx.beginPath();ctx.arc(n.x,n.y,28,0,6.28);ctx.fillStyle=parseInt(k)===this.curr?'#fbbf24':'#3b82f6';if(this.curr===null)ctx.fillStyle='#fbbf24';ctx.fill();ctx.fillStyle='white';ctx.font='bold 24px Arial';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(k,n.x,n.y)}document.getElementById('game-metric').innerText=`${13-this.visited.size} cạnh`} getHint(t){ if(t==='dog') return "Gâu! Điểm góc dưới này có mùi lạ, hãy bắt đầu từ đó!"; if(t==='robo') return "Dữ liệu: Điểm bắt đầu phải có số đường nối là số lẻ."; return ""; } }
         class GameRiver { constructor(){this.reset()} reset(){this.L=[1,3,6,8,12];this.R=[];this.lamp=[];this.side='L';this.time=0;this.names={1:'🐕',3:'👦',6:'🧙‍♂️',8:'🐻',12:'🤖'};this.render()} move(id,loc){if(loc===this.side){if(this.lamp.length<2){this[this.side]=this[this.side].filter(x=>x!==id);this.lamp.push(id);playSound('click')}}else if(loc==='lamp'){this.lamp=this.lamp.filter(x=>x!==id);this[this.side].push(id);playSound('click')}this.render()} go(){if(this.lamp.length===0){showToast('Cần người cầm đèn!', 'error');playSound('fail');return}this.time+=Math.max(...this.lamp);this.side=this.side==='L'?'R':'L';this.render();playSound('click');
-            /* FIX: STRICT FAIL LOGIC */
+            /* STRICT FAIL LOGIC */
             if(this.time > 30) {
                 showToast('Thất bại! Quá 30 giây.', 'error');
-                setTimeout(()=>this.reset(), 1500);
+                GameManager.autoResetGame(1000);
                 return;
             }
             if(this.L.length===0&&this.side==='R')setTimeout(()=>GameManager.win(this.time<=29),500)} render(){ document.getElementById('game-metric').innerText=`${this.time}s`; const d=(arr,loc)=>arr.map(id=>`<div onclick="window.ActiveGame.move(${id},'${loc}')" class="char-card bg-slate-700 p-2 rounded-lg border-2 border-slate-500 flex flex-col items-center justify-center shadow-lg cursor-pointer transform active:scale-95 w-full"><span class="char-emoji text-2xl md:text-3xl">${this.names[id].split(' ')[0]}</span><span class="font-bold text-emerald-400 text-xs md:text-sm">${id}s</span></div>`).join(''); const desktopHTML = `<div class="bridge-layout shadow-2xl relative w-full h-[600px] flex"><div class="cliff-side"><div class="col-span-full text-xs font-black text-slate-500 w-full text-center mb-2 tracking-widest uppercase">VÁCH TRÁI</div>${d(this.L,'L')}</div><div class="bridge-zone"><div class="bridge-cable"></div><div class="lamp-carrier ${this.side==='L'?'pos-left':'pos-right'}"><div class="absolute -top-10 text-4xl animate-pulse">🏮</div>${this.lamp.map(id=>`<div onclick="window.ActiveGame.move(${id},'lamp')" class="char-card bg-amber-900/90 border-amber-500 p-1 rounded-lg text-center z-30 transform hover:scale-110 shadow-xl" style="width:50px; height:50px; min-height:0;"><div class="text-xl">${this.names[id].split(' ')[0]}</div></div>`).join('')}</div><button onclick="window.ActiveGame.go()" class="btn-go-round hover:scale-105">ĐI</button></div><div class="cliff-side right"><div class="col-span-full text-xs font-black text-slate-500 w-full text-center mb-2 tracking-widest uppercase">VÁCH PHẢI</div>${d(this.R,'R')}</div></div>`; const mobileHTML = `<div class="bridge-layout shadow-2xl relative"><div class="cliff-side"><div class="col-span-full text-xs font-black text-slate-500 w-full text-center mb-2 tracking-widest uppercase">VÁCH TRÁI</div>${d(this.L,'L')}</div><div class="bridge-zone"><div class="bridge-track-area w-full md:w-full relative h-full"><div class="bridge-cable"></div><div class="lamp-carrier ${this.side==='L'?'pos-left':'pos-right'}"><div class="absolute -top-10 text-4xl animate-pulse">🏮</div>${this.lamp.map(id=>`<div onclick="window.ActiveGame.move(${id},'lamp')" class="char-card bg-amber-900/90 border-amber-500 p-1 rounded-lg text-center z-30 transform hover:scale-110 shadow-xl" style="width:50px; height:50px; min-height:0;"><div class="text-xl">${this.names[id].split(' ')[0]}</div></div>`).join('')}</div></div></div><div class="cliff-side right"><div class="col-span-full text-xs font-black text-slate-500 w-full text-center mb-2 tracking-widest uppercase">VÁCH PHẢI</div>${d(this.R,'R')}</div><div class="w-full p-4 mt-2 flex justify-center pb-8"><button onclick="window.ActiveGame.go()" class="btn-go-mobile">BĂNG QUA</button></div></div>`; const content = window.innerWidth >= 768 ? desktopHTML : mobileHTML; document.getElementById('game-stage').innerHTML = `<div class="w-full max-w-5xl mx-auto flex flex-col h-full md:justify-center md:pt-10 pb-20">${content}</div>`; } getHint(t){ if(t==='dog') return "Gâu! Để tôi cầm đèn chạy về cho nhanh, tôi chạy có 1 giây thôi!"; if(t==='bear') return "Chiến thuật: Lượt đi quan trọng nhất hãy cho 2 người chậm nhất đi cùng nhau."; if(t==='robo') return "Tính toán: Cần tối ưu lượt đi để giảm tổng thời gian chờ xuống dưới 29s."; return ""; } }
@@ -274,7 +293,7 @@
             this.render();
             GameManager.autoResetGame(4000);
         }
-        render(){ document.getElementById('game-metric').innerText=`Lần ${this.day}`; const boxes = [1,2,3,4,5].map(i=>`<button onclick="window.ActiveGame.check(${i})" class="box-btn h-24 md:h-40 flex-1 bg-slate-800 border-4 border-slate-600 rounded-2xl text-5xl md:text-7xl font-black text-slate-500 hover:text-indigo-400 hover:border-indigo-500 quantum-active transition-all shadow-xl">${i}</button>`).join(''); const logs = this.logs.map(l=>`<div class="flex justify-between text-sm md:text-base text-slate-400 mb-2 border-b border-slate-800 pb-1 font-mono"><span>${l}</span></div>`).join(''); document.getElementById('game-stage').innerHTML=`<div class="flex flex-col items-center gap-8 w-full max-w-4xl h-full justify-center pt-4 pb-8"><div class="flex gap-3 w-full justify-center">${boxes}</div><div class="text-slate-400 font-mono text-sm mb-2">Khả năng ẩn nấp: <span class="text-indigo-400 font-bold text-2xl">${this.pos.size}</span> vị trí</div><div class="w-full bg-slate-950/50 p-6 rounded-2xl border border-slate-800 h-64 flex-1 overflow-y-auto shadow-inner"><div class="text-xs font-bold text-slate-500 mb-4 uppercase tracking-widest border-b border-slate-800 pb-2 sticky top-0 bg-slate-950/90">LỊCH SỬ MỞ HỘP</div>${logs || '<div class="text-center text-slate-600 italic mt-10 text-lg">Chưa mở hộp nào...</div>'}</div></div>`} getHint(t){ if(t==='dog') return "Gâu! Hắn có mùi ở hộp số 2..."; if(t==='bear') return "Chiến thuật 'Dồn toa': Kiểm tra ô 2, nếu không có, ngày mai hắn chắc chắn ở ô lẻ."; if(t==='robo') return "Dữ liệu: Trạng thái thay đổi luân phiên Chẵn/Lẻ sau mỗi bước."; return ""; } }
+        render(){ document.getElementById('game-metric').innerText=`Lần ${this.day}`; const boxes = [1,2,3,4,5].map(i=>`<button onclick="window.ActiveGame.check(${i})" class="box-btn h-24 md:h-40 flex-1 bg-slate-800 border-4 border-slate-600 rounded-2xl text-5xl md:text-7xl font-black text-slate-500 hover:text-indigo-400 hover:border-indigo-500 quantum-active transition-all shadow-xl">${i}</button>`).join(''); const logs = this.logs.map(l=>`<div class="flex justify-between text-sm md:text-base text-slate-400 mb-2 border-b border-slate-800 pb-1 font-mono"><span>${l}</span></div>`).join(''); document.getElementById('game-stage').innerHTML=`<div class="flex flex-col items-center gap-8 w-full max-w-4xl h-full justify-center pt-4 pb-8"><div class="flex gap-3 w-full justify-center">${boxes}</div><div class="text-slate-400 font-mono text-sm mb-2">Khả năng ẩn nấp: <span class="text-indigo-400 font-bold text-2xl">${this.pos.size}</span> vị trí</div><div class="w-full bg-slate-950/50 p-6 rounded-2xl border border-slate-800 h-64 flex-1 overflow-y-auto shadow-inner"><div class="text-xs font-bold text-slate-500 mb-4 uppercase tracking-widest border-b border-slate-800 pb-2 sticky top-0 bg-slate-950/90">LỊCH SỬ MỞ HỘP</div>${logs || '<div class="text-center text-slate-600 italic mt-10 text-lg">...</div>'}</div></div>`} getHint(t){ if(t==='dog') return "Gâu! Hắn có mùi ở hộp số 2..."; if(t==='bear') return "Chiến thuật 'Dồn toa': Kiểm tra ô 2, nếu không có, ngày mai hắn chắc chắn ở ô lẻ."; if(t==='robo') return "Dữ liệu: Trạng thái thay đổi luân phiên Chẵn/Lẻ sau mỗi bước."; return ""; } }
         class GameSpider { 
             constructor(){this.reset()} 
             reset(){
@@ -296,7 +315,7 @@
                 wrapper.addEventListener('wheel', (e) => { e.preventDefault(); scale += e.deltaY * -0.001; scale = Math.min(Math.max(.5, scale), 3); canvas.style.transform = `translate(${pointX}px, ${pointY}px) scale(${scale})`; });
             }
             
-            // BFS for Graph Distance
+            // BFS for Node Distance
             getDist(start, end) {
                 let q = [[start, 0]]; let visited = new Set([start]);
                 while(q.length > 0) {
@@ -363,6 +382,7 @@
             reset(){
                 this.track=[];this.races=0;
                 this.pool=Array.from({length:25},(_,i)=>i+1);
+                // RIGGED LOGIC: Put #1 and #2 in SAME initial group
                 let s=Array.from({length:25},(_,i)=>i+1); 
                 let group = Math.floor(Math.random()*5); 
                 let idx1 = group*5 + Math.floor(Math.random()*5);
@@ -388,11 +408,17 @@
                 this.pool.push(...this.track);this.track=[];this.updateUI();
             } 
             check(){const p1=parseInt(document.getElementById('h-pred-1').value),p2=parseInt(document.getElementById('h-pred-2').value),p3=parseInt(document.getElementById('h-pred-3').value);if(!p1||!p2||!p3){showToast("Nhập đủ 3!", 'warning');return}const s=Object.keys(this.speeds).sort((a,b)=>this.speeds[a]-this.speeds[b]);if(p1==s[0]&&p2==s[1]&&p3==s[2])GameManager.win(this.races<=7);else{playSound('fail');showToast("Sai rồi!", 'error'); setTimeout(()=>this.giveUp(), 1500);}} 
+            giveUp(){
+                const s=Object.keys(this.speeds).sort((a,b)=>this.speeds[a]-this.speeds[b]);
+                const l=document.getElementById('horse-logs');
+                l.innerHTML=`<div class="text-amber-400 font-bold mt-2">ĐÁP ÁN: #1:${s[0]} | #2:${s[1]} | #3:${s[2]}</div>` + l.innerHTML;
+                GameManager.autoResetGame(4000);
+            }
             useGlass(){ const l = document.getElementById('horse-logs'); const slowest = Object.keys(this.speeds).sort((a,b)=>this.speeds[b]-this.speeds[a]).slice(0,5); l.innerHTML=`<div class="mb-3 pb-2 border-b border-yellow-500/50 bg-yellow-900/20 p-2 rounded"><div class="text-yellow-400 font-bold mb-1">🔍 KÍNH LÚP PHÁT HIỆN:</div><div class="text-slate-300 text-sm">5 Rồng chậm nhất: ${slowest.join(', ')}</div></div>`+l.innerHTML; } 
             getHint(t){ if(t==='dog') return "Gâu! Mấy con về bét ở vòng loại chắc chắn loại rồi!"; if(t==='bear') return "Đua 5 nhóm đầu. Lấy 5 con nhất đua với nhau (Lần 6). Từ đó loại trừ tiếp."; if(t==='robo') return "Thuật toán: Sử dụng tính chất bắc cầu (A>B, B>C => A>C) để loại bỏ dữ liệu thừa."; return ""; } 
         }
         class GameBalls { constructor(){this.reset()} reset(){this.pool=Array.from({length:12},(_,i)=>i+1);this.L=[];this.R=[];this.weighs=3;
-            // RANDOM FAKE 3-10
+            // FIX: RANDOM FAKE 3-10
             this.fake=Math.floor(Math.random()*8)+3; 
             this.heavy=Math.random()>0.5;this.selPan=null;this.render();
             let safe1, safe2;
@@ -424,7 +450,7 @@
             unlockedCompanions: new Set(), inventory: new Set(), usedSkills: {}, usedItems: {},
 
             init(){
-                const s=localStorage.getItem('an_v54_save');
+                const s=localStorage.getItem('an_v52_save');
                 if(s){
                     const d=JSON.parse(s);
                     this.idx=d.idx; this.gears=d.gears; this.progress=d.prog; this.visited=d.visited || {};
@@ -436,7 +462,7 @@
                 this.renderSidebar(); this.loadContent();
             },
             save(){
-                localStorage.setItem('an_v54_save',JSON.stringify({
+                localStorage.setItem('an_v52_save',JSON.stringify({
                     idx:this.idx, gears:this.gears, prog:this.progress, visited:this.visited,
                     unlockedCompanions: Array.from(this.unlockedCompanions),
                     inventory: Array.from(this.inventory),
@@ -444,7 +470,7 @@
                 }));
             },
             resetJourney(){ openModal('reset-modal'); },
-            confirmReset(){ localStorage.removeItem('an_v54_save'); location.reload(); },
+            confirmReset(){ localStorage.removeItem('an_v52_save'); location.reload(); },
             autoResetGame(delay){
                 setTimeout(() => {
                     if(window.ActiveGame && window.ActiveGame.reset) {
@@ -457,12 +483,12 @@
                 const nav=document.getElementById('sidebar-nav'), mob=document.getElementById('mobile-nav-list');
                 const inv=document.getElementById('inventory-grid');
                 const mobInv=document.getElementById('mobile-inventory');
+                const isCollapsed = document.getElementById('desktop-sidebar')?.classList.contains('sidebar-collapsed');
                 
                 if(nav) nav.innerHTML=''; if(mob) mob.innerHTML=''; if(inv) inv.innerHTML=''; if(mobInv) mobInv.innerHTML='';
                 if(document.getElementById('gear-count')) document.getElementById('gear-count').innerText=`${this.gears}/8`;
                 if(document.getElementById('mobile-gear')) document.getElementById('mobile-gear').innerText=`${this.gears} ⚙️`;
 
-                // Inventory Render (Desktop & Mobile)
                 const items = [
                     {id:'glass', icon:'🔍', name:'Kính Lúp', game: 'horses'},
                     {id:'magnet', icon:'🧲', name:'Nam Châm', game: 'balls'}
@@ -486,43 +512,48 @@
                 let cur='';
                 STORY.forEach((d,i)=>{
                     if(d.type==='text')return;
-                    if(d.part!==cur){cur=d.part;if(nav)nav.innerHTML+=`<div class="nav-part-header text-xs font-bold text-slate-500 uppercase tracking-widest mt-4 mb-2 pl-2 border-l-2 border-indigo-500/30">${cur}</div>`}
+                    if(d.part!==cur){
+                        cur=d.part;
+                        if(nav)nav.innerHTML+=`<div class="nav-part-header text-xs font-bold text-slate-500 uppercase tracking-widest mt-4 mb-2 pl-2 border-l-2 border-indigo-500/30 whitespace-nowrap overflow-hidden text-ellipsis" title="${cur}">${isCollapsed ? '' : cur}</div>`
+                    }
                     const p=this.progress[d.id];let st='text-slate-500 cursor-not-allowed',ic='🔒';
                     const prev=STORY[i-1];
                     if(i===0||i<=this.idx||(prev&&this.progress[prev.id]?.done))st='text-slate-300 hover:bg-slate-800 cursor-pointer';
                     if(i===this.idx) st='text-indigo-400 bg-indigo-950/30 border-r-2 border-indigo-500 font-bold';
                     if(p&&p.done){st='text-emerald-400';ic='✅'}
                     if(p&&p.opt){st='text-amber-400 font-bold';ic='⚙️'}
-                    const el=`<div class="flex items-center px-3 py-2 rounded-md transition-all mb-1 gap-2 ${st}" onclick="GameManager.jump(${i})"><span class="text-xs">${ic}</span><span class="truncate text-sm">${d.title.split(':')[1]}</span></div>`;
+                    
+                    // Nav Item Structure
+                    const shortTitle = d.title.split(':')[1] || d.title;
+                    const el = `<div class="flex items-center px-3 py-2 rounded-md transition-all mb-1 gap-2 ${st}" onclick="GameManager.jump(${i})" title="${d.title}">
+                        <span class="text-lg min-w-[24px] text-center">${ic}</span>
+                        <span class="truncate text-sm nav-text ${isCollapsed ? 'hidden' : ''}">${shortTitle}</span>
+                    </div>`;
+                    
                     if(nav)nav.innerHTML+=el; if(mob)mob.innerHTML+=el;
                 })
                 
                 if(mob) {
-                    mob.innerHTML += `<div class="mt-6 pt-4 border-t border-slate-800"><button onclick="GameManager.resetJourney()" class="w-full py-3 bg-red-900/30 hover:bg-red-900/50 text-red-400 font-bold rounded-lg flex items-center justify-center gap-2"><span>🗑️</span> XÓA HÀNH TRÌNH</button></div>`;
+                    mob.innerHTML += `<div class="mt-6 pt-4 border-t border-slate-800"><button onclick="openModal('reset-modal')" class="w-full py-3 bg-red-900/30 hover:bg-red-900/50 text-red-400 font-bold rounded-lg flex items-center justify-center gap-2"><span>🗑️</span> XÓA HÀNH TRÌNH</button></div>`;
                 }
             },
             useItem(itemId) {
                 if(this.usedItems[this.idx]?.[itemId]) return;
-                
-                // Logic
                 if(itemId === 'glass' && window.ActiveGame.useGlass) window.ActiveGame.useGlass();
                 if(itemId === 'magnet' && window.ActiveGame.useMagnet) window.ActiveGame.useMagnet();
-                
                 if(!this.usedItems[this.idx]) this.usedItems[this.idx] = {};
                 this.usedItems[this.idx][itemId] = true;
                 this.save(); this.renderSidebar();
-                showToast(`Đã sử dụng vật phẩm!`, 'event');
+                showToast("Đã sử dụng vật phẩm!", 'event');
             },
             useSkill(compId) {
                 if(this.usedSkills[this.idx]?.[compId]) return;
-                
                 const content = window.ActiveGame.getHint(compId);
                 document.getElementById(`content-${compId}`).innerHTML = content;
                 document.getElementById(`content-${compId}`).classList.add('visible');
                 document.getElementById(`btn-${compId}`).classList.remove('available');
                 document.getElementById(`btn-${compId}`).classList.add('used');
                 document.getElementById(`btn-${compId}`).innerText = "Đã sử dụng";
-                
                 if(!this.usedSkills[this.idx]) this.usedSkills[this.idx] = {};
                 this.usedSkills[this.idx][compId] = true;
                 this.save();
@@ -541,12 +572,10 @@
                 
                 const hText = document.getElementById('hint-text'); if(hText) hText.innerText = d.hint || 'Không có gợi ý.';
 
-                // RESET & LOAD SKILL UI
                 ['dog', 'bear', 'robo'].forEach(id => {
                     const btn = document.getElementById(`btn-${id}`);
                     const content = document.getElementById(`content-${id}`);
                     const tab = document.getElementById(`comp-${id}`);
-                    
                     if(tab) {
                         if(this.unlockedCompanions.has(id)) {
                             tab.classList.remove('opacity-50');
@@ -579,7 +608,9 @@
                 if(gw) gw.classList.add('hidden'); if(ph) ph.classList.remove('hidden');
                 
                 const vic = document.getElementById('victory-overlay');
-                if(!vic.classList.contains('victory-visible') || d.id !== 'c1') { vic.classList.remove('victory-visible'); vic.style.pointerEvents = 'none'; vic.innerHTML = ''; }
+                if(!vic.classList.contains('victory-visible') || d.id !== 'c1') { 
+                    vic.classList.remove('victory-visible'); vic.classList.remove('is-story-overlay'); vic.style.pointerEvents = 'none'; vic.innerHTML = ''; 
+                }
                 document.getElementById('hint-modal').style.display = 'none';
                 
                 if(window.innerWidth >= 768) {
@@ -594,7 +625,7 @@
 
                 if (d.id === 'c1' && !this.visited['c1']) {
                      const storyHTML = `<div class="max-w-2xl bg-slate-900 p-8 rounded-2xl border border-slate-700 shadow-2xl relative animate-fade-in mx-4"><div class="text-xs font-black text-indigo-400 uppercase tracking-widest mb-4">CHƯƠNG 1</div><h2 class="text-3xl font-serif font-bold text-white mb-4">${d.title.split(':')[1]}</h2><div class="text-slate-300 text-base leading-relaxed mb-8 max-h-[60vh] overflow-y-auto">${d.text}</div><button onclick="GameManager.closeStoryOverlay()" class="w-full py-4 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl uppercase tracking-wider transition-transform active:scale-95">TIẾP TỤC</button></div>`;
-                     vic.innerHTML = storyHTML; vic.classList.add('victory-visible'); vic.style.pointerEvents = 'auto';
+                     vic.innerHTML = storyHTML; vic.classList.add('victory-visible'); vic.classList.add('is-story-overlay'); vic.style.pointerEvents = 'auto';
                      this.visited['c1'] = true; this.save();
                 }
 
@@ -602,7 +633,27 @@
                 if(d.type==='text'){ if(b1) {b1.classList.remove('hidden');b1.innerText="BẮT ĐẦU";} }else{ if(b1) {b1.classList.remove('hidden');b1.innerText="BẮT ĐẦU / TIẾP TỤC";} }
                 setTimeout(() => { this.isTransitioning = false; }, 500);
             },
-            closeStoryOverlay() { const vic = document.getElementById('victory-overlay'); vic.classList.remove('victory-visible'); vic.style.pointerEvents = 'none'; this.playLevel(); },
+            toggleSidebar() {
+                const sidebar = document.getElementById('desktop-sidebar');
+                const btn = document.getElementById('toggle-sidebar-btn');
+                sidebar.classList.toggle('sidebar-collapsed');
+                
+                if (sidebar.classList.contains('sidebar-collapsed')) {
+                    btn.innerHTML = '»';
+                    document.getElementById('btn-reset-journey').innerHTML = '<span>🗑️</span>'; // Show only icon
+                    document.getElementById('gear-count').classList.add('hidden'); // Hide gear count text
+                } else {
+                    btn.innerHTML = '«';
+                    document.getElementById('btn-reset-journey').innerHTML = `<span>🗑️</span> <span id="btn-reset-text">XÓA HÀNH TRÌNH</span>`;
+                    document.getElementById('gear-count').classList.remove('hidden');
+                }
+                this.renderSidebar(); // Re-render to hide/show nav text
+            },
+            switchTab(tab) {
+                document.querySelectorAll('.hint-tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.hint-content').forEach(c => c.classList.remove('active'));
+            },
+            closeStoryOverlay() { const vic = document.getElementById('victory-overlay'); vic.classList.remove('victory-visible'); vic.classList.remove('is-story-overlay'); vic.style.pointerEvents = 'none'; this.playLevel(); },
             playLevel(){
                 const d=STORY[this.idx];
                 forceCollapseStory();
@@ -612,7 +663,6 @@
                 if (document.getElementById('game-msg')) document.getElementById('game-msg').innerText="";
                 if(window.ActiveGame && window.ActiveGame.reset) window.ActiveGame = null;
                 
-                // Init Game first so hints work
                 if(d.game==='switches')window.ActiveGame=new GameSwitches();
                 if(d.game==='jugs')window.ActiveGame=new GameJugs();
                 if(d.game==='graph')window.ActiveGame=new GameGraph();
@@ -659,39 +709,37 @@
                 document.getElementById('ending-screen').classList.remove('hidden');
                 const gears = this.gears;
                 document.getElementById('end-score').innerText = `${gears}/8 ⚙️`;
-                const title = document.getElementById('end-title');
-                const sub = document.getElementById('end-subtitle');
-                const desc = document.getElementById('end-desc');
                 const rank = document.getElementById('end-rank');
                 const icon = document.getElementById('end-icon');
+                const title = document.getElementById('end-title');
                 
-                let r = 'B'; 
+                let r = 'B', i = '🌱';
                 let rClass = "text-3xl font-black text-slate-400 mt-1";
-                let iText = '✨';
                 let tClass = "text-3xl md:text-5xl font-serif font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-200 to-cyan-500 mb-2";
                 let tText = "BÌNH MINH CHƯA TRỌN";
                 let sText = "NORMAL ENDING";
                 
                 if(gears === 8) {
                     r = 'S+'; rClass = "text-4xl font-black text-amber-400 mt-1 drop-shadow-[0_0_10px_rgba(251,191,36,0.8)]";
-                    iText = '👑'; tClass = "text-3xl md:text-5xl font-serif font-black text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-yellow-400 to-amber-600 mb-2";
+                    i = '👑'; tClass = "text-3xl md:text-5xl font-serif font-black text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-yellow-400 to-amber-600 mb-2";
                     tText = "HUYỀN THOẠI ÁNH SÁNG"; sText = "TRUE ENDING - HOÀN HẢO";
                 } else if (gears >= 6) {
                     r = 'S'; rClass = "text-4xl font-black text-yellow-300 mt-1";
-                    iText = '⚔️'; tText = "HIỆP SĨ THỜI GIAN";
+                    i = '⚔️'; tText = "HIỆP SĨ THỜI GIAN";
                 } else if (gears === 5) {
                     r = 'A+'; rClass = "text-3xl font-black text-emerald-400 mt-1";
-                    iText = '🛡️'; tText = "HỘ VỆ TÀI BA";
+                    i = '🛡️'; tText = "HỘ VỆ TÀI BA";
                 } else if (gears === 4) {
                     r = 'A'; rClass = "text-3xl font-black text-emerald-500 mt-1";
-                    iText = '🕯️'; tText = "NGƯỜI DẪN ĐƯỜNG";
+                    i = '🕯️'; tText = "NGƯỜI DẪN ĐƯỜNG";
                 } else {
-                    r = 'B'; iText = '🌱'; tText = "TẬP SỰ";
+                    r = 'B'; i = '🌱'; tText = "TẬP SỰ";
                 }
 
                 rank.innerText = r; rank.className = rClass;
-                icon.innerText = iText; title.className = tClass; title.innerText = tText; sub.innerText = sText;
+                icon.innerText = i; title.className = tClass; title.innerText = tText; document.getElementById('end-subtitle').innerText = sText;
 
+                const desc = document.getElementById('end-desc');
                 if(gears === 8) {
                     desc.innerHTML = `"Không thể tin được!" - Hắc Pháp Sư Muội Than thốt lên khi ánh sáng từ 8 Bánh Răng Vàng hợp nhất thành một luồng năng lượng thuần khiết, xuyên thủng màn đêm vĩnh cửu. <br><br>Cha của An bước ra từ khối pha lê vỡ vụn, không một vết xước. Cây Đèn Chân Lý không chỉ soi sáng con đường, mà còn thanh tẩy tâm hồn đen tối của kẻ thù. Muội Than, giờ đây đã được giải thoát khỏi lời nguyền bóng tối, cúi đầu kính phục trí tuệ và lòng dũng cảm của An.<br><br>Vương Quốc Logic bước vào kỷ nguyên thịnh vượng nhất lịch sử. An trở thành Thợ Đồng Hồ Hoàng Gia trẻ tuổi nhất, người nắm giữ chìa khóa của Thời Gian và Sự Thật. Một cái kết viên mãn không tì vết!`;
                 } else {
@@ -703,13 +751,8 @@
         document.addEventListener('keydown', (e) => {
             if(e.key === 'Enter' && !GameManager.isTransitioning) {
                 const overlay = document.getElementById('victory-overlay');
-                
                 if(overlay.classList.contains('victory-visible')) {
-                    if(overlay.classList.contains('is-story-overlay')) {
-                        GameManager.closeStoryOverlay();
-                    } else {
-                        GameManager.next(); 
-                    }
+                    if(overlay.classList.contains('is-story-overlay')) { GameManager.closeStoryOverlay(); } else { GameManager.next(); }
                 } else {
                    const btn = document.getElementById('btn-play');
                    if(btn && !btn.classList.contains('hidden')) btn.click();
