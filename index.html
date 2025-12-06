@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Hành Trình Của An - v2.50.0 Auto Reset</title>
+    <title>Hành Trình Của An - v54.0 Rank & Polish</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&family=Merriweather:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
     <style>
@@ -62,7 +62,6 @@
         @media (max-width: 767px) { 
             .bridge-layout { flex-direction: column; height: auto; min-height: auto; border: none; background: transparent; overflow: visible; gap: 4px; } 
             .cliff-side { width: 100%; height: auto; min-height: 70px; border: 2px solid #334155; border-radius: 12px; background: #1e293b; padding: 8px; margin: 0; display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px; } 
-            /* COMPACT BRIDGE ZONE (180px) */
             .bridge-zone { min-height: 180px; border: 2px solid #334155; border-radius: 12px; background: linear-gradient(180deg, #0f172a 0%, #1e293b 100%); margin: 0; display: flex; flex-direction: column; justify-content: center; } 
             .bridge-zone .btn-go-round { display: none; } 
             .mobile-action-bar { margin-top: 0px; padding: 0; display: flex; justify-content: center; } 
@@ -92,7 +91,7 @@
     <aside class="hidden md:flex flex-col w-72 bg-slate-900 border-r border-slate-800 h-full shrink-0 z-30">
         <div class="p-6 border-b border-slate-800">
             <h1 class="text-lg font-black text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-cyan-400">HÀNH TRÌNH CỦA AN</h1>
-            <div class="text-[10px] text-slate-500 font-bold mt-1 tracking-widest">v2.50.0 AUTO RESET</div>
+            <div class="text-[10px] text-slate-500 font-bold mt-1 tracking-widest">v54.0 RANK & POLISH</div>
         </div>
         <nav id="sidebar-nav" class="flex-1 overflow-y-auto pb-4 space-y-1 p-2"></nav>
         <div id="inventory-section" class="p-4 border-t border-slate-800 bg-slate-900/50">
@@ -222,7 +221,7 @@
 
         const STORY = [
             { id: 'intro', type: 'text', part: 'MỞ ĐẦU', title: 'Lời Nhắn Từ Quá Khứ', text: 'An, con trai yêu quý của ta. Nếu con đọc được những dòng này, có lẽ ta đã không còn ở bên con. Hắc Pháp Sư Muội Than - kẻ thù truyền kiếp của Hoàng Gia - đã trỗi dậy và bắt cóc ta. Ta đã kịp giấu Cây Đèn Chân Lý vào gói bưu phẩm này. Nó không chỉ là một công cụ, mà là người dẫn đường. Hãy lắng nghe tiếng nói của ánh sáng, nó sẽ chỉ cho con con đường cứu ta và cả Vương Quốc Logic. Hãy dũng cảm lên, con trai!', rules: null },
-            { id: 'c1', type: 'game', game: 'switches', part: 'PHẦN 1', title: 'Chương 1: Căn Nhà Gỗ', text: 'Theo chỉ dẫn của ngọn đèn, An tìm đến căn nhà gỗ bìa rừng nơi người bạn trung thành của cha - Chú Chó Vàng - đang bị giam giữ. Căn phòng tối om, chỉ có một lồng năng lượng nhiệt đang nhốt Chú Chó. Để phá lồng, An cần tìm đúng công tắc kích hoạt trong 4 công tắc. Ngọn đèn thì thầm: "Ánh sáng không phải là tất cả, hãy cảm nhận hơi ấm còn vương lại..."', hint: 'Bật công tắc, đợi nóng, rồi tắt đi. Bóng đèn tắt nhưng còn NÓNG chính là chìa khóa.', math: 'Nguyên lý: Sử dụng biến trạng thái thứ 3 (Nhiệt độ) để phân biệt 2 trạng thái đầu ra (Sáng/Tối).', rules: '<p>1. Có 4 công tắc và 4 bóng đèn.</p><p>2. Bật/Tắt công tắc tùy ý, nhấn "Chờ 10 phút" để làm nóng đèn.</p><p>3. Nhấn "Vào Phòng" để kiểm tra trạng thái.</p><p>4. <strong>Nhiệm vụ:</strong> Tìm chính xác cặp Công tắc - Bóng đèn tương ứng. (Lưu ý: Chỉ được vào phòng 1 lần).</p>', hint2: null, guide: null },
+            { id: 'c1', type: 'game', game: 'switches', part: 'PHẦN 1', title: 'Chương 1: Căn Nhà Gỗ', text: 'Theo chỉ dẫn của ngọn đèn, An tìm đến căn nhà gỗ bìa rừng nơi người bạn trung thành của cha - Chú Chó Vàng - đang bị giam giữ. Căn phòng tối om, chỉ có một lồng năng lượng nhiệt đang nhốt Chú Chó. Để phá lồng, An cần tìm đúng công tắc kích hoạt trong 4 công tắc. Ngọn đèn thì thầm: "Ánh sáng không phải là tất cả, hãy cảm nhận hơi ấm còn vương lại..."', hint: 'Bật công tắc, đợi nóng, rồi tắt đi. Bóng đèn tắt nhưng còn NÓNG chính là chìa khóa.', math: 'Nguyên lý: Sử dụng biến trạng thái thứ 3 (Nhiệt độ) để phân biệt 2 trạng thái đầu ra (Sáng/Tối).', rules: '<p>1. Có 4 công tắc và 4 bóng đèn.</p><p>2. Bật/Tắt công tắc tùy ý, nhấn "Chờ 10 phút" để làm nóng đèn.</p><p>3. Nhấn "Vào Phòng" để kiểm tra trạng thái.</p><p>4. <strong>Nhiệm vụ:</strong> Tìm chính xác công tắc nào điều khiển bóng đèn nào. (Chỉ được vào phòng 1 lần).</p>', hint2: null, guide: null },
             { id: 'c2', type: 'game', game: 'jugs', part: 'PHẦN 1', title: 'Chương 2: Suối Dầu Cạn', text: 'Giải cứu thành công, Chú Chó Vàng dẫn An đến suối dầu cạn. Tại đó, Robo Tin-Tin đang nằm bất động. Lõi năng lượng của Tin-Tin yêu cầu nạp chính xác 4 Lít dầu để tái khởi động. An chỉ tìm thấy 3 chiếc bình rỗng với dung tích 8L, 5L và 3L.', hint: 'Tập trung vào sự chênh lệch. 5 - 3 = 2. Làm sao từ 2 ra 4?', hint2: 'Gâu! Mùi dầu ở bình 5L và 3L là nồng nhất, hãy dùng chúng để tạo ra số dư!', guide: null, math: 'Nguyên lý: 5x + 3y = 4 (Phương trình Diophantine).', rules: '<p>1. Có 3 bình: 8L, 5L, 3L.</p><p>2. Đổ dầu qua lại giữa các bình.</p><p>3. Tạo ra chính xác 4 Lít dầu trong bất kỳ bình nào.</p>' },
             { id: 'c3', type: 'game', game: 'graph', part: 'PHẦN 1', title: 'Chương 3: Cổng Đá Cổ Đại', text: 'Cả nhóm bị chặn lại bởi Cổng Đá Cổ Đại. Giáo Sư Gấu đang loay hoay trước cổng. "Cổng này phong ấn bằng một hình vẽ sao," Giáo Sư nói, "Phải vẽ lại toàn bộ hình này bằng một nét bút liền mạch."', hint: 'Bắt đầu từ điểm có số đường nối LẺ.', hint2: 'Gâu! Điểm góc dưới này có mùi lạ, hãy bắt đầu từ đó!', guide: 'Chỉ có thể bắt đầu từ một trong hai điểm ở đáy (bậc 5). Đi theo viền ngoài rồi vào trong.', math: 'Nguyên lý Euler: Đồ thị vẽ được 1 nét khi và chỉ khi có 0 hoặc 2 đỉnh bậc lẻ.', rules: '<p>1. Vẽ lại hình ngôi sao bằng một nét liền.</p><p>2. Không được đi lại đường đã vẽ.</p>' },
             { id: 'c4', type: 'game', game: 'river', part: 'PHẦN 2', title: 'Chương 4: Cây Cầu Đứt Gãy', text: 'Cây cầu treo duy nhất đã bị đứt gãy. Ngọn đèn cảnh báo năng lượng chỉ còn 29 giây. Cả nhóm (5 người) phải qua cầu. Cầu chỉ chịu được 2 người/lượt, và phải có đèn.', hint: 'Đừng để người nhanh nhất làm mọi việc. Hãy để hai người chậm nhất đi cùng nhau.', hint2: 'Gâu! Để tôi cầm đèn chạy về cho nhanh, tôi chạy có 1 giây thôi!', guide: 'Lượt quan trọng: Cho Gấu (8s) và Robo (12s) đi cùng nhau để "gói" thời gian chậm nhất lại.', math: 'Tối ưu hóa: Giảm thiểu tổng thời gian chờ (Wait Time Minimization).', rules: '<p>1. Đưa 5 người qua bờ phải trong 29s.</p><p>2. Tối đa 2 người/lượt. Phải có đèn.</p><p>3. Tốc độ: Chó 1s, An 3s, Khách 6s, Gấu 8s, Robo 12s.</p>' },
@@ -232,7 +231,21 @@
             { id: 'c8', type: 'game', game: 'balls', part: 'PHẦN 3', title: 'Chương 8: Trái Tim Thời Gian', text: 'Đỉnh tháp! Hắc Pháp Sư trộn Lõi Thời Gian thật vào 12 quả cầu giống hệt nhau. Dùng cân 3 lần để tìm ra quả khác biệt.', hint: 'Chia 12 quả thành 3 nhóm (4-4-4). Cân nhóm 1 và 2 sẽ loại trừ được nhiều nhất.', hint2: null, guide: 'Lần 1: Cân 1,2,3,4 vs 5,6,7,8. Nếu cân bằng -> Lỗi ở nhóm còn lại.', math: 'Cây quyết định Tam phân: 3 lần cân cho 3^3 = 27 khả năng, đủ tìm ra 1/12.', rules: '<p>1. 12 quả cầu, 1 quả giả (khác khối lượng).</p><p>2. Cân tối đa 3 lần.</p><p>3. Tìm quả giả và xác định Nặng/Nhẹ.</p>' }
         ];
 
-        class GameSwitches { constructor(){this.reset()} reset(){this.map={};let s=['A','B','C','D'].sort(()=>Math.random()-0.5);[1,2,3,4].forEach((n,i)=>this.map[n]=s[i]);this.sw={A:{on:false,heat:0},B:{on:false,heat:0},C:{on:false,heat:0},D:{on:false,heat:0}};this.time=0;this.entered=false;this.render()} toggle(k){if(!this.entered){this.sw[k].on=!this.sw[k].on;playSound('click');this.render()}} wait(){if(!this.entered){this.time+=10;Object.keys(this.sw).forEach(k=>{if(this.sw[k].on)this.sw[k].heat+=10});playSound('click');this.render()}} enter(){this.entered=true;this.render()} check(){let c=0;[1,2,3,4].forEach(n=>{if(document.getElementById(`sel-${n}`).value===this.map[n])c++});if(c===4)GameManager.win(this.time<=20);else{playSound('fail');showToast('Sai! Đang Reset...', 'error'); GameManager.autoResetGame(4000);}} render(){ const s = document.getElementById('game-stage'); if(!s) return; if(!this.entered){ s.innerHTML=`<div class="flex flex-col items-center w-full h-full justify-start pt-4 overflow-y-auto pb-20"><div class="grid grid-cols-2 md:grid-cols-4 gap-4 w-full max-w-5xl mb-8">${['A','B','C','D'].map(k=>`<button onclick="window.ActiveGame.toggle('${k}')" class="bulb-btn h-32 md:h-40 rounded-2xl border-2 border-slate-600 text-3xl font-bold flex flex-col items-center justify-center transition-all ${this.sw[k].on?'bulb-on':'bulb-off'} shadow-lg w-full hover:scale-105"><span class="text-5xl mb-2">💡</span><span>${k}</span><span class="text-xs opacity-70 font-normal mt-2 bg-black/30 px-3 py-1 rounded-full border border-white/20">${this.sw[k].on?'ON':'OFF'}</span></button>`).join('')}</div><div class="md:hidden fixed bottom-0 left-0 w-full flex z-50"><button onclick="window.ActiveGame.wait()" class="flex-1 py-5 bg-slate-800 hover:bg-slate-700 text-white font-bold text-lg border-r border-slate-700 rounded-none">⏱️ Chờ 10 phút</button><button onclick="window.ActiveGame.enter()" class="flex-1 py-5 bg-rose-700 hover:bg-rose-600 text-white font-bold text-lg rounded-none">🚪 Vào Phòng</button></div><div class="hidden md:flex gap-4 w-full max-w-lg mt-auto"><button onclick="window.ActiveGame.wait()" class="flex-1 py-4 bg-slate-700 hover:bg-slate-600 rounded-xl font-bold text-white text-lg shadow-xl border border-slate-500 active:scale-95 transition-transform">⏱️ Chờ 10 phút</button><button onclick="window.ActiveGame.enter()" class="flex-1 py-4 bg-rose-600 hover:bg-rose-500 rounded-xl font-bold text-white text-lg uppercase shadow-xl border border-rose-400 active:scale-95 transition-transform">🚪 Vào Phòng</button></div></div>`; }else{ s.innerHTML=`<div class="flex flex-col items-center w-full h-full justify-start pt-4 overflow-y-auto pb-24"><div class="grid grid-cols-1 md:grid-cols-4 gap-6 w-full max-w-6xl mb-8 px-4">${[1,2,3,4].map(n=>{const st=this.sw[this.map[n]];let txt='TẮT',sub='LẠNH',cls='bulb-off';if(st.on){txt='BẬT';sub='NÓNG';cls='bulb-on'}else if(st.heat>=15){sub='NÓNG';cls='heat-high text-white'}else if(st.heat>0){sub='ẤM';cls='heat-med text-slate-300'}return `<div class="flex flex-row md:flex-col gap-4 w-full bg-slate-800/50 p-4 rounded-2xl border border-slate-700 items-center shadow-md"><div class="${cls} h-24 w-24 md:w-full md:h-32 rounded-xl border-2 flex flex-col items-center justify-center shadow-lg transition-all shrink-0"><span class="text-xs font-bold opacity-50 mb-1">Đèn ${n}</span><span class="text-xl font-black mb-1">${txt}</span><span class="text-[10px] font-bold uppercase tracking-widest bg-black/20 px-2 py-0.5 rounded-full">${sub}</span></div><select id="sel-${n}" class="flex-1 md:w-full p-4 bg-slate-900 border-2 border-slate-600 rounded-xl text-white font-bold cursor-pointer hover:border-indigo-500 outline-none text-center appearance-none text-base shadow-md"><option value="">Chọn công tắc...</option><option value="A">Công tắc A</option><option value="B">Công tắc B</option><option value="C">Công tắc C</option><option value="D">Công tắc D</option></select></div>`}).join('')}</div><div class="fixed bottom-0 left-0 w-full p-4 bg-slate-900/90 border-t border-slate-700 z-50 flex justify-center"><button onclick="window.ActiveGame.check()" class="w-full max-w-md py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl text-xl shadow-xl hover:scale-105 transition-transform">KIỂM TRA ĐÁP ÁN</button></div></div>`; } 
+        class GameSwitches { constructor(){this.reset()} reset(){this.map={};let s=['A','B','C','D'].sort(()=>Math.random()-0.5);[1,2,3,4].forEach((n,i)=>this.map[n]=s[i]);this.sw={A:{on:false,heat:0},B:{on:false,heat:0},C:{on:false,heat:0},D:{on:false,heat:0}};this.time=0;this.entered=false;this.render()} toggle(k){if(!this.entered){this.sw[k].on=!this.sw[k].on;playSound('click');this.render()}} wait(){if(!this.entered){this.time+=10;Object.keys(this.sw).forEach(k=>{if(this.sw[k].on)this.sw[k].heat+=10});playSound('click');this.render()}} enter(){this.entered=true;this.render()} check(){let c=0;[1,2,3,4].forEach(n=>{if(document.getElementById(`sel-${n}`).value===this.map[n])c++});if(c===4)GameManager.win(this.time<=20);else{playSound('fail');
+            /* FIX: SHOW ANSWER IN UI */
+            const ui=document.getElementById('game-stage').querySelector('.grid');
+            if(ui) {
+               [1,2,3,4].forEach(n => {
+                   const sel = document.getElementById(`sel-${n}`);
+                   if(sel) {
+                       sel.value = this.map[n]; // Force value
+                       sel.classList.add('bg-red-900', 'border-red-500', 'text-red-200'); // Highlight red
+                   }
+               });
+               showToast('Sai rồi! Đang Reset...', 'error'); 
+               GameManager.autoResetGame(4000);
+            }
+        }} render(){ const s = document.getElementById('game-stage'); if(!s) return; if(!this.entered){ s.innerHTML=`<div class="flex flex-col items-center w-full h-full justify-start pt-4 overflow-y-auto pb-20"><div class="grid grid-cols-2 md:grid-cols-4 gap-4 w-full max-w-5xl mb-8">${['A','B','C','D'].map(k=>`<button onclick="window.ActiveGame.toggle('${k}')" class="bulb-btn h-32 md:h-40 rounded-2xl border-2 border-slate-600 text-3xl font-bold flex flex-col items-center justify-center transition-all ${this.sw[k].on?'bulb-on':'bulb-off'} shadow-lg w-full hover:scale-105"><span class="text-5xl mb-2">💡</span><span>${k}</span><span class="text-xs opacity-70 font-normal mt-2 bg-black/30 px-3 py-1 rounded-full border border-white/20">${this.sw[k].on?'ON':'OFF'}</span></button>`).join('')}</div><div class="md:hidden fixed bottom-0 left-0 w-full flex z-50"><button onclick="window.ActiveGame.wait()" class="flex-1 py-5 bg-slate-800 hover:bg-slate-700 text-white font-bold text-lg border-r border-slate-700 rounded-none">⏱️ Chờ 10 phút</button><button onclick="window.ActiveGame.enter()" class="flex-1 py-5 bg-rose-700 hover:bg-rose-600 text-white font-bold text-lg rounded-none">🚪 Vào Phòng</button></div><div class="hidden md:flex gap-4 w-full max-w-lg mt-auto"><button onclick="window.ActiveGame.wait()" class="flex-1 py-4 bg-slate-700 hover:bg-slate-600 rounded-xl font-bold text-white text-lg shadow-xl border border-slate-500 active:scale-95 transition-transform">⏱️ Chờ 10 phút</button><button onclick="window.ActiveGame.enter()" class="flex-1 py-4 bg-rose-600 hover:bg-rose-500 rounded-xl font-bold text-white text-lg uppercase shadow-xl border border-rose-400 active:scale-95 transition-transform">🚪 Vào Phòng</button></div></div>`; }else{ s.innerHTML=`<div class="flex flex-col items-center w-full h-full justify-start pt-4 overflow-y-auto pb-24"><div class="grid grid-cols-1 md:grid-cols-4 gap-6 w-full max-w-6xl mb-8 px-4">${[1,2,3,4].map(n=>{const st=this.sw[this.map[n]];let txt='TẮT',sub='LẠNH',cls='bulb-off';if(st.on){txt='BẬT';sub='NÓNG';cls='bulb-on'}else if(st.heat>=15){sub='NÓNG';cls='heat-high text-white'}else if(st.heat>0){sub='ẤM';cls='heat-med text-slate-300'}return `<div class="flex flex-row md:flex-col gap-4 w-full bg-slate-800/50 p-4 rounded-2xl border border-slate-700 items-center shadow-md"><div class="${cls} h-24 w-24 md:w-full md:h-32 rounded-xl border-2 flex flex-col items-center justify-center shadow-lg transition-all shrink-0"><span class="text-xs font-bold opacity-50 mb-1">Đèn ${n}</span><span class="text-xl font-black mb-1">${txt}</span><span class="text-[10px] font-bold uppercase tracking-widest bg-black/20 px-2 py-0.5 rounded-full">${sub}</span></div><select id="sel-${n}" class="flex-1 md:w-full p-4 bg-slate-900 border-2 border-slate-600 rounded-xl text-white font-bold cursor-pointer hover:border-indigo-500 outline-none text-center appearance-none text-base shadow-md"><option value="">Chọn công tắc...</option><option value="A">Công tắc A</option><option value="B">Công tắc B</option><option value="C">Công tắc C</option><option value="D">Công tắc D</option></select></div>`}).join('')}</div><div class="fixed bottom-0 left-0 w-full p-4 bg-slate-900/90 border-t border-slate-700 z-50 flex justify-center"><button onclick="window.ActiveGame.check()" class="w-full max-w-md py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl text-xl shadow-xl hover:scale-105 transition-transform">KIỂM TRA ĐÁP ÁN</button></div></div>`; } 
             if(document.getElementById('game-metric')) document.getElementById('game-metric').innerText=`${this.time} phút`; 
         } 
         getHint(t){ return ""; } 
@@ -241,19 +254,21 @@
         class GameJugs { constructor(){this.reset()} reset(){this.jugs=[8,0,0];this.caps=[8,5,3];this.moves=0;this.sel=null;this.render()} click(i){if(this.sel===null){if(this.jugs[i]>0){this.sel=i;playSound('click')}}else{if(this.sel!==i)this.pour(this.sel,i);this.sel=null}this.render()} pour(f,t){const a=Math.min(this.jugs[f],this.caps[t]-this.jugs[t]);if(a>0){this.jugs[f]-=a;this.jugs[t]+=a;this.moves++;playSound('click')}if(this.jugs.includes(4))GameManager.win(this.moves===6)} render(){ document.getElementById('game-metric').innerText=`${this.moves} bước`; const hArr = [320, 200, 120]; const h=this.jugs.map((v,i)=>{ const cls=this.sel===i?'jug-selected':'border-slate-500'; const pct = (v/this.caps[i])*100; return `<div onclick="window.ActiveGame.click(${i})" style="height:${[320,200,120][i]}px" class="jug-container ${cls} flex-shrink-0"><div class="jug-water" style="height:${pct}%"></div><div class="absolute inset-0 flex items-center justify-center font-bold text-white drop-shadow-md z-10 text-3xl">${v}L</div></div>` }).join(''); document.getElementById('game-stage').innerHTML=`<div class="flex flex-col items-center justify-center h-full w-full py-8 flex-1 pt-20"><div class="flex-1 flex items-end justify-center gap-2 w-full pb-12 h-full">${h}</div><div class="text-slate-400 font-bold text-xl mb-4">Chọn bình nguồn ➔ Chọn bình đích</div></div>` } getHint(t){ if(t==='dog') return "Gâu! Mùi dầu ở bình 5L và 3L là nồng nhất, hãy dùng chúng để tạo ra số dư!"; return ""; } }
         class GameGraph { constructor(){this.reset()} reset(){this.nodes={1:{x:275,y:50},2:{x:175,y:130},3:{x:375,y:130},4:{x:175,y:230},5:{x:375,y:230},6:{x:175,y:330},7:{x:375,y:330},8:{x:275,y:410}};this.edges=[{u:1,v:2},{u:1,v:3},{u:2,v:3},{u:2,v:4},{u:2,v:5},{u:3,v:4},{u:3,v:5},{u:4,v:5},{u:4,v:6},{u:5,v:7},{u:6,v:7},{u:6,v:8},{u:7,v:8}];this.curr=null;this.visited=new Set();this.path=[];this.bt=0; document.getElementById('game-stage').innerHTML=`<div class="w-full h-full flex items-center justify-center p-0 m-0 overflow-hidden"><canvas id="graph-canvas" class="w-full h-full"></canvas></div>`; this.resizeObserver=new ResizeObserver(()=>window.requestAnimationFrame(()=>this.draw()));this.resizeObserver.observe(document.getElementById('game-stage'));setTimeout(()=>this.draw(),50)} click(e){const c=e.target,r=c.getBoundingClientRect(),scale=(window.innerWidth>=768)?Math.min(c.width/550,c.height/450)*0.9:Math.min(c.width/550,c.height/450)*1.2,offX=(c.width-550*scale)/2,offY=(c.height-450*scale)/2,lx=(e.clientX-r.left-offX)/scale,ly=(e.clientY-r.top-offY)/scale;let h=null;for(let k in this.nodes){if(Math.hypot(lx-this.nodes[k].x,ly-this.nodes[k].y)<50)h=parseInt(k)}if(h){if(this.curr===null){this.curr=h;this.path.push(h);playSound('click')}else if(this.path.length>1&&h===this.path[this.path.length-2]){const u=Math.min(this.curr,h),v=Math.max(this.curr,h),ei=this.edges.findIndex(e=>e.u===u&&e.v===v);this.visited.delete(ei);this.path.pop();this.curr=h;this.bt++;playSound('click')}else{const u=Math.min(this.curr,h),v=Math.max(this.curr,h),ei=this.edges.findIndex(e=>e.u===u&&e.v===v);if(ei>-1&&!this.visited.has(ei)){this.visited.add(ei);this.path.push(h);this.curr=h;playSound('click')}}this.draw();if(this.visited.size===13)GameManager.win(this.bt===0)}} draw(){const c=document.getElementById('graph-canvas');if(!c)return;c.onclick=(e)=>this.click(e);const con=c.parentElement;c.width=con.clientWidth;c.height=con.clientHeight;const ctx=c.getContext('2d'),scale=(window.innerWidth>=768)?Math.min(c.width/550,c.height/450)*0.9:Math.min(c.width/550,c.height/450)*1.2,offX=(c.width-550*scale)/2,offY=(c.height-450*scale)/2;ctx.setTransform(scale,0,0,scale,offX,offY);ctx.clearRect(-offX/scale,-offY/scale,c.width/scale,c.height/scale);ctx.lineWidth=8;this.edges.forEach((e,i)=>{const n1=this.nodes[e.u],n2=this.nodes[e.v];ctx.beginPath();ctx.moveTo(n1.x,n1.y);ctx.lineTo(n2.x,n2.y);ctx.strokeStyle=this.visited.has(i)?'#fbbf24':'#475569';ctx.stroke()});for(let k in this.nodes){const n=this.nodes[k];ctx.beginPath();ctx.arc(n.x,n.y,28,0,6.28);ctx.fillStyle=parseInt(k)===this.curr?'#fbbf24':'#3b82f6';if(this.curr===null)ctx.fillStyle='#fbbf24';ctx.fill();ctx.fillStyle='white';ctx.font='bold 24px Arial';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(k,n.x,n.y)}document.getElementById('game-metric').innerText=`${13-this.visited.size} cạnh`} getHint(t){ if(t==='dog') return "Gâu! Điểm góc dưới này có mùi lạ, hãy bắt đầu từ đó!"; if(t==='robo') return "Dữ liệu: Điểm bắt đầu phải có số đường nối là số lẻ."; return ""; } }
         class GameRiver { constructor(){this.reset()} reset(){this.L=[1,3,6,8,12];this.R=[];this.lamp=[];this.side='L';this.time=0;this.names={1:'🐕',3:'👦',6:'🧙‍♂️',8:'🐻',12:'🤖'};this.render()} move(id,loc){if(loc===this.side){if(this.lamp.length<2){this[this.side]=this[this.side].filter(x=>x!==id);this.lamp.push(id);playSound('click')}}else if(loc==='lamp'){this.lamp=this.lamp.filter(x=>x!==id);this[this.side].push(id);playSound('click')}this.render()} go(){if(this.lamp.length===0){showToast('Cần người cầm đèn!', 'error');playSound('fail');return}this.time+=Math.max(...this.lamp);this.side=this.side==='L'?'R':'L';this.render();playSound('click');
+            /* FIX: STRICT FAIL LOGIC */
             if(this.time > 30) {
                 showToast('Thất bại! Quá 30 giây.', 'error');
-                GameManager.autoResetGame(1000);
+                setTimeout(()=>this.reset(), 1500);
                 return;
             }
             if(this.L.length===0&&this.side==='R')setTimeout(()=>GameManager.win(this.time<=29),500)} render(){ document.getElementById('game-metric').innerText=`${this.time}s`; const d=(arr,loc)=>arr.map(id=>`<div onclick="window.ActiveGame.move(${id},'${loc}')" class="char-card bg-slate-700 p-2 rounded-lg border-2 border-slate-500 flex flex-col items-center justify-center shadow-lg cursor-pointer transform active:scale-95 w-full"><span class="char-emoji text-2xl md:text-3xl">${this.names[id].split(' ')[0]}</span><span class="font-bold text-emerald-400 text-xs md:text-sm">${id}s</span></div>`).join(''); const desktopHTML = `<div class="bridge-layout shadow-2xl relative w-full h-[600px] flex"><div class="cliff-side"><div class="col-span-full text-xs font-black text-slate-500 w-full text-center mb-2 tracking-widest uppercase">VÁCH TRÁI</div>${d(this.L,'L')}</div><div class="bridge-zone"><div class="bridge-cable"></div><div class="lamp-carrier ${this.side==='L'?'pos-left':'pos-right'}"><div class="absolute -top-10 text-4xl animate-pulse">🏮</div>${this.lamp.map(id=>`<div onclick="window.ActiveGame.move(${id},'lamp')" class="char-card bg-amber-900/90 border-amber-500 p-1 rounded-lg text-center z-30 transform hover:scale-110 shadow-xl" style="width:50px; height:50px; min-height:0;"><div class="text-xl">${this.names[id].split(' ')[0]}</div></div>`).join('')}</div><button onclick="window.ActiveGame.go()" class="btn-go-round hover:scale-105">ĐI</button></div><div class="cliff-side right"><div class="col-span-full text-xs font-black text-slate-500 w-full text-center mb-2 tracking-widest uppercase">VÁCH PHẢI</div>${d(this.R,'R')}</div></div>`; const mobileHTML = `<div class="bridge-layout shadow-2xl relative"><div class="cliff-side"><div class="col-span-full text-xs font-black text-slate-500 w-full text-center mb-2 tracking-widest uppercase">VÁCH TRÁI</div>${d(this.L,'L')}</div><div class="bridge-zone"><div class="bridge-track-area w-full md:w-full relative h-full"><div class="bridge-cable"></div><div class="lamp-carrier ${this.side==='L'?'pos-left':'pos-right'}"><div class="absolute -top-10 text-4xl animate-pulse">🏮</div>${this.lamp.map(id=>`<div onclick="window.ActiveGame.move(${id},'lamp')" class="char-card bg-amber-900/90 border-amber-500 p-1 rounded-lg text-center z-30 transform hover:scale-110 shadow-xl" style="width:50px; height:50px; min-height:0;"><div class="text-xl">${this.names[id].split(' ')[0]}</div></div>`).join('')}</div></div></div><div class="cliff-side right"><div class="col-span-full text-xs font-black text-slate-500 w-full text-center mb-2 tracking-widest uppercase">VÁCH PHẢI</div>${d(this.R,'R')}</div><div class="w-full p-4 mt-2 flex justify-center pb-8"><button onclick="window.ActiveGame.go()" class="btn-go-mobile">BĂNG QUA</button></div></div>`; const content = window.innerWidth >= 768 ? desktopHTML : mobileHTML; document.getElementById('game-stage').innerHTML = `<div class="w-full max-w-5xl mx-auto flex flex-col h-full md:justify-center md:pt-10 pb-20">${content}</div>`; } getHint(t){ if(t==='dog') return "Gâu! Để tôi cầm đèn chạy về cho nhanh, tôi chạy có 1 giây thôi!"; if(t==='bear') return "Chiến thuật: Lượt đi quan trọng nhất hãy cho 2 người chậm nhất đi cùng nhau."; if(t==='robo') return "Tính toán: Cần tối ưu lượt đi để giảm tổng thời gian chờ xuống dưới 29s."; return ""; } }
-        class GameCat { constructor(){this.reset()} reset(){this.day=1;this.pos=new Set([1,2,3,4,5]);this.logs=[];this.render()} check(i){if(this.pos.has(i)){if(this.pos.size===1)GameManager.win(this.day<=6);else this.pos.delete(i)}const n=new Set();this.pos.forEach(p=>{if(p>1)n.add(p-1);if(p<5)n.add(p+1)});this.pos=n;this.logs.unshift(`Lần ${this.day}: Hộp ${i} -> Trống.`);this.day++;this.render(); if(this.day > 10) { showToast("Thất bại! Quá 10 lượt.", "error"); this.giveUp(); }} 
+        class GameCat { constructor(){this.reset()} reset(){this.day=1;this.pos=new Set([1,2,3,4,5]);this.logs=[];this.render()} check(i){if(this.pos.has(i)){if(this.pos.size===1)GameManager.win(this.day<=6);else this.pos.delete(i)}const n=new Set();this.pos.forEach(p=>{if(p>1)n.add(p-1);if(p<5)n.add(p+1)});this.pos=n;this.logs.unshift(`Lần ${this.day}: Hộp ${i} -> Trống.`);this.day++;this.render(); if(this.day > 10) { showToast("Thất bại! Quá 10 ngày.", "error"); setTimeout(()=>this.giveUp(), 1500); }} 
         giveUp(){
             let current = Array.from(this.pos)[0] || 1;
             let sequence = [current];
             for(let i=0; i<5; i++) {
                 let next = (current === 1) ? 2 : (current === 5) ? 4 : (Math.random()>0.5 ? current-1 : current+1);
-                sequence.push(next); current = next;
+                sequence.push(next);
+                current = next;
             }
             this.logs.unshift(`<div class="text-amber-500 font-bold">Lộ trình Hắc Pháp Sư (Đáp án): ${sequence.join(" → ")}</div>`);
             this.render();
@@ -270,33 +285,77 @@
                 this.draw(); 
                 this.initPanZoom();
             } 
+            
             initPanZoom() {
-                const wrapper = document.getElementById('spider-wrapper'); const canvas = document.getElementById('spider-canvas'); let scale = 1, panning = false, pointX = 0, pointY = 0, start = { x: 0, y: 0 };
+                const wrapper = document.getElementById('spider-wrapper');
+                const canvas = document.getElementById('spider-canvas');
+                let scale = 1, panning = false, pointX = 0, pointY = 0, start = { x: 0, y: 0 };
                 wrapper.onmousedown = (e) => { e.preventDefault(); start = { x: e.clientX - pointX, y: e.clientY - pointY }; panning = true; }
                 wrapper.onmouseup = () => { panning = false; }
                 wrapper.onmousemove = (e) => { if (!panning) return; e.preventDefault(); pointX = (e.clientX - start.x); pointY = (e.clientY - start.y); canvas.style.transform = `translate(${pointX}px, ${pointY}px) scale(${scale})`; }
                 wrapper.addEventListener('wheel', (e) => { e.preventDefault(); scale += e.deltaY * -0.001; scale = Math.min(Math.max(.5, scale), 3); canvas.style.transform = `translate(${pointX}px, ${pointY}px) scale(${scale})`; });
             }
-            getDist(start, end) { let q = [[start, 0]]; let visited = new Set([start]); while(q.length > 0) { let [node, d] = q.shift(); if(node === end) return d; (this.adj[node]||[]).forEach(n => { if(!visited.has(n)) { visited.add(n); q.push([n, d+1]); } }); } return 999; }
+            
+            // BFS for Graph Distance
+            getDist(start, end) {
+                let q = [[start, 0]]; let visited = new Set([start]);
+                while(q.length > 0) {
+                    let [node, d] = q.shift();
+                    if(node === end) return d;
+                    (this.adj[node]||[]).forEach(n => {
+                        if(!visited.has(n)) { visited.add(n); q.push([n, d+1]); }
+                    });
+                }
+                return 999;
+            }
+
             getPos(id){ const cx=300, cy=520; if(id===0) return {x:cx, y:cy}; const val = id-1; const ring = Math.floor(val/5); const ray = val % 5; const maxDists = [300, 420, 480, 420, 300]; const maxDist = maxDists[ray]; const ratio = (ring + 1) / 4; const dist = ratio * maxDist; const startAngle = -150 * (Math.PI/180); const step = 30 * (Math.PI/180); const angle = startAngle + (ray * step); return { x: cx + dist * Math.cos(angle), y: cy + dist * Math.sin(angle) }; } 
-            getMousePos(canvas, evt) { var rect = canvas.getBoundingClientRect(); return { x: (evt.clientX - rect.left) * (canvas.width / rect.width), y: (evt.clientY - rect.top) * (canvas.height / rect.height) }; }
+            
+            getMousePos(canvas, evt) {
+                var rect = canvas.getBoundingClientRect();
+                return { x: (evt.clientX - rect.left) * (canvas.width / rect.width), y: (evt.clientY - rect.top) * (canvas.height / rect.height) };
+            }
+
             click(e){ 
-                if(this.over)return; const cvs = document.getElementById('spider-canvas'); const pos = this.getMousePos(cvs, e);
+                if(this.over)return; 
+                const canvas = document.getElementById('spider-canvas');
+                const pos = this.getMousePos(canvas, e);
                 let bestNode = -1; let minDist = 9999; 
                 for(let i=0; i<=20; i++){ const p = this.getPos(i); const dist = Math.hypot(pos.x-p.x, pos.y-p.y); if(dist < minDist){ minDist = dist; bestNode = i; } } 
+                /* FIX HITBOX to 40px */ 
                 if(bestNode !== -1 && minDist < 40){ 
                     if(this.adj[this.player].includes(bestNode)){ 
                         this.player = bestNode; playSound('click'); 
                         if(this.player===this.spider) this.win(); 
-                        else { this.moves--; document.getElementById('game-metric').innerText=`${this.moves} bước`; if(this.moves===0) { this.fail(); } else setTimeout(()=>this.ai(),300) } 
+                        else { this.moves--; document.getElementById('game-metric').innerText=`${this.moves} bước`; if(this.moves===0) this.fail(); else setTimeout(()=>this.ai(),300) } 
                         this.draw() 
                     } 
                 } 
             } 
-            ai(){ if(this.over)return; const nb=this.adj[this.spider]; let best=-1, maxDist=-1; nb.forEach(n=>{ const d = this.getDist(n, this.player); if(n!==this.player){ if(d > maxDist){ maxDist = d; best = n; } } }); if(best===-1) best=nb[0]; this.spider=best; playSound('click'); if(this.player===this.spider) this.win(); this.draw(); } 
+            ai(){ 
+                if(this.over)return; 
+                const nb=this.adj[this.spider]; 
+                let best=-1, maxDist=-1; 
+                nb.forEach(n=>{ 
+                    const d = this.getDist(n, this.player); // Use BFS Distance
+                    if(n!==this.player){ if(d > maxDist){ maxDist = d; best = n; } } 
+                }); 
+                if(best===-1) best=nb[0]; 
+                this.spider=best; playSound('click'); 
+                if(this.player===this.spider) this.win(); 
+                this.draw(); 
+            } 
             win(){this.over=true;GameManager.win(15-this.moves<=10)} 
             fail(){this.over=true;showToast('Thất bại! Hết bước.', 'error');playSound('fail'); GameManager.autoResetGame(1000); } 
-            draw(){ const cvs=document.getElementById('spider-canvas'); if(!cvs)return; cvs.width = 600; cvs.height = 600; cvs.onclick=(e)=>this.click(e); const ctx=cvs.getContext('2d'); ctx.clearRect(0,0,600,600); const cx=300, cy=520; ctx.lineWidth=2; ctx.strokeStyle='#475569'; for(let r=0; r<4; r++) { ctx.beginPath(); for(let ray=0; ray<5; ray++) { const id = 1 + (r*5) + ray; const p = this.getPos(id); if(ray===0) ctx.moveTo(p.x, p.y); else ctx.lineTo(p.x, p.y); } ctx.stroke(); } for(let ray=0; ray<5; ray++) { ctx.beginPath(); ctx.moveTo(cx, cy); const outerId = 1 + (3*5) + ray; const p = this.getPos(outerId); ctx.lineTo(p.x, p.y); ctx.stroke(); } for(let i=0; i<=20; i++){ const p=this.getPos(i); const isNeighbor = this.adj[this.player].includes(i); ctx.beginPath(); ctx.arc(p.x,p.y, i===0?15:10, 0, 6.28); if(i===this.player) { ctx.fillStyle='#3b82f6'; ctx.shadowBlur=20; ctx.shadowColor='#3b82f6'; } else if(i===this.spider) { ctx.fillStyle='#f472b6'; ctx.shadowBlur=20; ctx.shadowColor='#f472b6'; } else if(isNeighbor) { ctx.fillStyle='#94a3b8'; ctx.shadowBlur=0; } else { ctx.fillStyle='#1e293b'; ctx.shadowBlur=0; } ctx.fill(); if(isNeighbor) { ctx.lineWidth=2; ctx.strokeStyle='white'; ctx.stroke(); } ctx.shadowBlur=0; } ctx.fillStyle = '#ef4444'; ctx.font="bold 12px sans-serif"; ctx.textAlign="center"; ctx.fillText("O", cx, cy+30); } 
+            draw(){ 
+                const cvs=document.getElementById('spider-canvas'); if(!cvs)return;
+                cvs.width = 600; cvs.height = 600; cvs.onclick=(e)=>this.click(e); 
+                const ctx=cvs.getContext('2d'); ctx.clearRect(0,0,600,600); 
+                const cx=300, cy=520; ctx.lineWidth=2; ctx.strokeStyle='#475569'; 
+                for(let r=0; r<4; r++) { ctx.beginPath(); for(let ray=0; ray<5; ray++) { const id = 1 + (r*5) + ray; const p = this.getPos(id); if(ray===0) ctx.moveTo(p.x, p.y); else ctx.lineTo(p.x, p.y); } ctx.stroke(); } 
+                for(let ray=0; ray<5; ray++) { ctx.beginPath(); ctx.moveTo(cx, cy); const outerId = 1 + (3*5) + ray; const p = this.getPos(outerId); ctx.lineTo(p.x, p.y); ctx.stroke(); } 
+                for(let i=0; i<=20; i++){ const p=this.getPos(i); const isNeighbor = this.adj[this.player].includes(i); ctx.beginPath(); ctx.arc(p.x,p.y, i===0?15:10, 0, 6.28); if(i===this.player) { ctx.fillStyle='#3b82f6'; ctx.shadowBlur=20; ctx.shadowColor='#3b82f6'; } else if(i===this.spider) { ctx.fillStyle='#f472b6'; ctx.shadowBlur=20; ctx.shadowColor='#f472b6'; } else if(isNeighbor) { ctx.fillStyle='#94a3b8'; ctx.shadowBlur=0; } else { ctx.fillStyle='#1e293b'; ctx.shadowBlur=0; } ctx.fill(); if(isNeighbor) { ctx.lineWidth=2; ctx.strokeStyle='white'; ctx.stroke(); } ctx.shadowBlur=0; } ctx.fillStyle = '#ef4444'; ctx.font="bold 12px sans-serif"; ctx.textAlign="center"; ctx.fillText("O", cx, cy+30); 
+            } 
             getHint(t){ if(t==='dog') return "Gâu! Chặn đầu nó ở cái vòng ngoài kia kìa!"; if(t==='bear') return "Chiến thuật 'Bao vây': Đi vào trung tâm trước để kiểm soát các hướng ra."; if(t==='robo') return "Dữ liệu: Chiếm lĩnh các điểm trung tâm để thu hẹp vùng di chuyển."; return ""; } 
         }
         class GameHorses { 
@@ -313,7 +372,9 @@
                 for(let i=temp.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[temp[i],temp[j]]=[temp[j],temp[i]]}
                 this.speeds = {}; let tempIdx = 0;
                 for(let i=0; i<25; i++) {
-                    if(i === idx1) this.speeds[i+1] = 1; else if (i === idx2) this.speeds[i+1] = 2; else this.speeds[i+1] = temp[tempIdx++];
+                    if(i === idx1) this.speeds[i+1] = 1;
+                    else if (i === idx2) this.speeds[i+1] = 2;
+                    else this.speeds[i+1] = temp[tempIdx++];
                 }
                 this.renderHTML();
             } 
@@ -327,12 +388,6 @@
                 this.pool.push(...this.track);this.track=[];this.updateUI();
             } 
             check(){const p1=parseInt(document.getElementById('h-pred-1').value),p2=parseInt(document.getElementById('h-pred-2').value),p3=parseInt(document.getElementById('h-pred-3').value);if(!p1||!p2||!p3){showToast("Nhập đủ 3!", 'warning');return}const s=Object.keys(this.speeds).sort((a,b)=>this.speeds[a]-this.speeds[b]);if(p1==s[0]&&p2==s[1]&&p3==s[2])GameManager.win(this.races<=7);else{playSound('fail');showToast("Sai rồi!", 'error'); setTimeout(()=>this.giveUp(), 1500);}} 
-            giveUp(){
-                const s=Object.keys(this.speeds).sort((a,b)=>this.speeds[a]-this.speeds[b]);
-                const l=document.getElementById('horse-logs');
-                l.innerHTML=`<div class="text-amber-400 font-bold mt-2">ĐÁP ÁN: #1:${s[0]} | #2:${s[1]} | #3:${s[2]}</div>` + l.innerHTML;
-                GameManager.autoResetGame(4000);
-            }
             useGlass(){ const l = document.getElementById('horse-logs'); const slowest = Object.keys(this.speeds).sort((a,b)=>this.speeds[b]-this.speeds[a]).slice(0,5); l.innerHTML=`<div class="mb-3 pb-2 border-b border-yellow-500/50 bg-yellow-900/20 p-2 rounded"><div class="text-yellow-400 font-bold mb-1">🔍 KÍNH LÚP PHÁT HIỆN:</div><div class="text-slate-300 text-sm">5 Rồng chậm nhất: ${slowest.join(', ')}</div></div>`+l.innerHTML; } 
             getHint(t){ if(t==='dog') return "Gâu! Mấy con về bét ở vòng loại chắc chắn loại rồi!"; if(t==='bear') return "Đua 5 nhóm đầu. Lấy 5 con nhất đua với nhau (Lần 6). Từ đó loại trừ tiếp."; if(t==='robo') return "Thuật toán: Sử dụng tính chất bắc cầu (A>B, B>C => A>C) để loại bỏ dữ liệu thừa."; return ""; } 
         }
@@ -345,7 +400,10 @@
             do { safe2 = Math.floor(Math.random() * 12) + 1; } while (safe2 === this.fake || safe2 === safe1);
             this.magnetSafe = safe1;
             this.dogSafe = safe2;
-        } selectPan(s){this.selPan=(this.selPan===s)?null:s;this.updateUI()} click(id){if(this.L.includes(id)){this.L=this.L.filter(x=>x!==id);this.pool.push(id)}else if(this.R.includes(id)){this.R=this.R.filter(x=>x!==id);this.pool.push(id)}else{if(!this.selPan){showToast("Chọn đĩa cân trước!", 'warning');return}this.pool=this.pool.filter(x=>x!==id);if(this.selPan==='L')this.L.push(id);else this.R.push(id)}this.pool.sort((a,b)=>a-b);this.L.sort((a,b)=>a-b);this.R.sort((a,b)=>a-b);playSound('click');this.updateUI()} weigh(){ if(this.weighs<=0)return;this.weighs--; const arm=document.getElementById('scale-arm'); let res=0; if(this.L.length>this.R.length)res=-1;else if(this.R.length>this.L.length)res=1;else{if(this.L.includes(this.fake))res=this.heavy?-1:1;else if(this.R.includes(this.fake))res=this.heavy?1:-1} if(res===-1){ arm.classList.add('tilt-left'); } else if(res===1){ arm.classList.add('tilt-right'); } else { arm.classList.add('balanced-anim'); } const txt=res===0?"CÂN BẰNG":(res===-1?"TRÁI NẶNG":"PHẢI NẶNG"); document.getElementById('balls-logs').innerHTML=`<div class="mb-3 pb-2 border-b border-slate-700 flex flex-col"><div class="text-amber-400 font-bold text-base">Lần #${3-this.weighs}: ${txt}</div><div class="text-slate-400 text-xs mt-1 leading-relaxed">L:[${this.L}] <br> R:[${this.R}]</div></div>`+document.getElementById('balls-logs').innerHTML; setTimeout(()=>{ arm.classList.remove('tilt-left','tilt-right','balanced-anim'); this.pool.push(...this.L, ...this.R); this.L=[]; this.R=[]; this.pool.sort((a,b)=>a-b); this.updateUI(); },2500); this.updateUI(); } check(){const id=parseInt(document.getElementById('balls-guess-id').value),st=document.getElementById('balls-guess-status').value;if(!id||!st){showToast("Chọn bóng!", 'warning');return}if(id===this.fake&&st===(this.heavy?'Heavy':'Light'))GameManager.win(true);else{playSound('fail');showToast("Sai rồi!", 'error'); setTimeout(()=>this.giveUp(), 1500);}} 
+        } selectPan(s){this.selPan=(this.selPan===s)?null:s;this.updateUI()} click(id){if(this.L.includes(id)){this.L=this.L.filter(x=>x!==id);this.pool.push(id)}else if(this.R.includes(id)){this.R=this.R.filter(x=>x!==id);this.pool.push(id)}else{if(!this.selPan){showToast("Chọn đĩa cân trước!", 'warning');return}this.pool=this.pool.filter(x=>x!==id);if(this.selPan==='L')this.L.push(id);else this.R.push(id)}this.pool.sort((a,b)=>a-b);this.L.sort((a,b)=>a-b);this.R.sort((a,b)=>a-b);playSound('click');this.updateUI()} weigh(){ if(this.weighs<=0)return;this.weighs--; const arm=document.getElementById('scale-arm'); let res=0; if(this.L.length>this.R.length)res=-1;else if(this.R.length>this.L.length)res=1;else{if(this.L.includes(this.fake))res=this.heavy?-1:1;else if(this.R.includes(this.fake))res=this.heavy?1:-1} if(res===-1){ arm.classList.add('tilt-left'); } else if(res===1){ arm.classList.add('tilt-right'); } else { arm.classList.add('balanced-anim'); } const txt=res===0?"CÂN BẰNG":(res===-1?"TRÁI NẶNG":"PHẢI NẶNG"); document.getElementById('balls-logs').innerHTML=`<div class="mb-3 pb-2 border-b border-slate-700 flex flex-col"><div class="text-amber-400 font-bold text-base">Lần #${3-this.weighs}: ${txt}</div><div class="text-slate-400 text-xs mt-1 leading-relaxed">L:[${this.L}] <br> R:[${this.R}]</div></div>`+document.getElementById('balls-logs').innerHTML; setTimeout(()=>{ arm.classList.remove('tilt-left','tilt-right','balanced-anim'); this.pool.push(...this.L, ...this.R); this.L=[]; this.R=[]; this.pool.sort((a,b)=>a-b); this.updateUI(); },2500); this.updateUI(); 
+            if(this.weighs===0) setTimeout(()=>showToast("Hết lượt cân! Hãy đoán ngay.", "warning"), 3000);
+        } 
+        check(){const id=parseInt(document.getElementById('balls-guess-id').value),st=document.getElementById('balls-guess-status').value;if(!id||!st){showToast("Chọn bóng!", 'warning');return}if(id===this.fake&&st===(this.heavy?'Heavy':'Light'))GameManager.win(true);else{playSound('fail');showToast("Sai rồi!", 'error'); setTimeout(()=>this.giveUp(), 1500);}} 
         giveUp(){
             const l = document.getElementById('balls-logs');
             l.innerHTML=`<div class="text-amber-400 font-bold mt-2">ĐÁP ÁN: Bóng ${this.fake} là bóng ${this.heavy?'NẶNG':'NHẸ'}</div>` + l.innerHTML;
@@ -366,7 +424,7 @@
             unlockedCompanions: new Set(), inventory: new Set(), usedSkills: {}, usedItems: {},
 
             init(){
-                const s=localStorage.getItem('an_v250_save');
+                const s=localStorage.getItem('an_v54_save');
                 if(s){
                     const d=JSON.parse(s);
                     this.idx=d.idx; this.gears=d.gears; this.progress=d.prog; this.visited=d.visited || {};
@@ -378,7 +436,7 @@
                 this.renderSidebar(); this.loadContent();
             },
             save(){
-                localStorage.setItem('an_v250_save',JSON.stringify({
+                localStorage.setItem('an_v54_save',JSON.stringify({
                     idx:this.idx, gears:this.gears, prog:this.progress, visited:this.visited,
                     unlockedCompanions: Array.from(this.unlockedCompanions),
                     inventory: Array.from(this.inventory),
@@ -386,7 +444,7 @@
                 }));
             },
             resetJourney(){ openModal('reset-modal'); },
-            confirmReset(){ localStorage.removeItem('an_v250_save'); location.reload(); },
+            confirmReset(){ localStorage.removeItem('an_v54_save'); location.reload(); },
             autoResetGame(delay){
                 setTimeout(() => {
                     if(window.ActiveGame && window.ActiveGame.reset) {
@@ -395,8 +453,6 @@
                     }
                 }, delay);
             },
-            // ... (renderSidebar, useItem, useSkill, loadContent, switchTab, closeStoryOverlay, playLevel, skip, win, next, jump, ending functions same as v2.49.0 but updated with autoReset logic above) ...
-            // (Due to length limits, assuming standard implementation of these methods from previous context)
             renderSidebar(){
                 const nav=document.getElementById('sidebar-nav'), mob=document.getElementById('mobile-nav-list');
                 const inv=document.getElementById('inventory-grid');
@@ -406,6 +462,7 @@
                 if(document.getElementById('gear-count')) document.getElementById('gear-count').innerText=`${this.gears}/8`;
                 if(document.getElementById('mobile-gear')) document.getElementById('mobile-gear').innerText=`${this.gears} ⚙️`;
 
+                // Inventory Render (Desktop & Mobile)
                 const items = [
                     {id:'glass', icon:'🔍', name:'Kính Lúp', game: 'horses'},
                     {id:'magnet', icon:'🧲', name:'Nam Châm', game: 'balls'}
@@ -446,8 +503,11 @@
             },
             useItem(itemId) {
                 if(this.usedItems[this.idx]?.[itemId]) return;
+                
+                // Logic
                 if(itemId === 'glass' && window.ActiveGame.useGlass) window.ActiveGame.useGlass();
                 if(itemId === 'magnet' && window.ActiveGame.useMagnet) window.ActiveGame.useMagnet();
+                
                 if(!this.usedItems[this.idx]) this.usedItems[this.idx] = {};
                 this.usedItems[this.idx][itemId] = true;
                 this.save(); this.renderSidebar();
@@ -455,12 +515,14 @@
             },
             useSkill(compId) {
                 if(this.usedSkills[this.idx]?.[compId]) return;
+                
                 const content = window.ActiveGame.getHint(compId);
                 document.getElementById(`content-${compId}`).innerHTML = content;
                 document.getElementById(`content-${compId}`).classList.add('visible');
                 document.getElementById(`btn-${compId}`).classList.remove('available');
                 document.getElementById(`btn-${compId}`).classList.add('used');
                 document.getElementById(`btn-${compId}`).innerText = "Đã sử dụng";
+                
                 if(!this.usedSkills[this.idx]) this.usedSkills[this.idx] = {};
                 this.usedSkills[this.idx][compId] = true;
                 this.save();
@@ -479,6 +541,7 @@
                 
                 const hText = document.getElementById('hint-text'); if(hText) hText.innerText = d.hint || 'Không có gợi ý.';
 
+                // RESET & LOAD SKILL UI
                 ['dog', 'bear', 'robo'].forEach(id => {
                     const btn = document.getElementById(`btn-${id}`);
                     const content = document.getElementById(`content-${id}`);
@@ -516,12 +579,7 @@
                 if(gw) gw.classList.add('hidden'); if(ph) ph.classList.remove('hidden');
                 
                 const vic = document.getElementById('victory-overlay');
-                if(!vic.classList.contains('victory-visible') || d.id !== 'c1') { 
-                    vic.classList.remove('victory-visible'); 
-                    vic.classList.remove('is-story-overlay'); 
-                    vic.style.pointerEvents = 'none'; 
-                    vic.innerHTML = ''; 
-                }
+                if(!vic.classList.contains('victory-visible') || d.id !== 'c1') { vic.classList.remove('victory-visible'); vic.style.pointerEvents = 'none'; vic.innerHTML = ''; }
                 document.getElementById('hint-modal').style.display = 'none';
                 
                 if(window.innerWidth >= 768) {
@@ -536,10 +594,7 @@
 
                 if (d.id === 'c1' && !this.visited['c1']) {
                      const storyHTML = `<div class="max-w-2xl bg-slate-900 p-8 rounded-2xl border border-slate-700 shadow-2xl relative animate-fade-in mx-4"><div class="text-xs font-black text-indigo-400 uppercase tracking-widest mb-4">CHƯƠNG 1</div><h2 class="text-3xl font-serif font-bold text-white mb-4">${d.title.split(':')[1]}</h2><div class="text-slate-300 text-base leading-relaxed mb-8 max-h-[60vh] overflow-y-auto">${d.text}</div><button onclick="GameManager.closeStoryOverlay()" class="w-full py-4 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-xl uppercase tracking-wider transition-transform active:scale-95">TIẾP TỤC</button></div>`;
-                     vic.innerHTML = storyHTML; 
-                     vic.classList.add('victory-visible'); 
-                     vic.classList.add('is-story-overlay'); 
-                     vic.style.pointerEvents = 'auto';
+                     vic.innerHTML = storyHTML; vic.classList.add('victory-visible'); vic.style.pointerEvents = 'auto';
                      this.visited['c1'] = true; this.save();
                 }
 
@@ -547,26 +602,7 @@
                 if(d.type==='text'){ if(b1) {b1.classList.remove('hidden');b1.innerText="BẮT ĐẦU";} }else{ if(b1) {b1.classList.remove('hidden');b1.innerText="BẮT ĐẦU / TIẾP TỤC";} }
                 setTimeout(() => { this.isTransitioning = false; }, 500);
             },
-            switchTab(tab) {
-                if(tab === 'dog' && !this.unlockedCompanions.has('dog')) return;
-                if(tab === 'robo' && !this.unlockedCompanions.has('robo')) return;
-                if(tab === 'bear' && !this.unlockedCompanions.has('bear')) return;
-                
-                document.querySelectorAll('.hint-tab').forEach(t => t.classList.remove('active'));
-                document.querySelectorAll('.hint-content').forEach(c => c.classList.remove('active'));
-                
-                if(tab === 'basic') { document.querySelector('.hint-tab:nth-child(1)').classList.add('active'); document.getElementById('hint-content-basic').classList.add('active'); }
-                if(tab === 'dog') { document.getElementById('tab-dog').classList.add('active'); document.getElementById('hint-content-dog').classList.add('active'); }
-                if(tab === 'bear') { document.getElementById('tab-bear').classList.add('active'); document.getElementById('hint-content-bear').classList.add('active'); }
-                if(tab === 'robo') { document.getElementById('tab-robo').classList.add('active'); document.getElementById('hint-content-robo').classList.add('active'); }
-            },
-            closeStoryOverlay() { 
-                const vic = document.getElementById('victory-overlay'); 
-                vic.classList.remove('victory-visible'); 
-                vic.classList.remove('is-story-overlay'); 
-                vic.style.pointerEvents = 'none'; 
-                this.playLevel(); 
-            },
+            closeStoryOverlay() { const vic = document.getElementById('victory-overlay'); vic.classList.remove('victory-visible'); vic.style.pointerEvents = 'none'; this.playLevel(); },
             playLevel(){
                 const d=STORY[this.idx];
                 forceCollapseStory();
@@ -575,6 +611,8 @@
                 document.getElementById('placeholder').classList.add('hidden');
                 if (document.getElementById('game-msg')) document.getElementById('game-msg').innerText="";
                 if(window.ActiveGame && window.ActiveGame.reset) window.ActiveGame = null;
+                
+                // Init Game first so hints work
                 if(d.game==='switches')window.ActiveGame=new GameSwitches();
                 if(d.game==='jugs')window.ActiveGame=new GameJugs();
                 if(d.game==='graph')window.ActiveGame=new GameGraph();
@@ -583,6 +621,7 @@
                 if(d.game==='spider')window.ActiveGame=new GameSpider();
                 if(d.game==='horses')window.ActiveGame=new GameHorses();
                 if(d.game==='balls')window.ActiveGame=new GameBalls();
+                
                 this.renderSidebar(); 
             },
             skip(){showToast("Đã bỏ qua màn chơi!", 'warning');this.win(false)},
@@ -625,20 +664,37 @@
                 const desc = document.getElementById('end-desc');
                 const rank = document.getElementById('end-rank');
                 const icon = document.getElementById('end-icon');
+                
+                let r = 'B'; 
+                let rClass = "text-3xl font-black text-slate-400 mt-1";
+                let iText = '✨';
+                let tClass = "text-3xl md:text-5xl font-serif font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-200 to-cyan-500 mb-2";
+                let tText = "BÌNH MINH CHƯA TRỌN";
+                let sText = "NORMAL ENDING";
+                
                 if(gears === 8) {
-                    icon.innerText = '👑';
-                    title.className = "text-3xl md:text-5xl font-serif font-black text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-yellow-400 to-amber-600 mb-2";
-                    title.innerText = "HUYỀN THOẠI ÁNH SÁNG";
-                    sub.innerText = "TRUE ENDING - HOÀN HẢO";
-                    rank.innerText = "S+"; rank.className = "text-3xl font-black text-amber-400 mt-1";
+                    r = 'S+'; rClass = "text-4xl font-black text-amber-400 mt-1 drop-shadow-[0_0_10px_rgba(251,191,36,0.8)]";
+                    iText = '👑'; tClass = "text-3xl md:text-5xl font-serif font-black text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-yellow-400 to-amber-600 mb-2";
+                    tText = "HUYỀN THOẠI ÁNH SÁNG"; sText = "TRUE ENDING - HOÀN HẢO";
+                } else if (gears >= 6) {
+                    r = 'S'; rClass = "text-4xl font-black text-yellow-300 mt-1";
+                    iText = '⚔️'; tText = "HIỆP SĨ THỜI GIAN";
+                } else if (gears === 5) {
+                    r = 'A+'; rClass = "text-3xl font-black text-emerald-400 mt-1";
+                    iText = '🛡️'; tText = "HỘ VỆ TÀI BA";
+                } else if (gears === 4) {
+                    r = 'A'; rClass = "text-3xl font-black text-emerald-500 mt-1";
+                    iText = '🕯️'; tText = "NGƯỜI DẪN ĐƯỜNG";
+                } else {
+                    r = 'B'; iText = '🌱'; tText = "TẬP SỰ";
+                }
+
+                rank.innerText = r; rank.className = rClass;
+                icon.innerText = iText; title.className = tClass; title.innerText = tText; sub.innerText = sText;
+
+                if(gears === 8) {
                     desc.innerHTML = `"Không thể tin được!" - Hắc Pháp Sư Muội Than thốt lên khi ánh sáng từ 8 Bánh Răng Vàng hợp nhất thành một luồng năng lượng thuần khiết, xuyên thủng màn đêm vĩnh cửu. <br><br>Cha của An bước ra từ khối pha lê vỡ vụn, không một vết xước. Cây Đèn Chân Lý không chỉ soi sáng con đường, mà còn thanh tẩy tâm hồn đen tối của kẻ thù. Muội Than, giờ đây đã được giải thoát khỏi lời nguyền bóng tối, cúi đầu kính phục trí tuệ và lòng dũng cảm của An.<br><br>Vương Quốc Logic bước vào kỷ nguyên thịnh vượng nhất lịch sử. An trở thành Thợ Đồng Hồ Hoàng Gia trẻ tuổi nhất, người nắm giữ chìa khóa của Thời Gian và Sự Thật. Một cái kết viên mãn không tì vết!`;
                 } else {
-                    icon.innerText = '✨';
-                    title.className = "text-3xl md:text-5xl font-serif font-black text-transparent bg-clip-text bg-gradient-to-r from-blue-200 to-cyan-500 mb-2";
-                    title.innerText = "BÌNH MINH CHƯA TRỌN";
-                    sub.innerText = "NORMAL ENDING";
-                    let r = 'B'; if(gears > 5) { r = 'A'; rank.className = "text-3xl font-black text-emerald-400 mt-1"; } else { r = 'B'; rank.className = "text-3xl font-black text-slate-400 mt-1"; }
-                    rank.innerText = r;
                     desc.innerHTML = `Với số lượng Bánh Răng thu thập được (${gears}/8), Cây Đèn Chân Lý lóe lên một tia sáng mạnh mẽ, đủ để phá vỡ khối pha lê và giải thoát cho Cha. Tuy nhiên, năng lượng đó chưa đủ để thanh tẩy hoàn toàn bóng tối.<br><br>Hắc Pháp Sư Muội Than, dù bị thương, đã kịp thời hóa thành một làn khói đen và trốn thoát về phía Bắc. "Ta sẽ trở lại...", tiếng cười của hắn vọng lại trong gió.<br><br>An dìu cha trở về nhà. Dù gia đình đoàn tụ, nhưng An biết rằng, chừng nào chưa thu thập đủ 8 Bánh Răng Vàng để khôi phục toàn bộ sức mạnh của Cây Đèn, Vương Quốc Logic vẫn còn nằm trong mối đe dọa tiềm tàng. Hành trình tạm kết thúc, nhưng thử thách vẫn còn đó.`;
                 }
             }
