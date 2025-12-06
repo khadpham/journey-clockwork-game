@@ -255,7 +255,7 @@
                 let next = (current === 1) ? 2 : (current === 5) ? 4 : (Math.random()>0.5 ? current-1 : current+1);
                 sequence.push(next); current = next;
             }
-            this.logs.unshift(`<div class="text-amber-500 font-bold">Lộ trình Mèo (Đáp án): ${sequence.join(" → ")}</div>`);
+            this.logs.unshift(`<div class="text-amber-500 font-bold">Lộ trình Hắc Pháp Sư (Đáp án): ${sequence.join(" → ")}</div>`);
             this.render();
             GameManager.autoResetGame(4000);
         }
